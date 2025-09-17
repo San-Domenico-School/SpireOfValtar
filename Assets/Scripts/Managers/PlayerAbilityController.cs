@@ -12,23 +12,16 @@ public class PlayerAbilityController : MonoBehaviour
      * **********************************/
 
     [Header("Spells")]
-    [SerializeField] private MonoBehaviour spell1;
-    [SerializeField] private MonoBehaviour spell2;
-    [SerializeField] private MonoBehaviour spell3;
+    [SerializeField] private TestSpell1 spell1;
+    [SerializeField] private TestSpell2 spell2;
+    [SerializeField] private TestSpell3 spell3;
 
     [Header("Input Actions")]
     [SerializeField] private InputActionReference nextAction;
     [SerializeField] private InputActionReference previousAction;
     [SerializeField] private InputActionReference attackAction;
 
-    private MonoBehaviour[] spells;
     private int currentIndex = 0;
-
-    private void Awake()
-    {
-        // Put the spells in an array for easy cycling
-        spells = new MonoBehaviour[] { spell1, spell2, spell3 };
-    }
 
     private void OnEnable()
     {
@@ -76,34 +69,46 @@ public class PlayerAbilityController : MonoBehaviour
 
     private void OnNext(InputAction.CallbackContext context)
     {
-        currentIndex = (currentIndex + 1) % spells.Length;
+        currentIndex = (currentIndex + 1) % 3;
         Debug.Log($"Selected Spell {currentIndex + 1}");
     }
 
     private void OnPrevious(InputAction.CallbackContext context)
     {
-        currentIndex = (currentIndex - 1 + spells.Length) % spells.Length;
+        currentIndex = (currentIndex - 1 + 3) % 3;
         Debug.Log($"Selected Spell {currentIndex + 1}");
     }
 
     private void OnAttack(InputAction.CallbackContext context)
     {
-        var spell = spells[currentIndex];
-        if (spell == null)
+        switch (currentIndex)
         {
-            Debug.LogWarning($"No spell assigned to slot {currentIndex + 1}");
-            return;
-        }
+            case 0:
+                if (spell1 != null)
+                {
+                    Debug.Log("Casting Spell 1");
+                    spell1.OnCast();
+                }
+                else Debug.LogWarning("Spell 1 is not assigned");
+                break;
 
-        var method = spell.GetType().GetMethod("OnCast");
-        if (method != null)
-        {
-            Debug.Log($"Casting spell {currentIndex + 1}");
-            method.Invoke(spell, null);
-        }
-        else
-        {
-            Debug.LogWarning($"Spell {currentIndex + 1} has no OnCast method");
+            case 1:
+                if (spell2 != null)
+                {
+                    Debug.Log("Casting Spell 2");
+                    spell2.OnCast();
+                }
+                else Debug.LogWarning("Spell 2 is not assigned");
+                break;
+
+            case 2:
+                if (spell3 != null)
+                {
+                    Debug.Log("Casting Spell 3");
+                    spell3.OnCast();
+                }
+                else Debug.LogWarning("Spell 3 is not assigned");
+                break;
         }
     }
 }
