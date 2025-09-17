@@ -1,21 +1,21 @@
 public class PlayerMovement : UnityEngine.MonoBehaviour
 {
     // --- Tunables (edit in Inspector) ---
-    public float walkSpeed = 5f;
-    public float runMultiplier = 1.6f;
-    public float jumpHeight = 1.5f;
-    public float gravity = -20f;
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float runMultiplier = 1.6f;
+    [SerializeField] private float jumpHeight = 1.5f;
+    [SerializeField] private float gravity = GetComponent<Rigidbody>().gravity;
 
-    public float dodgeDistance = 6f;
-    public float dodgeDuration = 0.18f;   // seconds
-    public float dodgeCooldown = 0.8f;
+    [SerializeField] private float dodgeDistance = 6f;
+    [SerializeField] private float dodgeDuration = 0.18f;   // seconds
+    [SerializeField] private float dodgeCooldown = 0.8f;
 
-    public float attackLungeDistance = 2.5f;
-    public float attackLungeDuration = 0.12f;
+    [SerializeField] private float attackLungeDistance = 2.5f;
+    [SerializeField] private float attackLungeDuration = 0.12f;
 
-    public float groundCheckRadius = 0.2f;
-    public UnityEngine.Transform groundCheck;     // put at feet
-    public UnityEngine.LayerMask groundLayers;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private UnityEngine.Transform groundCheck;     // put at feet
+    [SerializeField] private UnityEngine.LayerMask groundLayers;
 
     // --- Private state ---
     UnityEngine.CharacterController controller;
