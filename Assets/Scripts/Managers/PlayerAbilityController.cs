@@ -12,7 +12,7 @@ public class PlayerAbilityController : MonoBehaviour
      * **********************************/
 
     [Header("Spells")]
-    [SerializeField] private TestSpell1 spell1; // make sure that the class is the name of the script.
+    [SerializeField] private LightningSpell spell1; // make sure that the class is the name of the script.
     [SerializeField] private TestSpell2 spell2;
     [SerializeField] private TestSpell3 spell3;
 
