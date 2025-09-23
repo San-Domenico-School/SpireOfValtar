@@ -670,7 +670,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FireballSpell
   fireballPrefab: {fileID: 6364568384165654965, guid: cf6c44b02fb104c079683643828f1e42, type: 3}
   speed: 10
-  lifetime: 5
+  lifetime: 10000
   arcCurve:
     serializedVersion: 2
     m_Curve:

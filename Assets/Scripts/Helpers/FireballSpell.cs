@@ -48,8 +48,27 @@ public class FireballSpell : MonoBehaviour
         float t = 0f;
         while (t < lifetime)
         {
+            // Calculate movement for this frame
+            Vector3 movement = forward * speed * Time.deltaTime;
+            
+            // Check for collision using raycast before moving
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, forward, out hit, movement.magnitude))
+            {
+                Debug.Log($"Fireball hit {hit.collider.name} (Tag: {hit.collider.tag})");
+                
+                if (hit.collider.CompareTag("Enemy"))
+                {
+                    Debug.Log("Fireball hit an enemy!");
+                    // TODO: Add damage dealing logic here
+                }
+                
+                Destroy(gameObject);
+                yield break;
+            }
+            
             // Move fireball forward
-            transform.position += forward * speed * Time.deltaTime;
+            transform.position += movement;
 
             // Add arc (arcCurve is evaluated 0→1 across lifetime)
             float normalizedTime = t / lifetime;
@@ -68,15 +87,4 @@ public class FireballSpell : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log($"Fireball hit {collision.collider.name}");
-
-        if (collision.collider.CompareTag("Enemy"))
-        {
-            Debug.Log("Fireball hit an enemy!");
-        }
-
-        Destroy(gameObject);
-    }
 }
