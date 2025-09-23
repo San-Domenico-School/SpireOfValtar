@@ -68,7 +68,7 @@ public class FireballSpell : MonoBehaviour
             }
             
             // Move fireball forward
-            transform.position += movement;
+              transform.position += forward * speed * Time.deltaTime;
 
             // Add arc (arcCurve is evaluated 0→1 across lifetime)
             float normalizedTime = t / lifetime;
