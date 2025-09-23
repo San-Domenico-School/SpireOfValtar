@@ -77,6 +77,6 @@ public class FireballSpell : MonoBehaviour
             Debug.Log("Fireball hit an enemy!");
         }
 
-        Destroy(gameObject);
+        Destroy(this.gameObject, 10000000f);
     }
 }
