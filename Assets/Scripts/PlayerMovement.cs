@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
     // --- Tunables (edit in Inspector) ---
@@ -30,6 +30,13 @@ public class PlayerMovement : MonoBehaviour
     bool isDodging = false;
     bool isLunging = false;
 
+    // Input System state (set by PlayerInput callbacks)
+    Vector2 moveInput;
+    bool sprintHeldInput;
+    bool jumpPressedFrame;
+    bool attackPressedFrame;
+    bool crouchPressedFrame;
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -50,20 +57,17 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // --- Read input ---
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        Vector3 input = new Vector3(h, 0f, v);
+        // --- Read input (Unity Input System) ---
+        Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
         if (input.sqrMagnitude > 1f) input.Normalize();
 
         // Map local to world based on facing
         Vector3 move = transform.TransformDirection(input);
 
-        bool runHeld      = Input.GetButton("Fire3");             // Shift / X
-        bool jumpPressed  = Input.GetButtonDown("Jump");          // Space / A
-        bool dodgePressed = Input.GetKeyDown(KeyCode.LeftControl) // Ctrl / B (example)
-                           || Input.GetKeyDown(KeyCode.JoystickButton1);
-        bool attackPressed = Input.GetButtonDown("Fire1");        // LMB / RT
+        bool runHeld       = sprintHeldInput;
+        bool jumpPressed   = Consume(ref jumpPressedFrame);
+        bool dodgePressed  = Consume(ref crouchPressedFrame);
+        bool attackPressed = Consume(ref attackPressedFrame);
 
         // Grounding & jump
         bool grounded = IsGrounded();
@@ -111,6 +115,42 @@ public class PlayerMovement : MonoBehaviour
                 0.2f
             );
         }
+
+	// --- Input System helpers & callbacks ---
+	static bool Consume(ref bool flag)
+	{
+		bool was = flag;
+		flag = false;
+		return was;
+	}
+
+	// These are invoked by a PlayerInput component set to "Send Messages"
+	void OnMove(InputAction.CallbackContext context)
+	{
+		moveInput = context.ReadValue<Vector2>();
+	}
+
+	void OnSprint(InputAction.CallbackContext context)
+	{
+		if (context.performed) sprintHeldInput = true;
+		if (context.canceled) sprintHeldInput = false;
+	}
+
+	void OnJump(InputAction.CallbackContext context)
+	{
+		if (context.performed) jumpPressedFrame = true;
+	}
+
+	void OnAttack(InputAction.CallbackContext context)
+	{
+		if (context.performed) attackPressedFrame = true;
+	}
+
+	void OnCrouch(InputAction.CallbackContext context)
+	{
+		// Repurpose crouch as dodge trigger per current design
+		if (context.performed) crouchPressedFrame = true;
+	}
     }
 
     bool IsGrounded()
