@@ -57,6 +57,14 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        // --- Input System helpers & callbacks ---
+        static bool Consume(ref bool flag)
+        {
+            bool was = flag;
+            flag = false;
+            return was;
+        }
+
         // --- Read input (Unity Input System) ---
         Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
         if (input.sqrMagnitude > 1f) input.Normalize();
@@ -115,14 +123,6 @@ public class PlayerMovement : MonoBehaviour
                 0.2f
             );
         }
-
-	// --- Input System helpers & callbacks ---
-	static bool Consume(ref bool flag)
-	{
-		bool was = flag;
-		flag = false;
-		return was;
-	}
 
 	// These are invoked by a PlayerInput component set to "Send Messages"
 	void OnMove(InputAction.CallbackContext context)
