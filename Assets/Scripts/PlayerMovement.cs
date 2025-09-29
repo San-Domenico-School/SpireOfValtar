@@ -57,6 +57,14 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        // --- Input System helpers & callbacks ---
+        static bool Consume(ref bool flag)
+        {
+            bool was = flag;
+            flag = false;
+            return was;
+        }
+
         // --- Read input (Unity Input System) ---
         Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
         if (input.sqrMagnitude > 1f) input.Normalize();
@@ -115,43 +123,36 @@ public class PlayerMovement : MonoBehaviour
                 0.2f
             );
         }
+    }
 
-	// --- Input System helpers & callbacks ---
-	static bool Consume(ref bool flag)
-	{
-		bool was = flag;
-		flag = false;
-		return was;
-	}
-
-	// These are invoked by a PlayerInput component set to "Send Messages"
-	void OnMove(InputAction.CallbackContext context)
+	// These are invoked by a PlayerInput component of unity event
+	public void OnMove(InputAction.CallbackContext context)
 	{
 		moveInput = context.ReadValue<Vector2>();
 	}
 
-	void OnSprint(InputAction.CallbackContext context)
+	public void OnSprint(InputAction.CallbackContext context)
 	{
 		if (context.performed) sprintHeldInput = true;
 		if (context.canceled) sprintHeldInput = false;
 	}
 
-	void OnJump(InputAction.CallbackContext context)
+	public void OnJump(InputAction.CallbackContext context)
 	{
 		if (context.performed) jumpPressedFrame = true;
 	}
 
-	void OnAttack(InputAction.CallbackContext context)
+	public void OnAttack(InputAction.CallbackContext context)
 	{
 		if (context.performed) attackPressedFrame = true;
 	}
 
-	void OnCrouch(InputAction.CallbackContext context)
+	public void OnCrouch(InputAction.CallbackContext context)
 	{
 		// Repurpose crouch as dodge trigger per current design
 		if (context.performed) crouchPressedFrame = true;
 	}
-    }
+    
 
     bool IsGrounded()
     {
