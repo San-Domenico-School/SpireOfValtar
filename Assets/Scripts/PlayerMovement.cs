@@ -115,9 +115,7 @@ public class PlayerMovement : MonoBehaviour
                 0.2f
             );
         }
-    }
 
-<<<<<<< Updated upstream
 	// --- Input System helpers & callbacks ---
 	static bool Consume(ref bool flag)
 	{
@@ -128,10 +126,6 @@ public class PlayerMovement : MonoBehaviour
 
 	// These are invoked by a PlayerInput component set to "Send Messages"
 	void OnMove(InputAction.CallbackContext context)
-=======
-	// These are invoked by a PlayerInput component of unity event
-	public void OnMove(InputAction.CallbackContext context)
->>>>>>> Stashed changes
 	{
 		moveInput = context.ReadValue<Vector2>();
 	}
@@ -157,7 +151,7 @@ public class PlayerMovement : MonoBehaviour
 		// Repurpose crouch as dodge trigger per current design
 		if (context.performed) crouchPressedFrame = true;
 	}
-    
+    }
 
     bool IsGrounded()
     {
