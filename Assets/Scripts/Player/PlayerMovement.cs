@@ -123,35 +123,37 @@ public class PlayerMovement : MonoBehaviour
                 0.2f
             );
         }
+    }
+    
+	// These are invoked by a PlayerInput component of unity event
+	public void OnMove(InputAction.CallbackContext context)
 
-	// These are invoked by a PlayerInput component set to "Send Messages"
-	void OnMove(InputAction.CallbackContext context)
 	{
 		moveInput = context.ReadValue<Vector2>();
 	}
 
-	void OnSprint(InputAction.CallbackContext context)
+	public void OnSprint(InputAction.CallbackContext context)
 	{
 		if (context.performed) sprintHeldInput = true;
 		if (context.canceled) sprintHeldInput = false;
 	}
 
-	void OnJump(InputAction.CallbackContext context)
+	public void OnJump(InputAction.CallbackContext context)
 	{
 		if (context.performed) jumpPressedFrame = true;
 	}
 
-	void OnAttack(InputAction.CallbackContext context)
+	public void OnAttack(InputAction.CallbackContext context)
 	{
 		if (context.performed) attackPressedFrame = true;
 	}
 
-	void OnCrouch(InputAction.CallbackContext context)
+	public void OnCrouch(InputAction.CallbackContext context)
 	{
 		// Repurpose crouch as dodge trigger per current design
 		if (context.performed) crouchPressedFrame = true;
 	}
-    }
+    
 
     bool IsGrounded()
     {
