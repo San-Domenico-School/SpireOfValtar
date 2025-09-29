@@ -124,9 +124,10 @@ public class PlayerMovement : MonoBehaviour
             );
         }
     }
-
+    
 	// These are invoked by a PlayerInput component of unity event
 	public void OnMove(InputAction.CallbackContext context)
+
 	{
 		moveInput = context.ReadValue<Vector2>();
 	}
