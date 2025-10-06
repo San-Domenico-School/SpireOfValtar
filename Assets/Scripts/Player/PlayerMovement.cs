@@ -32,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Input System state (set by PlayerInput callbacks)
     Vector2 moveInput;
+    Vector2 turnInput;
     bool sprintHeldInput;
     bool jumpPressedFrame;
     bool attackPressedFrame;
@@ -66,11 +67,13 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // --- Read input (Unity Input System) ---
-        Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
+        Vector3 input = new Vector3(0, 0f, moveInput.y);
         if (input.sqrMagnitude > 1f) input.Normalize();
 
-        // Map local to world based on facing
-        Vector3 move = transform.TransformDirection(input);
+        // Compute a stable world-space move vector (avoid feedback loop with self-rotation)
+        Vector3 move;
+        
+        move = input;
 
         bool runHeld       = sprintHeldInput;
         bool jumpPressed   = Consume(ref jumpPressedFrame);
@@ -113,16 +116,7 @@ public class PlayerMovement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
         controller.Move(new Vector3(0f, velocity.y, 0f) * Time.deltaTime);
 
-        // Face move direction
-        Vector3 face = new Vector3(planar.x, 0f, planar.z);
-        if (face.sqrMagnitude > 0.0001f)
-        {
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                Quaternion.LookRotation(face, Vector3.up),
-                0.2f
-            );
-        }
+
     }
     
 	// These are invoked by a PlayerInput component of unity event
@@ -130,6 +124,11 @@ public class PlayerMovement : MonoBehaviour
 
 	{
 		moveInput = context.ReadValue<Vector2>();
+	}
+
+	public void OnTurn(InputAction.CallbackContext context)
+	{
+		turnInput = context.ReadValue<Vector2>();
 	}
 
 	public void OnSprint(InputAction.CallbackContext context)
