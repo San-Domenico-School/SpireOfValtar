@@ -14,7 +14,7 @@ public class PlayerAbilityController : MonoBehaviour
     [Header("Spells")]
     [SerializeField] private LightningSpell spell1; // make sure that the class is the name of the script.
     [SerializeField] private FireballCaster spell2;
-    [SerializeField] private TestSpell3 spell3;
+    [SerializeField] private FreezeCaster spell3;
 
     [Header("Input Actions")]
     [SerializeField] private InputActionReference nextAction;
