@@ -48,6 +48,9 @@ public class PlayerMovement : MonoBehaviour
         if (groundCheck == null)
             groundCheck = this.transform; // fallback
         gravity = Physics.gravity.y;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()
