@@ -69,13 +69,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // --- Read input (Unity Input System) ---
-        Vector3 input = new Vector3(0, 0f, moveInput.y);
-        if (input.sqrMagnitude > 1f) input.Normalize();
+        Vector3 inputLocal = new Vector3(moveInput.x, 0f, moveInput.y);
+        if (inputLocal.sqrMagnitude > 1f) inputLocal.Normalize();
 
-        // Compute a stable world-space move vector (avoid feedback loop with self-rotation)
-        Vector3 move;
-        
-        move = input;
+        // Convert to world space relative to player's facing
+        Vector3 move = transform.TransformDirection(inputLocal);
 
         bool runHeld       = sprintHeldInput;
         bool jumpPressed   = Consume(ref jumpPressedFrame);
