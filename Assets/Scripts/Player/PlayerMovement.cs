@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private float attackLungeDistance = 2.5f;
     [SerializeField] private float attackLungeDuration = 0.12f;
+    [SerializeField] private float turnSensitivity = 0.2f;
 
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private Transform groundCheck;     // put at feet
@@ -51,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        ApplyTurnFromInput();
         // Lock movement while dodging/lunging (movement is driven by coroutine)
         if (isDodging || isLunging)
         {
@@ -106,6 +108,14 @@ public class PlayerMovement : MonoBehaviour
         ApplyGravityAndMove(move, runHeld);
     }
 
+    void ApplyTurnFromInput()
+    {
+        if (turnInput.sqrMagnitude <= 0.000001f) return;
+        float yawDegrees = turnInput.x * turnSensitivity;
+        transform.Rotate(0f, yawDegrees, 0f, Space.Self);
+        turnInput = Vector2.zero;
+    }
+    
     void ApplyGravityAndMove(Vector3 moveDir, bool runHeld)
     {
         float currentSpeed = walkSpeed * (runHeld ? runMultiplier : 1f);
@@ -129,6 +139,7 @@ public class PlayerMovement : MonoBehaviour
 	public void OnTurn(InputAction.CallbackContext context)
 	{
 		turnInput = context.ReadValue<Vector2>();
+        Debug.Log("Turn input: " + turnInput);
 	}
 
 	public void OnSprint(InputAction.CallbackContext context)
