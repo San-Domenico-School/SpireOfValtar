@@ -2,16 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-/******************************************************************************
- * Manages victory and failure systems for player -- death or defeating all enemies
- * 
- *              TO-DO
- * 3. cross check fields and names
- * 
- * Sebastian Balakier
- * Version 1.0, 9/15/2025
- *****************************************************************************/
-
 public class VictoryFailureManager : MonoBehaviour
 {
     [SerializeField] GameObject Door;
@@ -60,75 +50,86 @@ public class VictoryFailureManager : MonoBehaviour
             playerHealth -= 10;
             Debug.Log("Player health =" + playerHealth);
         */
-            if (playerHealth <= 0)
+        if (playerHealth <= 0)
+        {
+            isGameOver = true;
+            GameOver();
+        }
+
+        if (playerHealth != lastLoggedHealth)
+        {
+            Debug.Log("Player health = " + playerHealth);
+            lastLoggedHealth = playerHealth;
+        }
+
+        // TEST VICTORY
+        /*
+        enemyDecreaseTimer += Time.deltaTime;
+        if (enemyDecreaseTimer >= enemyDecreaseInterval)
+        {
+            enemyDecreaseTimer = 0f;
+            enemyCount -= 1;
+        }
+        */
+        if (enemyCount <= 0)
+        {
+            isVictory = true;
+            LevelComplete();
+        }
+//<<<<<<< Updated upstream
+//    }
+//=======
+    }
+        void GameOver() // level lost
+        {
+            if (!isGameOver == false)
             {
                 isGameOver = true;
-                GameOver();
-            }
-
-            if (playerHealth != lastLoggedHealth)
-            {
-                Debug.Log("Player health = " + playerHealth);
-                lastLoggedHealth = playerHealth;
-            }
-
-            // TEST VICTORY
-            /*
-            enemyDecreaseTimer += Time.deltaTime;
-            if (enemyDecreaseTimer >= enemyDecreaseInterval)
-            {
-                enemyDecreaseTimer = 0f;
-                enemyCount -= 1;
-            }
-            */
-            if (enemyCount <= 0)
-            {
-                isVictory = true;
-                LevelComplete();
-            }
-
-            void GameOver() // level lost
-            {
-                if (!isGameOver == false)
+                if (gameOverUI == false)
                 {
-                    isGameOver = true;
-                    if (gameOverUI == false)
-                    {
-                        gameOverUI.SetActive(true);
-                    }
                     gameOverUI.SetActive(true);
-                    Time.timeScale = 0f;
-
-                    Debug.Log("Game Over");
                 }
-            }
 
-            void LevelComplete() // level completed
-            {
-                if (!isVictory == false)
-                {
-                    isVictory = true;
-
-                    if (isVictory == true)
-                    {
-                        Door.tag = "Completed";
-                    }
-                    if (victoryUI == false)
-                    {
-                        victoryUI.SetActive(true);
-                    }
-                    victoryUI.SetActive(true);
-                    if (Door.CompareTag("Completed"))
-                    {
-                        Debug.Log("Door open");
-                    }
-
-                    Destroy(Door);
-                }
-                else
-                {
-                    Debug.Log("Door is not responding");
-                }
+                gameOverUI.SetActive(true);
+                Time.timeScale = 0f;
             }
         }
+
+        void LevelComplete() // level completed
+        {
+            if (!isVictory == false)
+            {
+                isVictory = true;
+
+                if (isVictory == true)
+                {
+                    Door.tag = "Completed";
+                }
+                if (victoryUI == false)
+                {
+                    victoryUI.SetActive(true);
+                }
+                victoryUI.SetActive(true);
+                if (Door.CompareTag("Completed"))
+                {
+                    Debug.Log("Door open");
+                }
+
+                Destroy(Door);
+            }
+            else
+            {
+                Debug.Log("Door is not responding");
+            }
+
+        }
+
+        void RestartLevel()
+        {
+            Time.timeScale = 1;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Debug.Log("Restarted");
+        }
     }
+
+//>>>>>>> Stashed changes
