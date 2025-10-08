@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private float attackLungeDistance = 2.5f;
     [SerializeField] private float attackLungeDuration = 0.12f;
-    [SerializeField] private float turnSensitivity = 0.2f;
+    [SerializeField] private float turnSensitivity = 1f;
 
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private Transform groundCheck;     // put at feet
@@ -113,7 +113,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (turnInput.sqrMagnitude <= 0.000001f) return;
         float yawDegrees = turnInput.x * turnSensitivity;
-        transform.Rotate(0f, yawDegrees, 0f, Space.Self);
+        float pitchDegrees = turnInput.y * turnSensitivity;
+        transform.Rotate(0f, yawDegrees, 0f, Space.World);
+        transform.Rotate(-pitchDegrees, 0f, 0f, Space.Self);
         turnInput = Vector2.zero;
     }
     
