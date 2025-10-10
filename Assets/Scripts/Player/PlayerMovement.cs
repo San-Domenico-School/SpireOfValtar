@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private float attackLungeDistance = 2.5f;
     [SerializeField] private float attackLungeDuration = 0.12f;
+    [SerializeField] private float turnSensitivity = 1f;
 
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private Transform groundCheck;     // put at feet
@@ -32,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Input System state (set by PlayerInput callbacks)
     Vector2 moveInput;
+    Vector2 turnInput;
     bool sprintHeldInput;
     bool jumpPressedFrame;
     bool attackPressedFrame;
@@ -46,10 +48,14 @@ public class PlayerMovement : MonoBehaviour
         if (groundCheck == null)
             groundCheck = this.transform; // fallback
         gravity = Physics.gravity.y;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()
     {
+        ApplyTurnFromInput();
         // Lock movement while dodging/lunging (movement is driven by coroutine)
         if (isDodging || isLunging)
         {
@@ -66,11 +72,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // --- Read input (Unity Input System) ---
-        Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
-        if (input.sqrMagnitude > 1f) input.Normalize();
+        Vector3 inputLocal = new Vector3(moveInput.x, 0f, moveInput.y);
+        if (inputLocal.sqrMagnitude > 1f) inputLocal.Normalize();
 
-        // Map local to world based on facing
-        Vector3 move = transform.TransformDirection(input);
+        // Convert to world space relative to player's facing
+        Vector3 move = transform.TransformDirection(inputLocal);
 
         bool runHeld       = sprintHeldInput;
         bool jumpPressed   = Consume(ref jumpPressedFrame);
@@ -103,6 +109,16 @@ public class PlayerMovement : MonoBehaviour
         ApplyGravityAndMove(move, runHeld);
     }
 
+    void ApplyTurnFromInput()
+    {
+        if (turnInput.sqrMagnitude <= 0.000001f) return;
+        float yawDegrees = turnInput.x * turnSensitivity;
+        float pitchDegrees = turnInput.y * turnSensitivity;
+        transform.Rotate(0f, yawDegrees, 0f, Space.World);
+        transform.Rotate(-pitchDegrees, 0f, 0f, Space.Self);
+        turnInput = Vector2.zero;
+    }
+    
     void ApplyGravityAndMove(Vector3 moveDir, bool runHeld)
     {
         float currentSpeed = walkSpeed * (runHeld ? runMultiplier : 1f);
@@ -113,45 +129,44 @@ public class PlayerMovement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
         controller.Move(new Vector3(0f, velocity.y, 0f) * Time.deltaTime);
 
-        // Face move direction
-        Vector3 face = new Vector3(planar.x, 0f, planar.z);
-        if (face.sqrMagnitude > 0.0001f)
-        {
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                Quaternion.LookRotation(face, Vector3.up),
-                0.2f
-            );
-        }
 
-	// These are invoked by a PlayerInput component set to "Send Messages"
-	void OnMove(InputAction.CallbackContext context)
+    }
+    
+	// These are invoked by a PlayerInput component of unity event
+	public void OnMove(InputAction.CallbackContext context)
+
 	{
 		moveInput = context.ReadValue<Vector2>();
 	}
 
-	void OnSprint(InputAction.CallbackContext context)
+	public void OnTurn(InputAction.CallbackContext context)
+	{
+		turnInput = context.ReadValue<Vector2>();
+        Debug.Log("Turn input: " + turnInput);
+	}
+
+	public void OnSprint(InputAction.CallbackContext context)
 	{
 		if (context.performed) sprintHeldInput = true;
 		if (context.canceled) sprintHeldInput = false;
 	}
 
-	void OnJump(InputAction.CallbackContext context)
+	public void OnJump(InputAction.CallbackContext context)
 	{
 		if (context.performed) jumpPressedFrame = true;
 	}
 
-	void OnAttack(InputAction.CallbackContext context)
+	public void OnAttack(InputAction.CallbackContext context)
 	{
 		if (context.performed) attackPressedFrame = true;
 	}
 
-	void OnCrouch(InputAction.CallbackContext context)
+	public void OnCrouch(InputAction.CallbackContext context)
 	{
 		// Repurpose crouch as dodge trigger per current design
 		if (context.performed) crouchPressedFrame = true;
 	}
-    }
+    
 
     bool IsGrounded()
     {
