@@ -142,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
 	public void OnTurn(InputAction.CallbackContext context)
 	{
 		turnInput = context.ReadValue<Vector2>();
-        Debug.Log("Turn input: " + turnInput);
+        //Debug.Log("Turn input: " + turnInput);
 	}
 
 	public void OnSprint(InputAction.CallbackContext context)
