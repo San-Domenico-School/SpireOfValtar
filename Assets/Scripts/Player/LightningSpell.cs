@@ -6,6 +6,7 @@ public class LightningSpell : MonoBehaviour
     [Header("Lightning Settings")]
     public float range = 20f;
     public float cooldown = 3f;
+    public float damage = 100f; // Added: damage value
 
     private bool isOnCooldown = false;
 
@@ -35,6 +36,17 @@ public class LightningSpell : MonoBehaviour
             if (hit.collider.CompareTag("Enemy"))
             {
                 Debug.Log("Hit an enemy!");
+
+                // Added: damage handling
+                EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
+                if (enemyHealth != null)
+                {
+                    enemyHealth.TakeDamage(damage);
+                }
+                else
+                {
+                    Debug.LogWarning("Enemy hit but no EnemyHealth component found!");
+                }
             }
             else
             {
