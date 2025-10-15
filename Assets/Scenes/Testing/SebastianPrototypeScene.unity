@@ -128,7 +128,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 59037817}
+<<<<<<< Updated upstream
   - component: {fileID: 59037818}
+=======
+  - component: {fileID: 59037816}
+>>>>>>> Stashed changes
   m_Layer: 0
   m_Name: RestartManager
   m_TagString: Untagged
@@ -136,6 +140,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+<<<<<<< Updated upstream
+=======
+--- !u!114 &59037816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59037815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 971464d6c55d14db5948325bf401494f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+>>>>>>> Stashed changes
 --- !u!4 &59037817
 Transform:
   m_ObjectHideFlags: 0
@@ -151,6 +170,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
 --- !u!114 &59037818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,6 +183,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 971464d6c55d14db5948325bf401494f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+=======
+>>>>>>> Stashed changes
 --- !u!1 &71159969
 GameObject:
   m_ObjectHideFlags: 0
@@ -326,6 +348,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 59037815}
+<<<<<<< Updated upstream
         m_TargetAssemblyTypeName: UnityEditor.MonoScript, UnityEditor.CoreModule
         m_MethodName: 
         m_Mode: 5
@@ -335,6 +358,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: RestartLevel
+=======
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+>>>>>>> Stashed changes
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &97358013
@@ -683,6 +717,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 836257375}
   m_CullTransparentMesh: 1
+<<<<<<< Updated upstream
 --- !u!1 &840294832
 GameObject:
   m_ObjectHideFlags: 0
@@ -717,6 +752,8 @@ Transform:
   - {fileID: 2094761497}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+>>>>>>> Stashed changes
 --- !u!1 &952574477
 GameObject:
   m_ObjectHideFlags: 0
@@ -1434,6 +1471,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
 --- !u!1 &1515348966
 GameObject:
   m_ObjectHideFlags: 0
@@ -1465,6 +1503,8 @@ Transform:
   m_Children: []
   m_Father: {fileID: 840294833}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+>>>>>>> Stashed changes
 --- !u!1 &1889641350
 GameObject:
   m_ObjectHideFlags: 0
@@ -1650,6 +1690,7 @@ MonoBehaviour:
   gameOverUI: {fileID: 836257375}
   victoryUI: {fileID: 1027283195}
   playerHealth: 100
+<<<<<<< Updated upstream
 --- !u!1 &2042876557
 GameObject:
   m_ObjectHideFlags: 0
@@ -1712,6 +1753,9 @@ Transform:
   m_Children: []
   m_Father: {fileID: 840294833}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+  enemyCount: 3
+>>>>>>> Stashed changes
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1724,4 +1768,7 @@ SceneRoots:
   - {fileID: 107585666}
   - {fileID: 71159972}
   - {fileID: 59037817}
+<<<<<<< Updated upstream
   - {fileID: 840294833}
+=======
+>>>>>>> Stashed changes
