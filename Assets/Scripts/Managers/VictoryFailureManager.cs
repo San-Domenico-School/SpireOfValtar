@@ -8,7 +8,6 @@ public class VictoryFailureManager : MonoBehaviour
     [SerializeField] private GameObject gameOverUI;
     [SerializeField] private GameObject victoryUI;
     public int playerHealth = 100;
-    public int enemyCount = 3;
     private int lastLoggedHealth;
     public static VictoryFailureManager Instance;
     private bool isGameOver = false;
@@ -25,7 +24,6 @@ public class VictoryFailureManager : MonoBehaviour
         playerHealth = 100;
         lastLoggedHealth = playerHealth;
         Debug.Log("Start health:" + playerHealth);
-        enemyCount = 3;
     }
 
     private void Awake()
@@ -41,15 +39,7 @@ public class VictoryFailureManager : MonoBehaviour
 
     private void Update() // called every frame
     {
-        // TEST GAME OVER
-        /*
-        healthDecreaseTimer += Time.deltaTime;
-        if (healthDecreaseTimer >= healthDecreaseInterval)
-        {
-            healthDecreaseTimer = 0f;
-            playerHealth -= 10;
-            Debug.Log("Player health =" + playerHealth);
-        */
+
         if (playerHealth <= 0)
         {
             isGameOver = true;
@@ -62,16 +52,7 @@ public class VictoryFailureManager : MonoBehaviour
             lastLoggedHealth = playerHealth;
         }
 
-        // TEST VICTORY
-        /*
-        enemyDecreaseTimer += Time.deltaTime;
-        if (enemyDecreaseTimer >= enemyDecreaseInterval)
-        {
-            enemyDecreaseTimer = 0f;
-            enemyCount -= 1;
-        }
-        */
-        if (enemyCount <= 0)
+        if (GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
         {
             isVictory = true;
             LevelComplete();
@@ -90,12 +71,13 @@ public class VictoryFailureManager : MonoBehaviour
                     gameOverUI.SetActive(true);
                 }
 
-                gameOverUI.SetActive(true);
-                Time.timeScale = 0f;
+            gameOverUI.SetActive(true);
+            Time.timeScale = 0f;
+            RestartLevel();
             }
         }
 
-        void LevelComplete() // level completed
+        private void LevelComplete() // level completed
         {
             if (!isVictory == false)
             {
@@ -124,7 +106,7 @@ public class VictoryFailureManager : MonoBehaviour
 
         }
 
-        void RestartLevel()
+        public void RestartLevel()
         {
             Time.timeScale = 1;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
