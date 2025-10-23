@@ -36,6 +36,12 @@ public class ControlsManager : MonoBehaviour
         controlledUIDocument = document;
         var rootVisualElement = document.rootVisualElement;
         
+        if (rootVisualElement == null)
+        {
+            Debug.LogWarning("ControlsManager: rootVisualElement is null! UIDocument may not be initialized yet.");
+            return;
+        }
+        
         Debug.Log("ControlsManager: Initializing from UIDocument with root element: " + rootVisualElement.name);
         
         controlsContainer = rootVisualElement.Q<VisualElement>("ControlsContainer");
@@ -47,11 +53,21 @@ public class ControlsManager : MonoBehaviour
         
         backButton = rootVisualElement.Q<Button>("Back");
         Debug.Log("ControlsManager: Back button found: " + (backButton != null));
+        if (backButton != null)
+        {
+            Debug.Log("ControlsManager: Back button clickable: " + (backButton.clickable != null));
+        }
         
         // Add click event handler for back button
         if (backButton != null)
         {
+            Debug.Log("ControlsManager: Adding event handler to Back button...");
             backButton.clicked += OnBackButtonClicked;
+            Debug.Log("ControlsManager: Back button event handler added successfully");
+        }
+        else
+        {
+            Debug.LogError("ControlsManager: Back button is NULL - cannot add event handler!");
         }
     }
     
@@ -115,16 +131,25 @@ public class ControlsManager : MonoBehaviour
     
     private void OnBackButtonClicked()
     {
+        Debug.Log("=== BACK BUTTON CLICKED ===");
         Debug.Log("Back button clicked - Returning to main menu");
         
         // Hide controls UI
+        Debug.Log("Hiding controls UI...");
         HideControls();
         
         // Show main menu
         if (mainMenuManager != null)
         {
+            Debug.Log("Calling mainMenuManager.ShowMainMenu()...");
             mainMenuManager.ShowMainMenu();
         }
+        else
+        {
+            Debug.LogError("mainMenuManager is NULL!");
+        }
+        
+        Debug.Log("=== BACK BUTTON COMPLETE ===");
     }
     
     // Method to set controls image programmatically

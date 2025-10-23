@@ -5,5 +5,10 @@
     xmlns:uie="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
-    
+    <ui:VisualElement name="ControlsContainer" style="flex-grow: 1; background-color: rgb(20, 20, 20); padding: 20px;">
+        <ui:VisualElement name="ControlsImageContainer" style="flex-grow: 1; background-color: rgb(40, 40, 40); margin-bottom: 20px; border-radius: 10px;">
+            <ui:Label text="Controls Image Will Appear Here" style="color: white; font-size: 18px; -unity-text-align: middle-center; flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:Button text="Back to Main Menu" name="Back" style="height: 50px; font-size: 16px; background-color: rgb(236, 165, 41); color: black;" />
+    </ui:VisualElement>
 </ui:UXML>

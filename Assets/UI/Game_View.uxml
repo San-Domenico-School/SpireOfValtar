@@ -5,5 +5,21 @@
     xmlns:uie="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
-    
+    <ui:VisualElement name="GameUIContainer" style="flex-grow: 1; background-color: rgb(15, 15, 15);">
+        <ui:VisualElement name="TopBar" style="height: 60px; background-color: rgb(30, 30, 30); flex-direction: row; align-items: center; padding: 0 20px;">
+            <ui:Button text="Menu" name="MenuButton" style="height: 40px; width: 80px; font-size: 14px; background-color: rgb(236, 165, 41); color: black;" />
+            <ui:Label text="Spire of Valtar" style="color: white; font-size: 20px; margin-left: 20px; flex-grow: 1;" />
+        </ui:VisualElement>
+        
+        <ui:VisualElement name="GameContentArea" style="flex-grow: 1; padding: 20px;">
+            <ui:Label text="Game Content Area" style="color: white; font-size: 24px; -unity-text-align: middle-center; flex-grow: 1;" />
+            
+            <!-- Game-specific buttons can go here -->
+            <ui:VisualElement style="flex-direction: row; justify-content: center; margin-top: 20px;">
+                <ui:Button text="Action 1" name="ActionButton1" style="height: 50px; width: 120px; font-size: 16px; background-color: rgb(50, 150, 50); color: white; margin: 0 10px;" />
+                <ui:Button text="Action 2" name="ActionButton2" style="height: 50px; width: 120px; font-size: 16px; background-color: rgb(150, 50, 50); color: white; margin: 0 10px;" />
+                <ui:Button text="Settings" name="SettingsButton" style="height: 50px; width: 120px; font-size: 16px; background-color: rgb(50, 50, 150); color: white; margin: 0 10px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>

@@ -9,7 +9,11 @@ public class GameUIManager : MonoBehaviour
     private VisualElement topBar;
     private VisualElement gameContentArea;
     private Button menuButton;
+    private Button actionButton1;
+    private Button actionButton2;
+    private Button settingsButton;
     private MainMenuManager mainMenuManager;
+    private PlayerMovement playerMovement;
     
     void Start()
     {
@@ -20,14 +24,44 @@ public class GameUIManager : MonoBehaviour
         topBar = rootVisualElement.Q<VisualElement>("TopBar");
         gameContentArea = rootVisualElement.Q<VisualElement>("GameContentArea");
         menuButton = rootVisualElement.Q<Button>("MenuButton");
+        Debug.Log("MenuButton found: " + (menuButton != null));
+        
+        actionButton1 = rootVisualElement.Q<Button>("ActionButton1");
+        Debug.Log("ActionButton1 found: " + (actionButton1 != null));
+        
+        actionButton2 = rootVisualElement.Q<Button>("ActionButton2");
+        Debug.Log("ActionButton2 found: " + (actionButton2 != null));
+        
+        settingsButton = rootVisualElement.Q<Button>("SettingsButton");
+        Debug.Log("SettingsButton found: " + (settingsButton != null));
         
         // Get reference to main menu manager
         mainMenuManager = FindObjectOfType<MainMenuManager>();
+        Debug.Log("MainMenuManager found: " + (mainMenuManager != null));
         
-        // Add click event handler for menu button
+        // Get reference to player movement
+        playerMovement = FindObjectOfType<PlayerMovement>();
+        Debug.Log("PlayerMovement found: " + (playerMovement != null));
+        
+        // Add click event handlers
         if (menuButton != null)
         {
             menuButton.clicked += OnMenuButtonClicked;
+        }
+        
+        if (actionButton1 != null)
+        {
+            actionButton1.clicked += OnActionButton1Clicked;
+        }
+        
+        if (actionButton2 != null)
+        {
+            actionButton2.clicked += OnActionButton2Clicked;
+        }
+        
+        if (settingsButton != null)
+        {
+            settingsButton.clicked += OnSettingsButtonClicked;
         }
         
         // Initially hide this UI
@@ -68,6 +102,27 @@ public class GameUIManager : MonoBehaviour
         
         // Add any game cleanup logic here
         CleanupGame();
+    }
+    
+    private void OnActionButton1Clicked()
+    {
+        Debug.Log("Action Button 1 clicked");
+        // Add your game action logic here
+        UpdateGameContent("Action 1 performed!");
+    }
+    
+    private void OnActionButton2Clicked()
+    {
+        Debug.Log("Action Button 2 clicked");
+        // Add your game action logic here
+        UpdateGameContent("Action 2 performed!");
+    }
+    
+    private void OnSettingsButtonClicked()
+    {
+        Debug.Log("Settings button clicked");
+        // Add your settings logic here
+        UpdateGameContent("Settings opened!");
     }
     
     private void InitializeGame()
