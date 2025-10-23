@@ -79,7 +79,7 @@ public class PlayerAbilityController : MonoBehaviour
     private void Update()
     {
         RegenerateStamina();
-        Debug.Log($"Current Stamina: {currentStamina:F1}");
+       // Debug.Log($"Current Stamina: {currentStamina:F1}"); //use this for debugging
     }
 
     private void RegenerateStamina()
@@ -148,8 +148,11 @@ public class PlayerAbilityController : MonoBehaviour
             case 2: // Freeze Spell (no stamina use yet)
                 if (spell3 != null)
                 {
-                    Debug.Log("Casting Spell 3 (Freeze)");
-                    spell3.OnCast();
+                    if (TryUseStamina(30f))
+                    {
+                        Debug.Log("Casting Spell 3 (Freeze)");
+                        spell3.OnCast();
+                    }
                 }
                 else Debug.LogWarning("Spell 3 is not assigned");
                 break;
