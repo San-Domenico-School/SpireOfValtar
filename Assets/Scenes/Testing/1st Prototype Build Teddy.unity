@@ -799,7 +799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf9fddbc8b3964e15a45bc20f8c439f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireballCaster
-  fireballPrefab: {fileID: 6364568384165654965, guid: cf6c44b02fb104c079683643828f1e42, type: 3}
+  fireballPrefab: {fileID: 2081132082438070434, guid: de2d963b15f744a0aa0e4627569839f2, type: 3}
   cooldown: 3
 --- !u!114 &1849116896
 MonoBehaviour:
