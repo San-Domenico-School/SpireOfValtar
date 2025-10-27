@@ -5,11 +5,19 @@ public class EnemyHealth : MonoBehaviour
 {
     [Header("Enemy Settings")]
     public float maxHealth = 100f;
-    private float currentHealth;
+    public float currentHealth;
+
 
     private Renderer enemyRenderer;
     private Color originalColor;
     private bool isFlashing = false;
+
+    [SerializeField] FloatingHealthBar healthBar;
+
+    private void Awake()
+    {
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
+    }
 
     private void Start()
     {
@@ -22,6 +30,7 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
+        healthBar.Update(currentHealth, maxHealth);
         Debug.Log($"{gameObject.name} took {amount} damage! Remaining health: {currentHealth}");
 
         if (!isFlashing && enemyRenderer != null)
@@ -29,6 +38,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (currentHealth <= 0)
             Die();
+        Debug.Log(currentHealth);
     }
 
     private IEnumerator FlashRed()
