@@ -188,8 +188,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuManager
   uiDocument: {fileID: 71096147}
-  controlsUIDocument: {fileID: 0}
-  gameUIDocument: {fileID: 0}
+  controlsUIDocument: {fileID: 1975835400}
+  gameUIDocument: {fileID: 1428248006}
 --- !u!1 &147569747
 GameObject:
   m_ObjectHideFlags: 0
