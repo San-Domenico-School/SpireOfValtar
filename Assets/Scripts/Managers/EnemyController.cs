@@ -117,11 +117,11 @@ public class EnemyController : MonoBehaviour
             float newSpeed = baseSpeed * currentSpeedMultiplier;
             if (currentSpeedMultiplier < 1f)
             {
-                Debug.Log($"❄️ Enemy SLOWED! Speed: {newSpeed:F2} (Multiplier: {currentSpeedMultiplier:F2})");
+                Debug.Log($"❄️ {gameObject.name} SLOWED! Speed: {newSpeed:F2} (Multiplier: {currentSpeedMultiplier:F2})");
             }
             else if (currentSpeedMultiplier == 1f && oldMultiplier < 1f)
             {
-                Debug.Log($"🔥 Enemy speed RESTORED! Speed: {newSpeed:F2} (Multiplier: {currentSpeedMultiplier:F2})");
+                Debug.Log($"🔥 {gameObject.name} speed RESTORED! Speed: {newSpeed:F2} (Multiplier: {currentSpeedMultiplier:F2})");
             }
         }
     }

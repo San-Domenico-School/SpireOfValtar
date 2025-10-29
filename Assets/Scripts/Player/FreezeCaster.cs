@@ -14,7 +14,7 @@ public class FreezeCaster : MonoBehaviour
 
         if (!canCast) return; 
         StartCoroutine(CastCooldown());
-
+        
         Transform cam = Camera.main.transform;
         GameObject freezeProjectile = Instantiate(
             freezePrefab,

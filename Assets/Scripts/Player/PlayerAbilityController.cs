@@ -4,15 +4,14 @@ using UnityEngine.InputSystem;
 public class PlayerAbilityController : MonoBehaviour
 {
     /************************************
-     * This script is responsible for calling the method that will
-     * activate the selected spell. it goes on the player and is
-     * independent of all other scripts except the spells equiped.
-     * Teddy F 8/15/25
-     * Version 1.0
-     * **********************************/
+     * Handles spell selection and casting.
+     * Now includes a stamina system.
+     * Teddy F 10/21/25
+     * Version 2.0
+     ************************************/
 
     [Header("Spells")]
-    [SerializeField] private LightningSpell spell1; // make sure that the class is the name of the script.
+    [SerializeField] private LightningSpell spell1;
     [SerializeField] private FireballCaster spell2;
     [SerializeField] private FreezeCaster spell3;
 
@@ -21,7 +20,17 @@ public class PlayerAbilityController : MonoBehaviour
     [SerializeField] private InputActionReference previousAction;
     [SerializeField] private InputActionReference attackAction;
 
+    [Header("Stamina Settings")]
+    [SerializeField] private float maxStamina = 100f;
+    [SerializeField] private float regenRate = 10f; // stamina per second
+    private float currentStamina;
+
     private int currentIndex = 0;
+
+    private void Awake()
+    {
+        currentStamina = maxStamina;
+    }
 
     private void OnEnable()
     {
@@ -67,6 +76,35 @@ public class PlayerAbilityController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        RegenerateStamina();
+       // Debug.Log($"Current Stamina: {currentStamina:F1}"); //use this for debugging
+    }
+
+    private void RegenerateStamina()
+    {
+        if (currentStamina < maxStamina)
+        {
+            currentStamina += regenRate * Time.deltaTime;
+            currentStamina = Mathf.Min(currentStamina, maxStamina);
+        }
+    }
+
+    private bool TryUseStamina(float amount)
+    {
+        if (currentStamina >= amount)
+        {
+            currentStamina -= amount;
+            return true;
+        }
+        else
+        {
+            Debug.Log("Not enough stamina!");
+            return false;
+        }
+    }
+
     private void OnNext(InputAction.CallbackContext context)
     {
         currentIndex = (currentIndex + 1) % 3;
@@ -83,29 +121,38 @@ public class PlayerAbilityController : MonoBehaviour
     {
         switch (currentIndex)
         {
-            case 0:
+            case 0: // Lightning Spell
                 if (spell1 != null)
                 {
-                    Debug.Log("Casting Spell 1");
-                    spell1.OnCast();
+                    if (TryUseStamina(20f))
+                    {
+                        Debug.Log("Casting Spell 1 (Lightning)");
+                        spell1.OnCast();
+                    }
                 }
                 else Debug.LogWarning("Spell 1 is not assigned");
                 break;
 
-            case 1:
+            case 1: // Fireball Spell
                 if (spell2 != null)
                 {
-                    Debug.Log("Casting Spell 2");
-                    spell2.OnCast();
+                    if (TryUseStamina(15f))
+                    {
+                        Debug.Log("Casting Spell 2 (Fireball)");
+                        spell2.OnCast();
+                    }
                 }
                 else Debug.LogWarning("Spell 2 is not assigned");
                 break;
 
-            case 2:
+            case 2: // Freeze Spell (no stamina use yet)
                 if (spell3 != null)
                 {
-                    Debug.Log("Casting Spell 3");
-                    spell3.OnCast();
+                    if (TryUseStamina(30f))
+                    {
+                        Debug.Log("Casting Spell 3 (Freeze)");
+                        spell3.OnCast();
+                    }
                 }
                 else Debug.LogWarning("Spell 3 is not assigned");
                 break;

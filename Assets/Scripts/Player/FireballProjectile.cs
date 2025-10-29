@@ -48,15 +48,15 @@ public class FireballProjectile : MonoBehaviour
                 yield break;
             }
 
-            transform.position += movement;
-
             float normalizedTime = t / lifetime;
+
+            // Move horizontally along the forward vector
+            Vector3 planarMove = forward * speed * Time.deltaTime;
+            transform.position += planarMove;
+
+            // Apply vertical arc relative to the fireball’s forward distance
             float arcOffset = arcCurve.Evaluate(normalizedTime) * arcHeight;
-            transform.position = new Vector3(
-                transform.position.x,
-                startPos.y + arcOffset,
-                transform.position.z
-            );
+            transform.position += Vector3.down * arcOffset;
 
             t += Time.deltaTime;
             yield return null;
