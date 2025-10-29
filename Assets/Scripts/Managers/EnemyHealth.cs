@@ -30,7 +30,7 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        healthBar.Update(currentHealth, maxHealth);
+        healthBar.SliderUpdate(currentHealth, maxHealth);
         Debug.Log($"{gameObject.name} took {amount} damage! Remaining health: {currentHealth}");
 
         if (!isFlashing && enemyRenderer != null)
