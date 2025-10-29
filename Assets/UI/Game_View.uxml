@@ -6,12 +6,29 @@
     <ui:VisualElement name="GameContentArea" style="flex-grow: 1; padding: 20px;">
         <ui:Label text="&#10;" style="color: white; font-size: 24px; -unity-text-align: middle-center; flex-grow: 1;" />
     </ui:VisualElement>
-    <ui:VisualElement name="HUD_BottomLeft" picking-mode="Ignore" style="position: absolute; left: 5%; bottom: 5%; width: 30%; flex-direction: column; align-items: flex-start;">
-        <ui:VisualElement name="StaminaBar" style="width: 100%; height: 16px; background-color: rgba(0, 0, 0, 0.35); border-radius: 10px; overflow: hidden; margin-bottom: 5%;">
-            <ui:VisualElement name="StaminaFill" style="width: 100%; height: 100%; background-color: rgb(52, 152, 219); border-radius: 10px;" />
+    <ui:VisualElement name="HUD_BottomLeft" picking-mode="Ignore" style="position: absolute; left: 5%; bottom: 5%; width: 35%; flex-direction: column; align-items: flex-start;">
+        <ui:VisualElement style="width: 100%; flex-direction: column; margin-bottom: 12px;">
+            <ui:Label text="Stamina" name="StaminaLabel" style="color: white; font-size: 12px; margin-bottom: 4px;" />
+            <ui:ProgressBar name="StaminaProgressBar" low-value="0" high-value="100" value="100" />
         </ui:VisualElement>
-        <ui:VisualElement name="HealthBar" style="width: 100%; height: 24px; background-color: rgba(0, 0, 0, 0.35); border-radius: 10px; overflow: hidden;">
-            <ui:VisualElement name="HealthFill" style="width: 100%; height: 100%; background-color: rgb(46, 204, 113); border-radius: 10px;" />
+        <ui:VisualElement style="width: 100%; flex-direction: column;">
+            <ui:Label text="Health" name="HealthLabel" style="color: white; font-size: 12px; margin-bottom: 4px;" />
+            <ui:ProgressBar name="HealthProgressBar" low-value="0" high-value="100" value="100" />
+            <ui:Label name="HealthValueLabel" text="100 / 100" style="position: absolute; color: white; font-size: 14px; font-weight: bold; -unity-font-style: bold; margin-top: -28px; margin-left: 5px;" />
         </ui:VisualElement>
     </ui:VisualElement>
+    
+    <ui:StyleSheet>
+        <!-- Default progress bar styling -->
+        <ui:Style selector="ui|ProgressBar" style="height: 22px; background-color: rgba(0, 0, 0, 0.35); border-radius: 12px; border-width: 2px; border-color: rgba(255, 255, 255, 0.1);" />
+        <ui:Style selector="ui|ProgressBar > ui|VisualElement" style="background-color: rgb(52, 152, 219); border-radius: 10px; height: 100%;" />
+        
+        <!-- Health bar specific styling -->
+        <ui:Style selector="ui|ProgressBar[name=HealthProgressBar]" style="height: 32px; background-color: rgba(0, 0, 0, 0.35); border-radius: 16px; border-width: 2px; border-color: rgba(255, 255, 255, 0.1);" />
+        <ui:Style selector="ui|ProgressBar[name=HealthProgressBar] > ui|VisualElement" style="background-color: rgb(46, 204, 113); border-radius: 14px; height: 100%;" />
+        
+        <!-- Stamina bar specific styling -->
+        <ui:Style selector="ui|ProgressBar[name=StaminaProgressBar]" style="height: 22px; background-color: rgba(0, 0, 0, 0.35); border-radius: 12px; border-width: 2px; border-color: rgba(255, 255, 255, 0.1);" />
+        <ui:Style selector="ui|ProgressBar[name=StaminaProgressBar] > ui|VisualElement" style="background-color: rgb(52, 152, 219); border-radius: 10px; height: 100%;" />
+    </ui:StyleSheet>
 </ui:UXML>
