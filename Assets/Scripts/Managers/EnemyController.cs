@@ -24,6 +24,10 @@ public class EnemyController : MonoBehaviour
     
     // Freeze effect management
     private Coroutine freezeTimer = null;
+
+    // Damage player
+    public PlayerHealth playerHealth;
+    public int damage = 10;
     
     void Start()
     {
@@ -155,5 +159,13 @@ public class EnemyController : MonoBehaviour
         SetSpeedMultiplier(1f);
         freezeTimer = null; // Clear the timer reference
     }
-    
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            playerHealth.TakeDamage(damage);
+            Debug.Log($" {gameObject.name} has hit Player!");
+        }
+    }
 }
