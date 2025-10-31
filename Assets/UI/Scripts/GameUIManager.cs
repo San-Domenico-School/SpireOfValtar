@@ -161,4 +161,14 @@ public class GameUIManager : MonoBehaviour
             element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
+    
+    // Method to check if game UI is visible
+    public bool IsGameUIVisible()
+    {
+        if (gameUIContainer != null)
+        {
+            return gameUIContainer.style.display.value == DisplayStyle.Flex;
+        }
+        return false;
+    }
 }

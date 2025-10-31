@@ -117,12 +117,24 @@ public class MainMenuManager : MonoBehaviour
             gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
             Debug.Log("Game UI initially hidden");
         }
+        
+        // Freeze game when main menu is shown
+        Time.timeScale = 0f;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        Debug.Log("MainMenuManager: Game frozen at start (main menu active)");
     }
     
     private void OnStartButtonClicked()
     {
         Debug.Log("=== START BUTTON CLICKED ===");
         Debug.Log("Start button clicked - Starting game");
+        
+        // Unfreeze game when starting
+        Time.timeScale = 1f;
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
+        Debug.Log("MainMenuManager: Game unfrozen (starting game)");
         
         // Hide main menu
         Debug.Log("Hiding main menu...");
@@ -228,6 +240,12 @@ public class MainMenuManager : MonoBehaviour
     public void ShowMainMenu()
     {
         Debug.Log("=== SHOW MAIN MENU CALLED ===");
+        
+        // Freeze game when returning to main menu
+        Time.timeScale = 0f;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        Debug.Log("MainMenuManager: Game frozen (returning to main menu)");
         
         if (mainMenuContainer != null)
         {

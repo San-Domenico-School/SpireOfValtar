@@ -75,6 +75,12 @@ public class ControlsManager : MonoBehaviour
     {
         Debug.Log("ControlsManager: ShowControls() called");
         
+        // Freeze game when controls menu is shown
+        Time.timeScale = 0f;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        Debug.Log("ControlsManager: Game frozen (controls menu shown)");
+        
         // Ensure the entire controlled UIDocument is visible first
         if (controlledUIDocument != null)
         {
@@ -132,17 +138,18 @@ public class ControlsManager : MonoBehaviour
     private void OnBackButtonClicked()
     {
         Debug.Log("=== BACK BUTTON CLICKED ===");
-        Debug.Log("Back button clicked - Returning to main menu");
         
         // Hide controls UI
         Debug.Log("Hiding controls UI...");
         HideControls();
         
+        // Return to main menu (which will freeze the game)
+        Debug.Log("Back button clicked - Returning to main menu");
         // Show main menu
         if (mainMenuManager != null)
         {
             Debug.Log("Calling mainMenuManager.ShowMainMenu()...");
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.ShowMainMenu(); // This will freeze the game again
         }
         else
         {
