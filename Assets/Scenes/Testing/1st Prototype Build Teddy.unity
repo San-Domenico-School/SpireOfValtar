@@ -1033,7 +1033,7 @@ CharacterController:
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 60
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -1093,12 +1093,20 @@ MonoBehaviour:
   runMultiplier: 1.6
   jumpHeight: 1.5
   gravity: -20
+  maxStamina: 100
+  sprintStaminaCostPerSecond: 25
+  staminaRecoveryPerSecond: 15
+  staminaRecoveryDelay: 0.5
   dodgeDistance: 6
   dodgeDuration: 0.18
   dodgeCooldown: 0.8
   attackLungeDistance: 2.5
   attackLungeDuration: 0.12
   turnSensitivity: 0.2
+  cameraPivot: {fileID: 0}
+  maxPitchAngle: 60
+  ceilingRestitution: 0.2
+  minCeilingBounceSpeed: 3
   groundCheckRadius: 0.2
   groundCheck: {fileID: 0}
   groundLayers:
