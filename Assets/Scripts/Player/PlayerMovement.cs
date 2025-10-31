@@ -8,9 +8,15 @@ public class PlayerMovement : MonoBehaviour
 {
     // --- Tunables (edit in Inspector) ---
     [SerializeField] private float walkSpeed = 5f;
-    [SerializeField] private float runMultiplier = 1.6f;
+    [SerializeField] private float runMultiplier = 2f;
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float gravity = -20f; // negative accel (m/s^2)
+
+    // Sprint / Stamina
+    [SerializeField] private float maxStamina = 100f;
+    [SerializeField] private float sprintStaminaCostPerSecond = 25f;
+    [SerializeField] private float staminaRecoveryPerSecond = 15f;
+    [SerializeField] private float staminaRecoveryDelay = 0.5f;
 
     [SerializeField] private float dodgeDistance = 6f;
     [SerializeField] private float dodgeDuration = 0.18f;   // seconds
@@ -18,7 +24,11 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private float attackLungeDistance = 2.5f;
     [SerializeField] private float attackLungeDuration = 0.12f;
-    [SerializeField] private float turnSensitivity = 1f;
+    [SerializeField] private float turnSensitivity = 10f;
+    [SerializeField] private Transform cameraPivot; // assign the Camera or a pivot under the player
+    [SerializeField] private float maxPitchAngle = 60f; // clamp pitch to ±max
+    [SerializeField] private float ceilingRestitution = 0.2f; // 0=no bounce, 1=elastic
+    [SerializeField] private float minCeilingBounceSpeed = 3f; // minimum downward speed after head hit
 
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private Transform groundCheck;     // put at feet
@@ -31,10 +41,13 @@ public class PlayerMovement : MonoBehaviour
     bool isDodging = false;
     bool isLunging = false;
 
+    float currentStamina;
+    float lastSprintTime = -999f;
+    float cameraPitchDegrees = 0f;
+
     // Input System state (set by PlayerInput callbacks)
     Vector2 moveInput;
     Vector2 turnInput;
-    bool sprintHeldInput;
     bool jumpPressedFrame;
     bool attackPressedFrame;
     bool crouchPressedFrame;
@@ -48,6 +61,8 @@ public class PlayerMovement : MonoBehaviour
         if (groundCheck == null)
             groundCheck = this.transform; // fallback
         gravity = Physics.gravity.y;
+
+        currentStamina = maxStamina;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -75,10 +90,15 @@ public class PlayerMovement : MonoBehaviour
         Vector3 inputLocal = new Vector3(moveInput.x, 0f, moveInput.y);
         if (inputLocal.sqrMagnitude > 1f) inputLocal.Normalize();
 
-        // Convert to world space relative to player's facing
-        Vector3 move = transform.TransformDirection(inputLocal);
+        // Convert to world space relative to player's facing, flattened on XZ to ignore camera pitch
+        Vector3 move;
+        {
+            Vector3 fwd = transform.forward; fwd.y = 0f; fwd.Normalize();
+            Vector3 right = transform.right; right.y = 0f; right.Normalize();
+            move = (fwd * inputLocal.z) + (right * inputLocal.x);
+            if (move.sqrMagnitude > 1f) move.Normalize();
+        }
 
-        bool runHeld       = sprintHeldInput;
         bool jumpPressed   = Consume(ref jumpPressedFrame);
         bool dodgePressed  = Consume(ref crouchPressedFrame);
         bool attackPressed = Consume(ref attackPressedFrame);
@@ -105,6 +125,26 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(DashRoutine(move.normalized, attackLungeDistance, attackLungeDuration, isDodge: false));
         }
 
+        // Stamina / sprint gating
+        bool isMovingPlanar = move.sqrMagnitude > 0.0001f;
+        bool runHeld = false;
+        if (isMovingPlanar && grounded && currentStamina > 0.01f)
+        {
+            runHeld = true;
+            currentStamina -= sprintStaminaCostPerSecond * Time.deltaTime;
+            if (currentStamina < 0f) currentStamina = 0f;
+            lastSprintTime = Time.time;
+        }
+        else
+        {
+            runHeld = false;
+            if (Time.time >= lastSprintTime + staminaRecoveryDelay)
+            {
+                currentStamina += staminaRecoveryPerSecond * Time.deltaTime;
+                if (currentStamina > maxStamina) currentStamina = maxStamina;
+            }
+        }
+
         // Regular locomotion
         ApplyGravityAndMove(move, runHeld);
     }
@@ -113,21 +153,33 @@ public class PlayerMovement : MonoBehaviour
     {
         if (turnInput.sqrMagnitude <= 0.000001f) return;
         float yawDegrees = turnInput.x * turnSensitivity;
-        float pitchDegrees = turnInput.y * turnSensitivity;
-        transform.Rotate(0f, yawDegrees, 0f, Space.World);
-        transform.Rotate(-pitchDegrees, 0f, 0f, Space.Self);
+        transform.Rotate(0f, yawDegrees, 0f, Space.Self);
+
+        if (cameraPivot != null)
+        {
+            cameraPitchDegrees -= turnInput.y * turnSensitivity; // invert Y for natural look
+            cameraPitchDegrees = Mathf.Clamp(cameraPitchDegrees, -maxPitchAngle, maxPitchAngle);
+            cameraPivot.localRotation = Quaternion.Euler(cameraPitchDegrees, 0f, 0f);
+        }
         turnInput = Vector2.zero;
     }
     
     void ApplyGravityAndMove(Vector3 moveDir, bool runHeld)
     {
         float currentSpeed = walkSpeed * (runHeld ? runMultiplier : 1f);
-        Vector3 planar = moveDir * currentSpeed;
+        Vector3 planar = new Vector3(moveDir.x, 0f, moveDir.z) * currentSpeed;
 
-        controller.Move(planar * Time.deltaTime);
+        CollisionFlags flags = controller.Move(planar * Time.deltaTime);
 
         velocity.y += gravity * Time.deltaTime;
-        controller.Move(new Vector3(0f, velocity.y, 0f) * Time.deltaTime);
+        flags |= controller.Move(new Vector3(0f, velocity.y, 0f) * Time.deltaTime);
+
+        // If we hit the ceiling while moving upward, apply a downward bounce
+        if ((flags & CollisionFlags.Above) != 0 && velocity.y > 0f)
+        {
+            float bounceSpeed = Mathf.Max(minCeilingBounceSpeed, velocity.y * ceilingRestitution);
+            velocity.y = -bounceSpeed;
+        }
 
 
     }
@@ -142,13 +194,7 @@ public class PlayerMovement : MonoBehaviour
 	public void OnTurn(InputAction.CallbackContext context)
 	{
 		turnInput = context.ReadValue<Vector2>();
-        //Debug.Log("Turn input: " + turnInput);
-	}
-
-	public void OnSprint(InputAction.CallbackContext context)
-	{
-		if (context.performed) sprintHeldInput = true;
-		if (context.canceled) sprintHeldInput = false;
+        Debug.Log("Turn input: " + turnInput);
 	}
 
 	public void OnJump(InputAction.CallbackContext context)
