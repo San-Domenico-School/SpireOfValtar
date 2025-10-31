@@ -10,6 +10,7 @@ public class FreezeProjectile : MonoBehaviour
     [SerializeField] private float arcHeight = 1f;
     [SerializeField] private float freezeSlowAmount = 0.2f; // 20% slower (0.8x speed)
     [SerializeField] private float freezeDuration = 5f; // How long the freeze effect lasts
+    [SerializeField] private float freezeRadius = 5f; // AOE
 
     public IEnumerator MoveRoutine(Vector3 direction)
     {
@@ -28,14 +29,19 @@ public class FreezeProjectile : MonoBehaviour
                 
                 if (hit.collider.CompareTag("Enemy"))
                 {
-                    Debug.Log("Freeze spell hit an enemy!");
-                    
-                    // Get the enemy's EnemyController and apply freeze effect
-                    EnemyController enemyController = hit.collider.GetComponent<EnemyController>();
-                    if (enemyController != null)
+                    Debug.Log("Freeze spell hit an enemy! Effecting...");
+
+                    Collider[] hitCollider = Physics.OverlapSphere(hit.point, freezeRadius);
+                    foreach (Collider nearby in hitCollider)
                     {
-                        // Apply freeze effect with timer management
-                        enemyController.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
+                        if (nearby.CompareTag("Enemy"))
+                        {
+                            EnemyController enemy = nearby.GetComponent<EnemyController>();
+                            if (enemy != null)
+                            {
+                                enemy.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
+                            }
+                        }
                     }
                 }
                 
