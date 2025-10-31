@@ -675,14 +675,12 @@ GameObject:
   - component: {fileID: 1849116887}
   - component: {fileID: 1849116888}
   - component: {fileID: 1849116895}
-  - component: {fileID: 1849116903}
-  - component: {fileID: 1849116889}
   - component: {fileID: 1849116896}
   - component: {fileID: 1849116902}
   - component: {fileID: 1849116898}
   - component: {fileID: 1849116897}
   - component: {fileID: 1849116901}
-  - component: {fileID: 1849116900}
+  - component: {fileID: 1849116903}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -820,18 +818,6 @@ MonoBehaviour:
   range: 20
   cooldown: 3
   damage: 100
---- !u!114 &1849116889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1849116881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 716ab13a0b01c486a8fa73c6b80bff7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestSpell3
 --- !u!114 &1849116895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1042,23 +1028,11 @@ CharacterController:
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 60
+  m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1849116900
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1849116881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5598f3b6c8e7a41c78bbb8aee703eb9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
 --- !u!54 &1849116901
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1102,20 +1076,12 @@ MonoBehaviour:
   runMultiplier: 1.6
   jumpHeight: 1.5
   gravity: -20
-  maxStamina: 100
-  sprintStaminaCostPerSecond: 25
-  staminaRecoveryPerSecond: 15
-  staminaRecoveryDelay: 0.5
   dodgeDistance: 6
   dodgeDuration: 0.18
   dodgeCooldown: 0.8
   attackLungeDistance: 2.5
   attackLungeDuration: 0.12
   turnSensitivity: 0.2
-  cameraPivot: {fileID: 599641032}
-  maxPitchAngle: 60
-  ceilingRestitution: 0.2
-  minCeilingBounceSpeed: 3
   groundCheckRadius: 0.2
   groundCheck: {fileID: 0}
   groundLayers:
