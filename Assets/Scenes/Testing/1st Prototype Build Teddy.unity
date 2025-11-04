@@ -717,6 +717,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+--- !u!114 &1313962357 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4788852693910403770, guid: 68c061c0c32c445c0a3a2c4c99461109, type: 3}
+  m_PrefabInstance: {fileID: 1185667840}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
 --- !u!1 &1849116881
 GameObject:
   m_ObjectHideFlags: 0
@@ -733,7 +744,6 @@ GameObject:
   - component: {fileID: 1849116888}
   - component: {fileID: 1849116895}
   - component: {fileID: 1849116903}
-  - component: {fileID: 1849116889}
   - component: {fileID: 1849116896}
   - component: {fileID: 1849116902}
   - component: {fileID: 1849116898}
@@ -862,7 +872,7 @@ MonoBehaviour:
   attackAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   maxStamina: 100
   regenRate: 10
-  uiDocument: {fileID: 0}
+  uiDocument: {fileID: 1313962357}
 --- !u!114 &1849116888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -875,21 +885,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79a66983ca9bd4d139c39418d2496124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  range: 20
-  cooldown: 1
-  damage: 100
---- !u!114 &1849116889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1849116881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 716ab13a0b01c486a8fa73c6b80bff7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestSpell3
+  range: 30
+  cooldown: 0
+  damage: 75
 --- !u!114 &1849116895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -903,7 +901,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireballCaster
   fireballPrefab: {fileID: 6364568384165654965, guid: cf6c44b02fb104c079683643828f1e42, type: 3}
-  cooldown: 1
+  cooldown: 0
 --- !u!114 &1849116896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1192,7 +1190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FreezeCaster
   freezePrefab: {fileID: 5487141266320357360, guid: 44bb6b97542f744dd90e690107be4955, type: 3}
-  cooldown: 1
+  cooldown: 0
 --- !u!1 &1999503379 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6732568824878039460, guid: 0e4f9ac00080f77478d30b2df770545e, type: 3}
