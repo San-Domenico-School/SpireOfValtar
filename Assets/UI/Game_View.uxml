@@ -13,5 +13,4 @@
             <ui:Label name="HealthValueLabel" text="100 / 100" style="position: absolute; color: white; font-size: 14px; font-weight: bold; -unity-font-style: bold; margin-top: -28px; margin-left: 5px; padding-top: 12px;" />
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:StyleSheet />
 </ui:UXML>
