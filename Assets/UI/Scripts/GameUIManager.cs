@@ -7,6 +7,7 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private UIDocument uiDocument;
     [SerializeField] private UIDocument pauseMenuDocument;
     [SerializeField] private UIDocument controlsDocument;
+    [SerializeField] private UIDocument controlsPauseDocument;
     
     private VisualElement gameUIContainer;
     private VisualElement topBar;
@@ -24,7 +25,7 @@ public class GameUIManager : MonoBehaviour
     private Button pauseMainMenuButton;
     private Button pauseExitButton;
     private VisualElement controlsContainer;
-    private Button controlsBackButton;
+    private VisualElement controlsPauseContainer;
     
     private bool isPaused = false;
     
@@ -85,6 +86,9 @@ public class GameUIManager : MonoBehaviour
         
         // Initialize controls menu
         InitializeControlsMenu();
+        
+        // Initialize controls pause menu
+        InitializeControlsPauseMenu();
     }
     
     void Update()
@@ -94,8 +98,15 @@ public class GameUIManager : MonoBehaviour
         {
             if (isPaused)
             {
-                // If controls menu is open, go back to pause menu
-                if (controlsDocument != null && controlsDocument.rootVisualElement != null && 
+                // If controls pause menu is open, go back to pause menu
+                if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null && 
+                    controlsPauseDocument.rootVisualElement.style.display == DisplayStyle.Flex)
+                {
+                    HideControlsPauseMenu();
+                    ShowPauseMenu();
+                }
+                // If controls menu (from main menu) is open, go back to pause menu
+                else if (controlsDocument != null && controlsDocument.rootVisualElement != null && 
                     controlsDocument.rootVisualElement.style.display == DisplayStyle.Flex)
                 {
                     HideControlsMenu();
@@ -154,17 +165,29 @@ public class GameUIManager : MonoBehaviour
         {
             var controlsRoot = controlsDocument.rootVisualElement;
             controlsContainer = controlsRoot.Q<VisualElement>("ControlsContainer");
-            controlsBackButton = controlsRoot.Q<Button>("Back");
             
-            if (controlsBackButton != null)
-            {
-                controlsBackButton.clicked += OnControlsBackClicked;
-            }
+            // Don't register Back button handler here - ControlsManager handles it
+            // when Controls is opened from main menu
             
             // Initially hide controls menu - hide entire UIDocument
             if (controlsDocument.rootVisualElement != null)
             {
                 controlsDocument.rootVisualElement.style.display = DisplayStyle.None;
+            }
+        }
+    }
+    
+    private void InitializeControlsPauseMenu()
+    {
+        if (controlsPauseDocument != null)
+        {
+            var controlsPauseRoot = controlsPauseDocument.rootVisualElement;
+            controlsPauseContainer = controlsPauseRoot.Q<VisualElement>("ControlsContainer");
+            
+            // Initially hide controls pause menu - hide entire UIDocument
+            if (controlsPauseDocument.rootVisualElement != null)
+            {
+                controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
             }
         }
     }
@@ -206,6 +229,11 @@ public class GameUIManager : MonoBehaviour
         {
             controlsDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+        
+        if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null)
+        {
+            controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
     }
     
     private void ShowPauseMenu()
@@ -224,6 +252,14 @@ public class GameUIManager : MonoBehaviour
         }
     }
     
+    private void HideControlsPauseMenu()
+    {
+        if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null)
+        {
+            controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
+    
     private void CleanupGame()
     {
         // Resume game if paused
@@ -239,31 +275,31 @@ public class GameUIManager : MonoBehaviour
     
     private void OnPauseControlsClicked()
     {
-        Debug.Log("Controls button clicked");
+        Debug.Log("Controls button clicked from pause menu");
         
         // Ensure cursor stays unlocked for menu interaction
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
         
-        // Ensure controls UIDocument is enabled
-        if (controlsDocument != null)
+        // Ensure controls pause UIDocument is enabled
+        if (controlsPauseDocument != null)
         {
-            controlsDocument.enabled = true;
+            controlsPauseDocument.enabled = true;
             
-            // Show controls menu first
-            if (controlsDocument.rootVisualElement != null)
+            // Show controls pause menu
+            if (controlsPauseDocument.rootVisualElement != null)
             {
-                Debug.Log("Showing controls menu");
-                controlsDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+                Debug.Log("Showing controls pause menu");
+                controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.Flex;
             }
             else
             {
-                Debug.LogWarning("Controls document root element is null!");
+                Debug.LogWarning("Controls pause document root element is null!");
             }
         }
         else
         {
-            Debug.LogError("Controls document is null!");
+            Debug.LogError("Controls pause document is null!");
         }
         
         // Hide pause menu
@@ -272,13 +308,6 @@ public class GameUIManager : MonoBehaviour
             Debug.Log("Hiding pause menu");
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
-    }
-    
-    private void OnControlsBackClicked()
-    {
-        // Hide controls menu and show pause menu
-        HideControlsMenu();
-        ShowPauseMenu();
     }
     
     private void OnPauseMainMenuClicked()
