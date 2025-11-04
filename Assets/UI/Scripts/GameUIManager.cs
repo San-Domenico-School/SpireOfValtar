@@ -21,6 +21,7 @@ public class GameUIManager : MonoBehaviour
     // Pause menu elements
     private VisualElement pauseMenuContainer;
     private Button pauseControlsButton;
+    private Button pauseMainMenuButton;
     private Button pauseExitButton;
     private VisualElement controlsContainer;
     private Button controlsBackButton;
@@ -121,11 +122,17 @@ public class GameUIManager : MonoBehaviour
             var pauseRoot = pauseMenuDocument.rootVisualElement;
             pauseMenuContainer = pauseRoot.Q<VisualElement>("PauseMenuContainer");
             pauseControlsButton = pauseRoot.Q<Button>("ControlsButton");
+            pauseMainMenuButton = pauseRoot.Q<Button>("MainMenuButton");
             pauseExitButton = pauseRoot.Q<Button>("ExitButton");
             
             if (pauseControlsButton != null)
             {
                 pauseControlsButton.clicked += OnPauseControlsClicked;
+            }
+            
+            if (pauseMainMenuButton != null)
+            {
+                pauseMainMenuButton.clicked += OnPauseMainMenuClicked;
             }
             
             if (pauseExitButton != null)
@@ -185,6 +192,10 @@ public class GameUIManager : MonoBehaviour
         
         isPaused = false;
         Time.timeScale = 1f; // Resume the game
+        
+        // Lock cursor back for game
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
         
         if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
         {
@@ -268,6 +279,32 @@ public class GameUIManager : MonoBehaviour
         // Hide controls menu and show pause menu
         HideControlsMenu();
         ShowPauseMenu();
+    }
+    
+    private void OnPauseMainMenuClicked()
+    {
+        Debug.Log("Main Menu button clicked from pause menu - Returning to main menu");
+        
+        // Resume game first (unpause)
+        ResumeGame();
+        
+        // Hide game UI
+        HideGameUI();
+        
+        // Hide pause menu
+        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        
+        // Show main menu
+        if (mainMenuManager != null)
+        {
+            mainMenuManager.ShowMainMenu();
+        }
+        
+        // Cleanup game
+        CleanupGame();
     }
     
     private void OnPauseExitClicked()
