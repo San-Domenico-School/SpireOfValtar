@@ -9,13 +9,15 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         health = maxHealth;
+        Debug.Log("Health = 100");
     }
 
+    // Player takes (x) amount of damage from enemy
     public void TakeDamage(int amount)
     {
         health -= amount;
-        Debug.Log($"Player has taken {amount} damage");
-        if (health <= 0)
+        Debug.Log($"Player has taken {amount} damage, remaining health = {health}");
+        if (health <= 1)
         {
             Destroy(gameObject);
             Debug.Log("Player has died");
