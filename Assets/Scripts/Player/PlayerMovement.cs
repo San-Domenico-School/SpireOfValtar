@@ -197,7 +197,7 @@ public class PlayerMovement : MonoBehaviour
 	public void OnTurn(InputAction.CallbackContext context)
 	{
 		turnInput = context.ReadValue<Vector2>();
-        Debug.Log("Turn input: " + turnInput);
+        //Debug.Log("Turn input: " + turnInput);     //use this to check if its getting the mouse input
 	}
 
 	public void OnJump(InputAction.CallbackContext context)

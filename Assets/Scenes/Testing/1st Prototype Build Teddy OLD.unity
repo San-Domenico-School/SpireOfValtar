@@ -127,6 +127,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 83265616679666714, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: m_Radius
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 83265616679666714, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 973510999471788076, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -143,6 +151,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 5382962020025032778, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: playerHealth
+      value: 
+      objectReference: {fileID: 1849116904}
     - target: {fileID: 6019195495182123421, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.37771463
@@ -599,6 +611,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 83265616679666714, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: m_Radius
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 83265616679666714, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 973510999471788076, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -615,6 +635,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5382962020025032778, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: playerHealth
+      value: 
+      objectReference: {fileID: 1849116904}
     - target: {fileID: 6019195495182123421, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.37771463
@@ -683,6 +707,8 @@ GameObject:
   - component: {fileID: 1849116901}
   - component: {fileID: 1849116900}
   - component: {fileID: 1849116903}
+  - component: {fileID: 1849116904}
+  - component: {fileID: 1849116905}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1135,6 +1161,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FreezeCaster
   freezePrefab: {fileID: 5487141266320357360, guid: 44bb6b97542f744dd90e690107be4955, type: 3}
   cooldown: 3
+--- !u!114 &1849116904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849116881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7c0402821d894df1af44246b4813a50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  health: 0
+  maxHealth: 100
+--- !u!136 &1849116905
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849116881}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.7
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1999503379 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6732568824878039460, guid: 0e4f9ac00080f77478d30b2df770545e, type: 3}
@@ -1180,6 +1243,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 83265616679666714, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: m_Radius
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 83265616679666714, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 973510999471788076, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1196,6 +1267,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5382962020025032778, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+      propertyPath: playerHealth
+      value: 
+      objectReference: {fileID: 1849116904}
     - target: {fileID: 6019195495182123421, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.37771463
