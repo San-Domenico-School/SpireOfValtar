@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements; // ✅ Added for UI Toolkit
 
 public class PlayerAbilityController : MonoBehaviour
 {
     /************************************
      * Handles spell selection and casting.
-     * Now includes a stamina system.
+     * Now includes a stamina system and connected to UI.
      * Teddy F 10/21/25
-     * Version 2.0
+     * Version 2.1
      ************************************/
 
     [Header("Spells")]
@@ -24,6 +25,10 @@ public class PlayerAbilityController : MonoBehaviour
     [SerializeField] private float maxStamina = 100f;
     [SerializeField] private float regenRate = 10f; // stamina per second
     private float currentStamina;
+
+    [Header("UI")] // ✅ Added UI connection
+    [SerializeField] private UIDocument uiDocument; // Drag your UI Document here
+    private ProgressBar staminaBar; // Reference to ProgressBar in UI Builder
 
     private int currentIndex = 0;
 
@@ -53,6 +58,22 @@ public class PlayerAbilityController : MonoBehaviour
         }
 
         Debug.Log("Starting on Spell 1");
+
+        if (uiDocument != null)
+        {
+            var root = uiDocument.rootVisualElement;
+            staminaBar = root.Q<ProgressBar>("StaminaProgressBar"); // Must match name in UI Builder
+            if (staminaBar != null)
+            {
+                staminaBar.lowValue = 0;
+                staminaBar.highValue = maxStamina;
+                staminaBar.value = currentStamina;
+            }
+            else
+            {
+                Debug.LogWarning("No ProgressBar named 'StaminaProgressBar' found in UI Document!");
+            }
+        }
     }
 
     private void OnDisable()
@@ -79,7 +100,8 @@ public class PlayerAbilityController : MonoBehaviour
     private void Update()
     {
         RegenerateStamina();
-       // Debug.Log($"Current Stamina: {currentStamina:F1}"); //use this for debugging
+        UpdateStaminaUI(); //update bar each frame
+        // Debug.Log($"Current Stamina: {currentStamina:F1}"); //use this for debugging
     }
 
     private void RegenerateStamina()
@@ -89,6 +111,12 @@ public class PlayerAbilityController : MonoBehaviour
             currentStamina += regenRate * Time.deltaTime;
             currentStamina = Mathf.Min(currentStamina, maxStamina);
         }
+    }
+
+    private void UpdateStaminaUI() // ✅ Added method to sync stamina bar
+    {
+        if (staminaBar != null)
+            staminaBar.value = currentStamina;
     }
 
     private bool TryUseStamina(float amount)
