@@ -796,8 +796,8 @@ MonoBehaviour:
   range: 20
   cooldown: 0
   damage: 100
-  lightningVFXPrefab: {fileID: 0}
-  spawnHeight: 8
+  lightningVFXPrefab: {fileID: 4159723444550947670, guid: 18eccc8d944514aebb6f083126b3214d, type: 3}
+  boltHeight: 6
   vfxLifetime: 2
 --- !u!114 &1849116895
 MonoBehaviour:
@@ -1080,7 +1080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5ea29bc65a7843b0864c1d2f3038bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FreezeCaster
-  freezePrefab: {fileID: 5487141266320357360, guid: 44bb6b97542f744dd90e690107be4955, type: 3}
+  freezePrefab: {fileID: 8449232247961012594, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
   cooldown: 0
 --- !u!1 &1932088758
 GameObject:
@@ -1366,6 +1366,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18eccc8d944514aebb6f083126b3214d, type: 3}
+--- !u!1001 &1351634490161389778
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 13.55244
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -14.45414
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3594547798310103603, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8449232247961012594, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
+      propertyPath: m_Name
+      value: Freeze
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1379,3 +1436,4 @@ SceneRoots:
   - {fileID: 1765017606}
   - {fileID: 2129272562}
   - {fileID: 985347416705435162}
+  - {fileID: 1351634490161389778}
