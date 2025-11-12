@@ -26,11 +26,13 @@ public class EnemyController : MonoBehaviour
     private Coroutine freezeTimer = null;
 
     // Damage player
-    public PlayerHealth playerHealth;
+    private PlayerHealth playerHealth;
     public int damage = 10;
 
     void Start()
     {
+        playerHealth = FindFirstObjectByType<PlayerHealth>();
+
         // Get NavMeshAgent component
         navAgent = GetComponent<NavMeshAgent>();
         if (navAgent == null)
@@ -163,7 +165,7 @@ public class EnemyController : MonoBehaviour
     // Enemy collision with player
     private void OnTriggerEnter(Collider other)
     { 
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && other.gameObject != null)
         {
             Debug.Log("Enemy collided");
             playerHealth.TakeDamage(10);
