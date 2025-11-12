@@ -1,19 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class RestartManager : MonoBehaviour
 {
-    private void Awake()
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public void RestartLevel()
     {
-        RestartLevel();
-        Debug.Log("Restart?");
-    }
-
-    void RestartLevel() //restart when button is pressed
-    {
-        Scene currentScene = SceneManager.GetActiveScene();
-        Debug.Log("Restarted");
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

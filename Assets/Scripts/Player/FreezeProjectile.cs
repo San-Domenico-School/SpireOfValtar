@@ -6,60 +6,82 @@ public class FreezeProjectile : MonoBehaviour
     [Header("Freeze Projectile Settings")]
     [SerializeField] private float speed = 10f;
     [SerializeField] private float lifetime = 10f;
-    [SerializeField] private AnimationCurve arcCurve;   
+    [SerializeField] private AnimationCurve arcCurve;
     [SerializeField] private float arcHeight = 1f;
     [SerializeField] private float freezeSlowAmount = 0.2f; // 20% slower (0.8x speed)
     [SerializeField] private float freezeDuration = 5f; // How long the freeze effect lasts
+    [SerializeField] private float freezeRadius = 5f; // AOE
 
-    public IEnumerator MoveRoutine(Vector3 direction)
+    // Called by FreezeCaster
+    public void Launch(Vector3 direction)
+    {
+        StopAllCoroutines();
+        StartCoroutine(MoveRoutine(direction));
+    }
+
+    private IEnumerator MoveRoutine(Vector3 direction)
     {
         Vector3 startPos = transform.position;
         Vector3 forward = direction.normalized;
 
         float t = 0f;
+        float distanceTravelled = 0f;
+
         while (t < lifetime)
         {
-            Vector3 movement = forward * speed * Time.deltaTime;
-            
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, forward, out hit, movement.magnitude))
+            float dt = Time.deltaTime;
+            float moveStep = speed * dt;
+            distanceTravelled += moveStep;
+
+            // Base position along the *true* shoot direction
+            Vector3 basePos = startPos + forward * distanceTravelled;
+
+            // Arc offset added on top (only vertical)
+            float normalizedTime = lifetime > 0f ? t / lifetime : 0f;
+            float curveValue = arcCurve != null ? arcCurve.Evaluate(normalizedTime) : normalizedTime;
+            float arcOffset = curveValue * arcHeight;
+
+            Vector3 nextPos = basePos + Vector3.up * arcOffset;
+
+            // Raycast from current to next position
+            Vector3 displacement = nextPos - transform.position;
+            float dist = displacement.magnitude;
+
+            if (dist > 0f && Physics.Raycast(transform.position, displacement.normalized, out RaycastHit hit, dist))
             {
                 Debug.Log($"Freeze spell hit {hit.collider.name} (Tag: {hit.collider.tag})");
-                
+
                 if (hit.collider.CompareTag("Enemy"))
                 {
-                    Debug.Log("Freeze spell hit an enemy!");
-                    
-                    // Get the enemy's EnemyController and apply freeze effect
-                    EnemyController enemyController = hit.collider.GetComponent<EnemyController>();
-                    if (enemyController != null)
+                    Debug.Log("Freeze spell hit an enemy! Effecting...");
+
+                    Collider[] hitCollider = Physics.OverlapSphere(hit.point, freezeRadius);
+                    foreach (Collider nearby in hitCollider)
                     {
-                        // Apply freeze effect with timer management
-                        enemyController.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
+                        if (nearby.CompareTag("Enemy"))
+                        {
+                            EnemyController enemy = nearby.GetComponent<EnemyController>();
+                            if (enemy != null)
+                            {
+                                enemy.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
+                            }
+                        }
                     }
                 }
-                
-                // Destroy the freeze projectile
+
                 Destroy(gameObject);
                 yield break;
             }
-            
-            transform.position += movement;
 
-            float normalizedTime = t / lifetime;
-            float arcOffset = arcCurve.Evaluate(normalizedTime) * arcHeight;
-            transform.position = new Vector3(
-                transform.position.x,
-                startPos.y + arcOffset,
-                transform.position.z
-            );
+            // Apply position & orientation
+            transform.position = nextPos;
+            transform.rotation = Quaternion.LookRotation(forward, Vector3.up); // only pitch/yaw
 
-            t += Time.deltaTime;
+            t += dt;
             yield return null;
         }
 
         Debug.Log("Freeze spell expired");
         Destroy(gameObject);
     }
-    
 }

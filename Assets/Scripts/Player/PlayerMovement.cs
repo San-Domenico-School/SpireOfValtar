@@ -63,13 +63,14 @@ public class PlayerMovement : MonoBehaviour
         gravity = Physics.gravity.y;
 
         currentStamina = maxStamina;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // Cursor state managed by UI managers
     }
 
     void Update()
     {
+        // Don't process input when game is paused (Time.timeScale == 0)
+        if (Time.timeScale == 0f) return;
+        
         ApplyTurnFromInput();
         // Lock movement while dodging/lunging (movement is driven by coroutine)
         if (isDodging || isLunging)
@@ -151,6 +152,8 @@ public class PlayerMovement : MonoBehaviour
 
     void ApplyTurnFromInput()
     {
+        // Don't process camera turn when game is paused
+        if (Time.timeScale == 0f) return;
         if (turnInput.sqrMagnitude <= 0.000001f) return;
         float yawDegrees = turnInput.x * turnSensitivity;
         transform.Rotate(0f, yawDegrees, 0f, Space.Self);
@@ -194,7 +197,7 @@ public class PlayerMovement : MonoBehaviour
 	public void OnTurn(InputAction.CallbackContext context)
 	{
 		turnInput = context.ReadValue<Vector2>();
-        Debug.Log("Turn input: " + turnInput);
+        //Debug.Log("Turn input: " + turnInput);     //use this to check if its getting the mouse input
 	}
 
 	public void OnJump(InputAction.CallbackContext context)
