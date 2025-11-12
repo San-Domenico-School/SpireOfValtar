@@ -5,6 +5,8 @@ public class PlayerHealth : MonoBehaviour
     public int health;
     public int maxHealth = 100;
 
+    [SerializeField] RestartManager restartManager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -19,7 +21,7 @@ public class PlayerHealth : MonoBehaviour
         Debug.Log($"Player has taken {amount} damage, remaining health = {health}");
         if (health <= 1)
         {
-            Destroy(gameObject);
+            restartManager.RestartLevel();
             Debug.Log("Player has died");
         }
     }
