@@ -14,7 +14,7 @@ public class FreezeCaster : MonoBehaviour
     {
         if (!canCast) return;
         StartCoroutine(CastCooldown());
-
+        
         Transform cam = Camera.main.transform;
 
         // Spawn in front of the camera, facing the camera's forward
