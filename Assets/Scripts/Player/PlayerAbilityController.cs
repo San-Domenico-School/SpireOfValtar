@@ -184,7 +184,7 @@ public class PlayerAbilityController : MonoBehaviour
             case 2: // Freeze Spell (no stamina use yet)
                 if (spell3 != null)
                 {
-                    if (Time.timeScale <= 0f)
+                    if (!spell3.canCast)
                     {
                         return;
                     }

@@ -4,36 +4,35 @@ using System.Collections;
 public class FreezeCaster : MonoBehaviour
 {
     [Header("Freeze Caster Settings")]
-    [SerializeField] private GameObject freezePrefab; 
-    [SerializeField] private float cooldown = 3f; 
-    private bool canCast = true;
+    [SerializeField] private GameObject freezePrefab;
+    [SerializeField] private float cooldown = 3f;
+    [SerializeField] private float spawnDistance = 1f;
+
+    private bool isOnCooldown = false;
+
+    public bool canCast => !isOnCooldown && Time.timeScale > 0f;
 
     public void OnCast()
     {
-        Debug.Log("Casting Freeze Spell!");
-
-        if (!canCast) return; 
+        if (!canCast) return;
         StartCoroutine(CastCooldown());
         
         Transform cam = Camera.main.transform;
-        GameObject freezeProjectile = Instantiate(
-            freezePrefab,
-            cam.position + cam.forward * 1f, 
-            Quaternion.identity
-        );
 
-        // Start movement of freeze projectile
-        FreezeProjectile projectile = freezeProjectile.GetComponent<FreezeProjectile>();
-        if (projectile != null)
-        {
-            projectile.StartCoroutine(projectile.MoveRoutine(cam.forward));
-        }
+        // Spawn in front of the camera, facing the camera's forward
+        Vector3 spawnPos = cam.position + cam.forward * spawnDistance;
+        Quaternion spawnRot = Quaternion.LookRotation(cam.forward, Vector3.up);
+
+        GameObject instance = Instantiate(freezePrefab, spawnPos, spawnRot);
+
+        // The projectile should handle its own movement/behavior
+        // If FreezeProjectile needs initialization, add a method there
     }
 
     private IEnumerator CastCooldown()
     {
-        canCast = false;
+        isOnCooldown = true;
         yield return new WaitForSeconds(cooldown);
-        canCast = true;
+        isOnCooldown = false;
     }
 }

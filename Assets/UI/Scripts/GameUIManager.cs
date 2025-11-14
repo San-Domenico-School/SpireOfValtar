@@ -25,8 +25,6 @@ public class GameUIManager : MonoBehaviour
     
     private bool isPaused = false;
     
-    public bool IsPaused => isPaused;
-    
     void Start()
     {
         var rootVisualElement = uiDocument.rootVisualElement;
