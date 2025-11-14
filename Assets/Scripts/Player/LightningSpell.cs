@@ -1,12 +1,18 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.VFX; // for VisualEffect
 
 public class LightningSpell : MonoBehaviour
 {
     [Header("Lightning Settings")]
     public float range = 20f;
     public float cooldown = 3f;
-    public float damage = 100f; // Added: damage value
+    public float damage = 100f;
+
+    [Header("VFX")]
+    public VisualEffect lightningVFXPrefab; // assign your LightningStrike prefab here
+    public float boltHeight = 6f;           // used if your graph exposes Start/Target
+    public float vfxLifetime = 2f;          // safety cleanup if Stop Action != Destroy
 
     private bool isOnCooldown = false;
 
@@ -27,19 +33,20 @@ public class LightningSpell : MonoBehaviour
 
     private void FireRaycast()
     {
-        Transform playerCamera = Camera.main.transform;
-        Vector3 origin = playerCamera.position;
-        Vector3 direction = playerCamera.forward;
+        Transform cam = Camera.main.transform;
+        Vector3 origin = cam.position;
+        Vector3 direction = cam.forward;
 
         if (Physics.Raycast(origin, direction, out RaycastHit hit, range))
         {
             Debug.Log($"Lightning hit {hit.collider.name}!");
 
+            // Spawn vertical VFX exactly at the hit point
+            SpawnLightning(hit.point);
+
+            // Apply damage if the hit object is an enemy
             if (hit.collider.CompareTag("Enemy"))
             {
-                Debug.Log("Hit an enemy!");
-
-                // Added: damage handling
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
                 if (enemyHealth != null)
                 {
@@ -50,15 +57,38 @@ public class LightningSpell : MonoBehaviour
                     Debug.LogWarning("Enemy hit but no EnemyHealth component found!");
                 }
             }
-            else
-            {
-                Debug.Log("Hit something else.");
-            }
         }
         else
         {
             Debug.Log("Lightning missed everything.");
         }
+    }
+
+    private void SpawnLightning(Vector3 hitPoint)
+    {
+        if (lightningVFXPrefab == null)
+        {
+            Debug.LogWarning("Lightning VFX Prefab is not assigned.");
+            return;
+        }
+
+        // Instantiate exactly at the hit point; start with identity rotation
+        VisualEffect vfx = Instantiate(lightningVFXPrefab, hitPoint, Quaternion.identity);
+
+        // Keep it perfectly vertical no matter what
+        vfx.transform.up = Vector3.up;
+
+        // If your graph exposes positions, set a vertical segment from hitPoint upwards
+        if (vfx.HasVector3("StartPosition"))  vfx.SetVector3("StartPosition", hitPoint);
+        if (vfx.HasVector3("TargetPosition")) vfx.SetVector3("TargetPosition", hitPoint + Vector3.up * boltHeight);
+
+        // If your prefab’s bolt is authored along +Z instead of +Y, uncomment this line:
+        // vfx.transform.rotation = Quaternion.FromToRotation(Vector3.forward, Vector3.up);
+
+        vfx.Play();
+
+        // Safety cleanup (use Stop Action = Destroy on the Visual Effect for best results)
+        Destroy(vfx.gameObject, vfxLifetime);
     }
 
     private IEnumerator CooldownCoroutine()
