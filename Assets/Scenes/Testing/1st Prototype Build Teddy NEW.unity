@@ -119,6 +119,63 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &24393966
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2076452202548890415, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_Name
+      value: UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.2639
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.164
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.48964
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691789655871748103, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
 --- !u!1001 &139223594
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -591,6 +648,7 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1999503381}
   m_SourcePrefab: {fileID: 100100000, guid: 0e4f9ac00080f77478d30b2df770545e, type: 3}
+<<<<<<< Updated upstream
 --- !u!114 &894356605 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1502871050897994476, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
@@ -664,6 +722,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+=======
+>>>>>>> Stashed changes
 --- !u!1001 &1277458609
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -733,6 +793,20 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8eed6d2afe3ae4cceb48a2f0e35e96fd, type: 3}
+<<<<<<< Updated upstream
+=======
+--- !u!114 &1444813107 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1502871050897994476, guid: 4083f299c67b44e7389bda795b2f754f, type: 3}
+  m_PrefabInstance: {fileID: 24393966}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+>>>>>>> Stashed changes
 --- !u!1 &1849116881
 GameObject:
   m_ObjectHideFlags: 0
@@ -877,7 +951,11 @@ MonoBehaviour:
   attackAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   maxStamina: 100
   regenRate: 10
+<<<<<<< Updated upstream
   uiDocument: {fileID: 894356605}
+=======
+  uiDocument: {fileID: 1444813107}
+>>>>>>> Stashed changes
 --- !u!114 &1849116888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1313,4 +1391,8 @@ SceneRoots:
   - {fileID: 139223594}
   - {fileID: 1277458609}
   - {fileID: 2059704504}
+<<<<<<< Updated upstream
   - {fileID: 913985663}
+=======
+  - {fileID: 24393966}
+>>>>>>> Stashed changes
