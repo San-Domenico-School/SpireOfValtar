@@ -152,6 +152,10 @@ public class PlayerAbilityController : MonoBehaviour
             case 0: // Lightning Spell
                 if (spell1 != null)
                 {
+                    if (!spell1.canCast)
+                    {
+                        return;
+                    }
                     if (TryUseStamina(20f))
                     {
                         Debug.Log("Casting Spell 1 (Lightning)");
@@ -164,6 +168,10 @@ public class PlayerAbilityController : MonoBehaviour
             case 1: // Fireball Spell
                 if (spell2 != null)
                 {
+                    if (!spell2.canCast)
+                    {
+                        return;
+                    }
                     if (TryUseStamina(15f))
                     {
                         Debug.Log("Casting Spell 2 (Fireball)");
@@ -176,6 +184,10 @@ public class PlayerAbilityController : MonoBehaviour
             case 2: // Freeze Spell (no stamina use yet)
                 if (spell3 != null)
                 {
+                    if (Time.timeScale <= 0f)
+                    {
+                        return;
+                    }
                     if (TryUseStamina(30f))
                     {
                         Debug.Log("Casting Spell 3 (Freeze)");

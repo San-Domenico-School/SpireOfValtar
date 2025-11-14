@@ -89,8 +89,20 @@ public class ControlsManager : MonoBehaviour
     
     private void OnBackButtonClicked()
     {
+        // Keep game frozen (same pattern as Start button but with timeScale = 0f)
+        Time.timeScale = 0f;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        
         HideControls();
         
+        // Hide controls UI document (same pattern as HideMainMenu)
+        if (controlledUIDocument != null && controlledUIDocument.rootVisualElement != null)
+        {
+            controlledUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        
+        // Show main menu (same pattern as showing game UI)
         if (mainMenuManager != null)
         {
             mainMenuManager.ShowMainMenu();
