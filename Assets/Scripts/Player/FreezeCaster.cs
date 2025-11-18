@@ -8,7 +8,9 @@ public class FreezeCaster : MonoBehaviour
     [SerializeField] private float cooldown = 3f;
     [SerializeField] private float spawnDistance = 1f;
 
-    private bool canCast = true;
+    private bool isOnCooldown = false;
+
+    public bool canCast => !isOnCooldown && Time.timeScale > 0f;
 
     public void OnCast()
     {
@@ -23,22 +25,14 @@ public class FreezeCaster : MonoBehaviour
 
         GameObject instance = Instantiate(freezePrefab, spawnPos, spawnRot);
 
-        // Find the projectile script (root or child)
-        FreezeProjectile projectile = instance.GetComponentInChildren<FreezeProjectile>();
-        if (projectile != null)
-        {
-            projectile.Launch(cam.forward);
-        }
-        else
-        {
-            Debug.LogError("FreezePrefab has no FreezeProjectile component on it or its children!");
-        }
+        // The projectile should handle its own movement/behavior
+        // If FreezeProjectile needs initialization, add a method there
     }
 
     private IEnumerator CastCooldown()
     {
-        canCast = false;
+        isOnCooldown = true;
         yield return new WaitForSeconds(cooldown);
-        canCast = true;
+        isOnCooldown = false;
     }
 }

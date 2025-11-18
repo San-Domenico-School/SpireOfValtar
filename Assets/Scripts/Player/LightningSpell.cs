@@ -16,12 +16,14 @@ public class LightningSpell : MonoBehaviour
 
     private bool isOnCooldown = false;
 
-    // Called by PlayerAbilityController
+    public bool canCast => !isOnCooldown && Time.timeScale > 0f;
+
+    // This is the method called by PlayerAbilityController
     public void OnCast()
     {
-        if (isOnCooldown)
+        if (!canCast)
         {
-            Debug.Log("Lightning is on cooldown!");
+            Debug.Log("Lightning is on cooldown or game is paused!");
             return;
         }
 
