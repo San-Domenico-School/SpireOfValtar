@@ -6,7 +6,9 @@ public class FireballCaster : MonoBehaviour
     [Header("Fireball Caster Settings")]
     [SerializeField] private GameObject fireballPrefab; 
     [SerializeField] private float cooldown = 3f; 
-    private bool canCast = true;
+    private bool isOnCooldown = false;
+
+    public bool canCast => !isOnCooldown && Time.timeScale > 0f;
 
     public void OnCast()
     {
@@ -33,9 +35,9 @@ public class FireballCaster : MonoBehaviour
 
     private IEnumerator CastCooldown()
     {
-        canCast = false;
+        isOnCooldown = true;
         yield return new WaitForSeconds(cooldown);
-        canCast = true;
+        isOnCooldown = false;
     }
 
 
