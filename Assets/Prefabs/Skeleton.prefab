@@ -304,7 +304,7 @@ GameObject:
   - component: {fileID: 6671976472014832156}
   - component: {fileID: 436963044692907946}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Skeleton
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -460,7 +460,7 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthBar: {fileID: 4015550118316039084}
-  deathParticle: {fileID: 0}
+  deathParticle: {fileID: 2018934290385573034, guid: 94ef98b101ea2485cb129c1dec682c2e, type: 3}
 --- !u!1 &6697825833002519335
 GameObject:
   m_ObjectHideFlags: 0
