@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -7,22 +8,56 @@ public class PlayerHealth : MonoBehaviour
 
     [SerializeField] RestartManager restartManager;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // --- UI Elements ---
+    [Header("UI")]
+    [SerializeField] private UIDocument healthUIDocument;  // Assign in Inspector
+    private ProgressBar healthBar;                        // ProgressBar instead of VisualElement
+
     void Start()
     {
         health = maxHealth;
         Debug.Log("Health = 100");
+
+        // --- Initialize UI ---
+        if (healthUIDocument != null)
+        {
+            var root = healthUIDocument.rootVisualElement;
+
+            // CHANGE "HealthBar" to whatever the Progress Bar name is in UI Builder
+            healthBar = root.Q<ProgressBar>("HealthBar");
+
+            if (healthBar == null)
+                Debug.LogWarning("PlayerHealth: Could not find ProgressBar named 'HealthBar'.");
+
+            UpdateHealthUI();
+        }
+        else
+        {
+            Debug.LogWarning("PlayerHealth: No UIDocument assigned for health UI.");
+        }
     }
 
-    // Player takes (x) amount of damage from enemy
     public void TakeDamage(int amount)
     {
         health -= amount;
         Debug.Log($"Player has taken {amount} damage, remaining health = {health}");
+
+        UpdateHealthUI();
+
         if (health <= 1)
         {
             restartManager.RestartLevel();
             Debug.Log("Player has died");
+        }
+    }
+
+    // --- UI Update Method ---
+    private void UpdateHealthUI()
+    {
+        if (healthBar != null)
+        {
+            healthBar.value = health;     // ProgressBar automatically handles max value
+            healthBar.highValue = maxHealth;
         }
     }
 }

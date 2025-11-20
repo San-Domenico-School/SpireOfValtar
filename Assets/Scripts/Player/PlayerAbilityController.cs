@@ -102,6 +102,7 @@ public class PlayerAbilityController : MonoBehaviour
         RegenerateStamina();
         UpdateStaminaUI(); //update bar each frame
         // Debug.Log($"Current Stamina: {currentStamina:F1}"); //use this for debugging
+        // Debug.Log("update is called in PAC");
     }
 
     private void RegenerateStamina()

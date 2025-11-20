@@ -14547,7 +14547,34 @@ MonoBehaviour:
   lifetime: 10
   arcCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.000019073486
+      value: -0.0044555664
+      inSlope: 0.2638369
+      outSlope: 0.2638369
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.23012517
+    - serializedVersion: 3
+      time: 0.40759858
+      value: 0.05487691
+      inSlope: -0.0036472387
+      outSlope: -0.0036472387
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.9991455
+      value: 0.0004310608
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

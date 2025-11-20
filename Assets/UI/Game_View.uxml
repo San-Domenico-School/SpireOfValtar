@@ -9,7 +9,7 @@
         </ui:VisualElement>
         <ui:VisualElement>
             <ui:Label text="Health" name="HealthLabel" />
-            <ui:ProgressBar name="HealthProgressBar" low-value="0" high-value="100" value="100" style="width: 50%;" />
+            <ui:ProgressBar name="HealthBar" low-value="0" high-value="100" value="100" style="width: 50%;" />
             <ui:Label name="HealthValueLabel" text="100 / 100" />
         </ui:VisualElement>
     </ui:VisualElement>
