@@ -343,7 +343,6 @@ GameObject:
   m_Component:
   - component: {fileID: 313032459}
   - component: {fileID: 313032462}
-  - component: {fileID: 313032461}
   - component: {fileID: 313032460}
   m_Layer: 0
   m_Name: ReticleCamera
@@ -411,14 +410,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!81 &313032461
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313032458}
-  m_Enabled: 1
 --- !u!20 &313032462
 Camera:
   m_ObjectHideFlags: 0
@@ -789,6 +780,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: healthUIDocument
+      value: 
+      objectReference: {fileID: 8650492187293151942}
     - target: {fileID: 2217434796633799266, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: m_Cameras.Array.size
       value: 1
@@ -845,6 +840,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9147664805636325474, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: uiDocument
+      value: 
+      objectReference: {fileID: 8650492187293151942}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -962,6 +961,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+--- !u!114 &8650492187293151942 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6365394897216457393, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+  m_PrefabInstance: {fileID: 4868112149460240186}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
