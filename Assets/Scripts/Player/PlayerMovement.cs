@@ -24,11 +24,11 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private float attackLungeDistance = 2.5f;
     [SerializeField] private float attackLungeDuration = 0.12f;
-    [SerializeField] private float turnSensitivity = 10f;
     [SerializeField] private Transform cameraPivot; // assign the Camera or a pivot under the player
     [SerializeField] private float maxPitchAngle = 60f; // clamp pitch to ±max
     [SerializeField] private float ceilingRestitution = 0.2f; // 0=no bounce, 1=elastic
     [SerializeField] private float minCeilingBounceSpeed = 3f; // minimum downward speed after head hit
+    [SerializeField] private float turnSensitivity = 1.2f;
 
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private Transform groundCheck;     // put at feet

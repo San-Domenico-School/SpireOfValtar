@@ -13,6 +13,7 @@ public class EnemyHealth : MonoBehaviour
     private bool isFlashing = false;
 
     [SerializeField] FloatingHealthBar healthBar;
+    [SerializeField] private GameObject deathParticle;
 
     private void Awake()
     {
@@ -53,6 +54,10 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{gameObject.name} has been defeated!");
+        if (deathParticle != null)
+        {
+            Instantiate(deathParticle, transform.position, Quaternion.identity);
+        }
         Destroy(gameObject);
     }
 }
