@@ -767,6 +767,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 711588537881631730, guid: c0f1bc86aacf34d60aaa330e434371ff, type: 3}
   m_PrefabInstance: {fileID: 1069919202}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1377055902 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4654921610813067680, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+  m_PrefabInstance: {fileID: 1904238748}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1377055917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377055902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c826ef8031a30440b87950d22f92a626, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DontDestroyPlayer
 --- !u!4 &1594931101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1427325297843683170, guid: c0f1bc86aacf34d60aaa330e434371ff, type: 3}
@@ -862,7 +879,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7743488379024989733, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 313032459}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4654921610813067680, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1377055917}
   m_SourcePrefab: {fileID: 100100000, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
 --- !u!1 &1999503379 stripped
 GameObject:
