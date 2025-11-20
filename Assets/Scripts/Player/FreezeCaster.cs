@@ -11,7 +11,7 @@ public class FreezeCaster : MonoBehaviour
     private bool isOnCooldown = false;
 
     public bool canCast => !isOnCooldown && Time.timeScale > 0f;
-
+    
     public void OnCast()
     {
         if (!canCast) return;
@@ -25,8 +25,12 @@ public class FreezeCaster : MonoBehaviour
 
         GameObject instance = Instantiate(freezePrefab, spawnPos, spawnRot);
 
-        // The projectile should handle its own movement/behavior
-        // If FreezeProjectile needs initialization, add a method there
+		// Initialize projectile movement
+		FreezeProjectile projectile = instance.GetComponent<FreezeProjectile>();
+		if (projectile != null)
+		{
+			projectile.Launch(cam.forward);
+		}
     }
 
     private IEnumerator CastCooldown()
