@@ -44,10 +44,11 @@ public class PlayerHealth : MonoBehaviour
 
         UpdateHealthUI();
 
-        if (health <= 1)
+        if (health <= 0)
         {
-            restartManager.RestartLevel();
             Debug.Log("Player has died");
+            restartManager.RestartLevel();
+
         }
     }
 
