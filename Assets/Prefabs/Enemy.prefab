@@ -287,8 +287,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5882685373908171575}
   - {fileID: 2253967164851293861}
+  - {fileID: 2468809791839755731}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3627521328093216201
@@ -306,7 +306,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3177292819868564285}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -366,10 +366,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.81328773
+  m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0.04687047, y: 0, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5233339416854855808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,6 +388,7 @@ MonoBehaviour:
   rotationSpeed: 5
   currentSpeedMultiplier: 1
   damage: 10
+  damageInterval: 3
 --- !u!195 &5906325879628883707
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -572,7 +573,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 6019195495182123421}
+    m_TransformParent: {fileID: 2633260949874965941}
     m_Modifications:
     - target: {fileID: 8520377123068307305, guid: 190983124ce63af4e924c51df8723ef6, type: 3}
       propertyPath: m_Name
