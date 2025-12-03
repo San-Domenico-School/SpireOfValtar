@@ -27,6 +27,8 @@ public class MainMenuManager : MonoBehaviour
         Time.timeScale = 0f;
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
+
+        DontDestroyOnLoad(gameObject);
     }
     
     void Start()
