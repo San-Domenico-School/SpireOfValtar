@@ -28,6 +28,8 @@ public class EnemyController : MonoBehaviour
     // Damage player
     private PlayerHealth playerHealth;
     public int damage = 10;
+    [SerializeField] private float damageInterval = 3f; // damage every 5 seconds while in contact
+    private Coroutine damageCoroutine;
 
     void Start()
     {
@@ -168,8 +170,38 @@ public class EnemyController : MonoBehaviour
         if (other.CompareTag("Player") && other.gameObject != null)
         {
             Debug.Log("Enemy collided");
-            playerHealth.TakeDamage(10);
+            playerHealth.TakeDamage(damage); // initial instant damage
             Debug.Log($"{gameObject.name} has hit Player!");
+
+            // Start periodic damage if not already running
+            if (damageCoroutine == null)
+            {
+                damageCoroutine = StartCoroutine(DamageOverTime());
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && damageCoroutine != null)
+        {
+            // Stop periodic damage once contact is broken
+            StopCoroutine(damageCoroutine);
+            damageCoroutine = null;
+        }
+    }
+
+    private IEnumerator DamageOverTime()
+    {
+        // Wait 5 seconds of continuous contact before first periodic damage
+        yield return new WaitForSeconds(damageInterval);
+
+        // Then deal damage every 5 seconds while still in contact
+        while (true)
+        {
+            playerHealth.TakeDamage(damage);
+            Debug.Log($"{gameObject.name} dealt periodic damage: {damage}");
+            yield return new WaitForSeconds(damageInterval);
         }
     }
 }
