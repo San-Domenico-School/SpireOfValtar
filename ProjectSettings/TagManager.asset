@@ -7,6 +7,7 @@ TagManager:
   - Locked
   - Completed
   - Enemy
+  - Door
   layers:
   - Default
   - TransparentFX
