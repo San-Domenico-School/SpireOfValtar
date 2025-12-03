@@ -48,7 +48,6 @@ public class PlayerHealth : MonoBehaviour
         {
             Debug.Log("Player has died");
             restartManager.RestartLevel();
-
         }
     }
 
@@ -61,4 +60,5 @@ public class PlayerHealth : MonoBehaviour
             healthBar.highValue = maxHealth;
         }
     }
+
 }
