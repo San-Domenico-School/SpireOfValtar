@@ -1,17 +1,17 @@
 using UnityEngine;
 
-public class PersistentSingleton : MonoBehaviour
+public class Player : MonoBehaviour
 {
-    private static PersistentSingleton _instance;
+    private static Player Instance;
 
     void Awake()
     {
-        if (_instance == null)
+        if (Instance == null)
         {
-            _instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if (_instance != this)
+        else 
         {
             Destroy(gameObject); // prevent duplicates
         }
