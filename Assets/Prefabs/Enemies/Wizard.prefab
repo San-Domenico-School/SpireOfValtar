@@ -252,6 +252,37 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &3700617449090689066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7936206195257743609}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7936206195257743609
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3700617449090689066}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.042, y: -0.158, z: 0.258}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6019195495182123421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3905705664069840554
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,11 +331,11 @@ GameObject:
   - component: {fileID: 5996625611378852220}
   - component: {fileID: 5329010705353353482}
   - component: {fileID: 83265616679666714}
-  - component: {fileID: 5382962020025032778}
   - component: {fileID: 6671976472014832156}
   - component: {fileID: 436963044692907946}
+  - component: {fileID: -1565761978949787313}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Wizard
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -323,6 +354,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7936206195257743609}
   - {fileID: 5882685373908171575}
   - {fileID: 2253967164851293861}
   m_Father: {fileID: 0}
@@ -406,24 +438,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5382962020025032778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5043927312112991726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9dc6644d6a0db422b9d23de45a96b9a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  baseSpeed: 2
-  detectionRange: 10
-  attackRange: 2
-  rotationSpeed: 5
-  currentSpeedMultiplier: 1
-  damage: 10
 --- !u!195 &6671976472014832156
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -461,7 +475,29 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthBar: {fileID: 4015550118316039084}
-  deathParticle: {fileID: 0}
+  deathParticle: {fileID: 2018934290385573034, guid: 1ee9a7fc20f3543bb80048eda473aa88, type: 3}
+--- !u!114 &-1565761978949787313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043927312112991726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e198412bdaefb47fcbbac28cbebd659e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WizardController
+  baseSpeed: 3.5
+  detectionRange: 10
+  attackRange: 10
+  rotationSpeed: 5
+  projectilePrefab: {fileID: 2081132082438070434, guid: 7394e1b9aa0954308a3040d2d7b0164e, type: 3}
+  firePoint: {fileID: 6019195495182123421}
+  fireRate: 1
+  projectileDamage: 10
+  currentSpeedMultiplier: 1
+  damage: 10
 --- !u!1 &6697825833002519335
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,15 +616,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9040313749590359507, guid: 190983124ce63af4e924c51df8723ef6, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.55455005
+      value: 0.5545501
       objectReference: {fileID: 0}
     - target: {fileID: 9040313749590359507, guid: 190983124ce63af4e924c51df8723ef6, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.55455005
+      value: 0.5545501
       objectReference: {fileID: 0}
     - target: {fileID: 9040313749590359507, guid: 190983124ce63af4e924c51df8723ef6, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.55455005
+      value: 0.5545501
       objectReference: {fileID: 0}
     - target: {fileID: 9040313749590359507, guid: 190983124ce63af4e924c51df8723ef6, type: 3}
       propertyPath: m_LocalPosition.x
