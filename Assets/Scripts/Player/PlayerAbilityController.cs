@@ -157,7 +157,7 @@ public class PlayerAbilityController : MonoBehaviour
                     {
                         return;
                     }
-                    if (TryUseStamina(20f))
+                    if (TryUseStamina(30f)) // Balanced for souls-like: High cost for high damage
                     {
                         Debug.Log("Casting Spell 1 (Lightning)");
                         spell1.OnCast();
@@ -173,7 +173,7 @@ public class PlayerAbilityController : MonoBehaviour
                     {
                         return;
                     }
-                    if (TryUseStamina(15f))
+                    if (TryUseStamina(25f)) // Balanced for souls-like: Medium cost for AOE damage
                     {
                         Debug.Log("Casting Spell 2 (Fireball)");
                         spell2.OnCast();
@@ -182,14 +182,14 @@ public class PlayerAbilityController : MonoBehaviour
                 else Debug.LogWarning("Spell 2 is not assigned");
                 break;
 
-            case 2: // Freeze Spell (no stamina use yet)
+            case 2: // Freeze Spell
                 if (spell3 != null)
                 {
                     if (!spell3.canCast)
                     {
                         return;
                     }
-                    if (TryUseStamina(30f))
+                    if (TryUseStamina(30f)) // Balanced for souls-like: High cost for utility/CC
                     {
                         Debug.Log("Casting Spell 3 (Freeze)");
                         spell3.OnCast();

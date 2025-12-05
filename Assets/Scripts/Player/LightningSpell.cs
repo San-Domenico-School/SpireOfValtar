@@ -7,7 +7,7 @@ public class LightningSpell : MonoBehaviour
     [Header("Lightning Settings")]
     public float range = 20f;
     public float cooldown = 3f;
-    public float damage = 100f;
+    public float damage = 35f; // Balanced for souls-like: High single-target burst damage
 
     [Header("VFX")]
     public VisualEffect lightningVFXPrefab; // assign your LightningStrike prefab here

@@ -14579,7 +14579,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   arcHeight: 1
-  damage: 50
+  fireballRadius: 5
+  damage: 25
 --- !u!1 &4911641219556916762
 GameObject:
   m_ObjectHideFlags: 0
