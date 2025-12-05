@@ -770,6 +770,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: maxHealth
+      value: 999
+      objectReference: {fileID: 0}
+    - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: restartManager
       value: 
       objectReference: {fileID: 126691049}
@@ -777,6 +781,10 @@ PrefabInstance:
       propertyPath: healthUIDocument
       value: 
       objectReference: {fileID: 8650492187293151942}
+    - target: {fileID: 2470579908735636197, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: runMultiplier
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4654921610813067680, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: m_Name
       value: Player
@@ -960,6 +968,7 @@ MonoBehaviour:
   flashDuration: 1
   flashColor: {r: 1, g: 0, b: 0, a: 0.5}
   edgeThickness: 20
+  gradientTextureSize: 512
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -54,8 +54,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   arcHeight: 1
-  freezeSlowAmount: 0.2
+  freezeSlowAmount: 0.75
   freezeDuration: 5
+  freezeRadius: 5
 --- !u!1 &9099917820031731689
 GameObject:
   m_ObjectHideFlags: 0
