@@ -12,7 +12,6 @@ using System.Collections;
  * Assign the PlayerHealth in the Inspector.
  * The script will automatically find the PlayerHealth component in the scene.
  * The script will automatically find the UIDocument component in the scene.
- * The script will automatically find the PlayerHealth component in the scene.
  * Gleb
  * December 5, 2025
  ************************************/
@@ -25,13 +24,12 @@ public class DamageFlashUI : MonoBehaviour
     [Header("Flash Settings")]
     [SerializeField] private float flashDuration = 1f;
     [SerializeField] private Color flashColor = new Color(1f, 0f, 0f, 0.5f); // Red with transparency
-    [SerializeField] private int edgeThickness = 20; // Thickness of the red edges in pixels
+    [SerializeField] private int edgeThickness = 100; // Distance from edge where gradient starts fading
+    [SerializeField] private int gradientTextureSize = 512; // Size of the gradient texture
     
     private VisualElement root;
-    private VisualElement topEdge;
-    private VisualElement bottomEdge;
-    private VisualElement leftEdge;
-    private VisualElement rightEdge;
+    private VisualElement gradientOverlay;
+    private Texture2D gradientTexture;
     
     private int previousHealth;
     private Coroutine flashCoroutine;
@@ -86,58 +84,56 @@ public class DamageFlashUI : MonoBehaviour
     {
         root = uiDocument.rootVisualElement;
         
-        // Create edge overlays
-        topEdge = new VisualElement();
-        bottomEdge = new VisualElement();
-        leftEdge = new VisualElement();
-        rightEdge = new VisualElement();
+        // Create gradient texture
+        CreateGradientTexture();
         
-        // Style the edges
-        StyleEdge(topEdge);
-        StyleEdge(bottomEdge);
-        StyleEdge(leftEdge);
-        StyleEdge(rightEdge);
+        // Create full-screen overlay
+        gradientOverlay = new VisualElement();
+        gradientOverlay.style.position = Position.Absolute;
+        gradientOverlay.style.top = 0;
+        gradientOverlay.style.bottom = 0;
+        gradientOverlay.style.left = 0;
+        gradientOverlay.style.right = 0;
+        gradientOverlay.style.backgroundColor = new StyleColor(Color.clear);
+        gradientOverlay.style.backgroundImage = new StyleBackground(gradientTexture);
+        gradientOverlay.style.opacity = 0f; // Start invisible
         
-        // Position the edges
-        topEdge.style.position = Position.Absolute;
-        topEdge.style.top = 0;
-        topEdge.style.left = 0;
-        topEdge.style.right = 0;
-        topEdge.style.height = edgeThickness;
-        topEdge.style.backgroundColor = new StyleColor(Color.clear);
-        
-        bottomEdge.style.position = Position.Absolute;
-        bottomEdge.style.bottom = 0;
-        bottomEdge.style.left = 0;
-        bottomEdge.style.right = 0;
-        bottomEdge.style.height = edgeThickness;
-        bottomEdge.style.backgroundColor = new StyleColor(Color.clear);
-        
-        leftEdge.style.position = Position.Absolute;
-        leftEdge.style.top = 0;
-        leftEdge.style.bottom = 0;
-        leftEdge.style.left = 0;
-        leftEdge.style.width = edgeThickness;
-        leftEdge.style.backgroundColor = new StyleColor(Color.clear);
-        
-        rightEdge.style.position = Position.Absolute;
-        rightEdge.style.top = 0;
-        rightEdge.style.bottom = 0;
-        rightEdge.style.right = 0;
-        rightEdge.style.width = edgeThickness;
-        rightEdge.style.backgroundColor = new StyleColor(Color.clear);
-        
-        // Add edges to root (they're invisible by default)
-        root.Add(topEdge);
-        root.Add(bottomEdge);
-        root.Add(leftEdge);
-        root.Add(rightEdge);
+        // Add overlay to root (invisible by default)
+        root.Add(gradientOverlay);
     }
     
-    private void StyleEdge(VisualElement edge)
+    private void CreateGradientTexture()
     {
-        edge.style.position = Position.Absolute;
-        edge.style.backgroundColor = new StyleColor(Color.clear);
+        gradientTexture = new Texture2D(gradientTextureSize, gradientTextureSize, TextureFormat.RGBA32, false);
+        gradientTexture.wrapMode = TextureWrapMode.Clamp;
+        
+        // Create gradient: red at edges, transparent in center
+        for (int y = 0; y < gradientTextureSize; y++)
+        {
+            for (int x = 0; x < gradientTextureSize; x++)
+            {
+                // Calculate distance from nearest edge
+                float distFromEdge = Mathf.Min(
+                    x, // Distance from left edge
+                    gradientTextureSize - x, // Distance from right edge
+                    y, // Distance from top edge
+                    gradientTextureSize - y  // Distance from bottom edge
+                );
+                
+                // Calculate alpha based on distance from edge
+                // Closer to edge = more opaque, further = more transparent
+                float normalizedDist = distFromEdge / edgeThickness;
+                float alpha = Mathf.Clamp01(1f - normalizedDist);
+                
+                // Apply smooth falloff curve for better visual effect
+                alpha = Mathf.Pow(alpha, 2f); // Quadratic falloff for smoother gradient
+                
+                Color pixelColor = new Color(flashColor.r, flashColor.g, flashColor.b, alpha);
+                gradientTexture.SetPixel(x, y, pixelColor);
+            }
+        }
+        
+        gradientTexture.Apply();
     }
     
     public void TriggerFlash()
@@ -152,37 +148,33 @@ public class DamageFlashUI : MonoBehaviour
     
     private IEnumerator FlashCoroutine()
     {
-        // Set edges to red
-        topEdge.style.backgroundColor = new StyleColor(flashColor);
-        bottomEdge.style.backgroundColor = new StyleColor(flashColor);
-        leftEdge.style.backgroundColor = new StyleColor(flashColor);
-        rightEdge.style.backgroundColor = new StyleColor(flashColor);
+        // Show the gradient overlay at full opacity
+        gradientOverlay.style.opacity = 1f;
         
         // Fade out over time
         float elapsed = 0f;
         while (elapsed < flashDuration)
         {
             elapsed += Time.deltaTime;
-            float alpha = Mathf.Lerp(flashColor.a, 0f, elapsed / flashDuration);
-            
-            Color currentColor = flashColor;
-            currentColor.a = alpha;
-            
-            topEdge.style.backgroundColor = new StyleColor(currentColor);
-            bottomEdge.style.backgroundColor = new StyleColor(currentColor);
-            leftEdge.style.backgroundColor = new StyleColor(currentColor);
-            rightEdge.style.backgroundColor = new StyleColor(currentColor);
+            float opacity = Mathf.Lerp(1f, 0f, elapsed / flashDuration);
+            gradientOverlay.style.opacity = opacity;
             
             yield return null;
         }
         
-        // Ensure edges are fully transparent at the end
-        topEdge.style.backgroundColor = new StyleColor(Color.clear);
-        bottomEdge.style.backgroundColor = new StyleColor(Color.clear);
-        leftEdge.style.backgroundColor = new StyleColor(Color.clear);
-        rightEdge.style.backgroundColor = new StyleColor(Color.clear);
+        // Ensure overlay is fully transparent at the end
+        gradientOverlay.style.opacity = 0f;
         
         flashCoroutine = null;
+    }
+    
+    void OnDestroy()
+    {
+        // Clean up texture to prevent memory leaks
+        if (gradientTexture != null)
+        {
+            Destroy(gradientTexture);
+        }
     }
 }
 
