@@ -82,3 +82,5 @@ crashlytics-build.properties
 # Apple Finder File
 *.[Dd][Ss]_[Ss]tore
 
+*.blend1
+*.blend1.meta
