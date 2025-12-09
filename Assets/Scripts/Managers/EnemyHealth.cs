@@ -15,6 +15,13 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] FloatingHealthBar healthBar;
     [SerializeField] private GameObject deathParticle;
 
+    private int enemyKillsNeeded = 5;
+    private int enemiesKilled = 0;
+
+    private TeleporterActivater teleporterActivater;
+
+    [SerializeField] public GameObject objectToActivate;
+
     private void Awake()
     {
         healthBar = GetComponentInChildren<FloatingHealthBar>();
@@ -59,5 +66,18 @@ public class EnemyHealth : MonoBehaviour
             Instantiate(deathParticle, transform.position, Quaternion.identity);
         }
         Destroy(gameObject);
+        EnemyKilled();
+    }
+
+    public void EnemyKilled()
+    {
+        enemiesKilled++;
+        Debug.Log("+1 Enemy Killed");
+
+        if (enemiesKilled >= enemyKillsNeeded)
+        {
+            objectToActivate.SetActive(true);
+            Debug.Log("Door opened!");
+        }
     }
 }
