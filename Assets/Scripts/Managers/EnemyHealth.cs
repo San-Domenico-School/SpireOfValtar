@@ -7,7 +7,6 @@ public class EnemyHealth : MonoBehaviour
     public float maxHealth = 100f;
     public float currentHealth;
 
-
     private Renderer enemyRenderer;
     private Color originalColor;
     private bool isFlashing = false;
@@ -15,16 +14,18 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] FloatingHealthBar healthBar;
     [SerializeField] private GameObject deathParticle;
 
-    private int enemyKillsNeeded = 5;
-    private int enemiesKilled = 0;
-
-    private TeleporterActivater teleporterActivater;
+    [SerializeField] private int enemyKillsNeeded = 5;
+    [SerializeField] private int enemiesKilled = 0;
 
     [SerializeField] public GameObject objectToActivate;
 
     private void Awake()
     {
         healthBar = GetComponentInChildren<FloatingHealthBar>();
+
+        // ✅ Only assign if nothing is set in Inspector
+        if (objectToActivate == null)
+            objectToActivate = GameObject.FindGameObjectWithTag("Door");
     }
 
     private void Start()
