@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: a3ea6c588a4813949a7ce085cb443744, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -264,9 +264,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3487190318691316308, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.756
+      objectReference: {fileID: 0}
     - target: {fileID: 3567544088805216249, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
       propertyPath: m_Name
       value: Great Hall new Materials_001
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667445531573438466, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.9
       objectReference: {fileID: 0}
     - target: {fileID: 4236100400949220675, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
       propertyPath: m_LocalPosition.x
@@ -307,6 +315,26 @@ PrefabInstance:
     - target: {fileID: 4236100400949220675, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4782366409784693711, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4782366409784693711, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 5133294890339605426, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 5871828682557850340, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 6807685967837220957, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.68
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
