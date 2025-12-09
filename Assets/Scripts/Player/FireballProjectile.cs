@@ -8,8 +8,9 @@ public class FireballProjectile : MonoBehaviour
     [SerializeField] private float lifetime = 10f;
     [SerializeField] private AnimationCurve arcCurve;
     [SerializeField] private float arcHeight = 1f;
+    [SerializeField] private float fireballRadius = 5f; // AOE
 
-    [SerializeField] private float damage = 50f; // Added: fireball damage
+    [SerializeField] private float damage = 25f; // Balanced for souls-like: AOE damage
 
     public IEnumerator MoveRoutine(Vector3 direction)
     {
@@ -28,18 +29,21 @@ public class FireballProjectile : MonoBehaviour
 
                 if (hit.collider.CompareTag("Enemy"))
                 {
-                    Debug.Log("Fireball hit an enemy!");
+                    Debug.Log("Fireball hit an enemy! Applying AOE damage...");
 
-                    // DEAL DAMAGE
-                    EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
-                    if (enemyHealth != null)
+                    // AOE Damage - damage all enemies within radius
+                    Collider[] hitColliders = Physics.OverlapSphere(hit.point, fireballRadius);
+                    foreach (Collider nearby in hitColliders)
                     {
-                        enemyHealth.TakeDamage(damage);
-                        Debug.Log($"Dealt {damage} damage to {hit.collider.name}");
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Enemy hit but no EnemyHealth component found!");
+                        if (nearby.CompareTag("Enemy"))
+                        {
+                            EnemyHealth enemyHealth = nearby.GetComponent<EnemyHealth>();
+                            if (enemyHealth != null)
+                            {
+                                enemyHealth.TakeDamage(damage);
+                                Debug.Log($"Dealt {damage} damage to {nearby.name}");
+                            }
+                        }
                     }
                 }
 
@@ -61,6 +65,8 @@ public class FireballProjectile : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
+
+        
 
         Debug.Log("Fireball expired");
         // Destroy only this fireball projectile
