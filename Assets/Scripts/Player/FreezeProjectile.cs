@@ -8,8 +8,8 @@ public class FreezeProjectile : MonoBehaviour
     [SerializeField] private float lifetime = 10f;
     [SerializeField] private AnimationCurve arcCurve;
     [SerializeField] private float arcHeight = 1f;
-    [SerializeField] private float freezeSlowAmount = 0.2f; // 20% slower (0.8x speed)
-    [SerializeField] private float freezeDuration = 5f; // How long the freeze effect lasts
+    [SerializeField] private float freezeSlowAmount = 0.6f; // 60% slower (0.4x speed) - Balanced for souls-like
+    [SerializeField] private float freezeDuration = 4f; // How long the freeze effect lasts - Balanced for souls-like
     [SerializeField] private float freezeRadius = 5f; // AOE
 
     // Called by FreezeCaster

@@ -5,13 +5,13 @@ using System.Collections;
 public class EnemyController : MonoBehaviour
 {
     [Header("Enemy Settings")]
-    [SerializeField] private float baseSpeed = 3.5f;
+    [SerializeField] private float baseSpeed = 6f; // Slightly faster than player walk speed (5f) - makes freeze spell valuable
     [SerializeField] private float detectionRange = 10f;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private float rotationSpeed = 5f;
 
     [Header("Speed Modifiers")]
-    [SerializeField] private float currentSpeedMultiplier = 1f;
+    [SerializeField] private float currentSpeedMultiplier = 0.2f;
 
 
     // Components
@@ -27,8 +27,8 @@ public class EnemyController : MonoBehaviour
 
     // Damage player
     private PlayerHealth playerHealth;
-    public int damage = 10;
-    [SerializeField] private float damageInterval = 3f; // damage every 5 seconds while in contact
+    public int damage = 15; // Balanced for souls-like: More punishing damage
+    [SerializeField] private float damageInterval = 3f; // damage every 3 seconds while in contact
     private Coroutine damageCoroutine;
 
     void Start()
