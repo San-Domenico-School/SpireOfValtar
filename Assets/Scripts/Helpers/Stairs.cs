@@ -1,5 +1,11 @@
 using UnityEngine;
 
+/************************************
+ * controls the stair animation and audio 
+ * Seamus
+ * Version 1.0
+ ************************************/
+
 [RequireComponent(typeof(Animator))]
 public class Stairs : MonoBehaviour
 {
