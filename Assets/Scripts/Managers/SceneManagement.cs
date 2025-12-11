@@ -11,8 +11,7 @@ public class SceneManagement : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             SceneManager.LoadScene(sceneToLoad);
-            Debug.Log("Player progressed to next scene");
-            
+            Debug.Log("Player progressed to next scene");    
         }
     }
 }

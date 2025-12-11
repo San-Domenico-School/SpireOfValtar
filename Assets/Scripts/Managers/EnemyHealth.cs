@@ -7,7 +7,6 @@ public class EnemyHealth : MonoBehaviour
     public float maxHealth = 100f;
     public float currentHealth;
 
-
     private Renderer enemyRenderer;
     private Color originalColor;
     private bool isFlashing = false;
@@ -15,9 +14,17 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] FloatingHealthBar healthBar;
     [SerializeField] private GameObject deathParticle;
 
+    [SerializeField] private int enemyKillsNeeded = 1;
+    [SerializeField] private int enemiesKilled = 0;
+
+
+    private Stairs stairs;
+
     private void Awake()
     {
         healthBar = GetComponentInChildren<FloatingHealthBar>();
+
+        stairs = GameObject.Find("Great Hall new Materials_001").GetComponent<Stairs>();
     }
 
     private void Start()
@@ -59,5 +66,18 @@ public class EnemyHealth : MonoBehaviour
             Instantiate(deathParticle, transform.position, Quaternion.identity);
         }
         Destroy(gameObject);
+        EnemyKilled();
+    }
+
+    public void EnemyKilled()
+    {
+        enemiesKilled++;
+        Debug.Log("+1 Enemy Killed");
+
+        if (enemiesKilled >= enemyKillsNeeded)
+        {
+            stairs.Progress();
+            Debug.Log("Stairs lowered");
+        }
     }
 }

@@ -60,5 +60,4 @@ public class PlayerHealth : MonoBehaviour
             healthBar.highValue = maxHealth;
         }
     }
-
 }
