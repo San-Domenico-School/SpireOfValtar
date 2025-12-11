@@ -14,18 +14,17 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] FloatingHealthBar healthBar;
     [SerializeField] private GameObject deathParticle;
 
-    [SerializeField] private int enemyKillsNeeded = 5;
+    [SerializeField] private int enemyKillsNeeded = 1;
     [SerializeField] private int enemiesKilled = 0;
 
-    [SerializeField] public GameObject objectToActivate;
+
+    private Stairs stairs;
 
     private void Awake()
     {
         healthBar = GetComponentInChildren<FloatingHealthBar>();
 
-        // ✅ Only assign if nothing is set in Inspector
-        if (objectToActivate == null)
-            objectToActivate = GameObject.FindGameObjectWithTag("Door");
+        stairs = GameObject.Find("Great Hall new Materials_001").GetComponent<Stairs>();
     }
 
     private void Start()
@@ -77,8 +76,8 @@ public class EnemyHealth : MonoBehaviour
 
         if (enemiesKilled >= enemyKillsNeeded)
         {
-            objectToActivate.SetActive(true);
-            Debug.Log("Door opened!");
+            stairs.Progress();
+            Debug.Log("Stairs lowered");
         }
     }
 }
