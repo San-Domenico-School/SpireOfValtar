@@ -771,33 +771,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1570995586 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 645636378942873522, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
-  m_PrefabInstance: {fileID: 1679775812}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &1570995590
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1570995586}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 5543852910939878438, guid: 0931931a5c69a78488c5515f1d19eaba, type: 3}
 --- !u!4 &1594931101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1427325297843683170, guid: c0f1bc86aacf34d60aaa330e434371ff, type: 3}
@@ -931,62 +904,17 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3567544088805216249, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1679775814}
-    - targetCorrespondingSourceObject: {fileID: 3567544088805216249, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1679775817}
-    - targetCorrespondingSourceObject: {fileID: 3567544088805216249, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1679775816}
-    - targetCorrespondingSourceObject: {fileID: 645636378942873522, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1570995590}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
 --- !u!1 &1679775813 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3567544088805216249, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
   m_PrefabInstance: {fileID: 1679775812}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1679775814
+--- !u!114 &1679775816 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1679775813}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 3b4c47cca896148e4a94e66113bd8082, type: 2}
-  m_BuildHeightMesh: 0
---- !u!114 &1679775816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 6908394193366460276, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
+  m_PrefabInstance: {fileID: 1679775812}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1679775813}
   m_Enabled: 1
@@ -994,29 +922,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f326219d2b7ed4d972be308bdafd6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stairs
-  numberOfEnemies: 1
---- !u!95 &1679775817
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1679775813}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ec160586376d9ed46bee14c8dcc52724, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1714454510 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4446561019528792011, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
