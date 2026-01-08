@@ -476,6 +476,8 @@ MonoBehaviour:
   currentHealth: 0
   healthBar: {fileID: 4015550118316039084}
   deathParticle: {fileID: 2018934290385573034, guid: 1ee9a7fc20f3543bb80048eda473aa88, type: 3}
+  enemyKillsNeeded: 1
+  enemiesKilled: 0
 --- !u!114 &-1565761978949787313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,7 +496,7 @@ MonoBehaviour:
   rotationSpeed: 5
   projectilePrefab: {fileID: 2081132082438070434, guid: 7394e1b9aa0954308a3040d2d7b0164e, type: 3}
   firePoint: {fileID: 6019195495182123421}
-  fireRate: 1
+  fireRate: 0.5
   projectileDamage: 10
   currentSpeedMultiplier: 1
   damage: 10
