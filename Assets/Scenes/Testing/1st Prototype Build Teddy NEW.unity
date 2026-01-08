@@ -776,79 +776,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1427325297843683170, guid: c0f1bc86aacf34d60aaa330e434371ff, type: 3}
   m_PrefabInstance: {fileID: 1069919202}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1652083368
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -4.2905436
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.154
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.10926056
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3177292819868564285, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_Name
-      value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 7090493283282442718, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: stairs
-      value: 
-      objectReference: {fileID: 1679775816}
-    - target: {fileID: 7090493283282442718, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: greatHall
-      value: 
-      objectReference: {fileID: 1679775813}
-    - target: {fileID: 8560453381884413085, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8560453381884413085, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
 --- !u!1001 &1679775812
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -906,22 +833,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
---- !u!1 &1679775813 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3567544088805216249, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
-  m_PrefabInstance: {fileID: 1679775812}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1679775816 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6908394193366460276, guid: ca6c5b8ee3086604b84b9b88c62be314, type: 3}
-  m_PrefabInstance: {fileID: 1679775812}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1679775813}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3f326219d2b7ed4d972be308bdafd6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stairs
 --- !u!1 &1714454510 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4446561019528792011, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
@@ -1153,4 +1064,3 @@ SceneRoots:
   - {fileID: 126691050}
   - {fileID: 1331499952}
   - {fileID: 1679775812}
-  - {fileID: 1652083368}
