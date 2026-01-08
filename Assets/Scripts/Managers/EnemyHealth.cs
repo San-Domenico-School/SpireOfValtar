@@ -76,8 +76,9 @@ public class EnemyHealth : MonoBehaviour
 
         if (enemiesKilled >= enemyKillsNeeded)
         {
+            //gameObject.SetActive(true);
             stairs.Progress();
-            Debug.Log("Stairs lowered");
+            Debug.Log("Stairs lowered, teleporter active");
         }
     }
 }
