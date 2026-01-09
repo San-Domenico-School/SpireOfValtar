@@ -35,7 +35,8 @@ public class GameUIManager : MonoBehaviour
     {
         var rootVisualElement = uiDocument.rootVisualElement;
         
-        gameUIContainer = rootVisualElement.Q<VisualElement>("GameUIContainer");
+        // Use root element as gameUIContainer since Game_View.uxml doesn't have a GameUIContainer element
+        gameUIContainer = rootVisualElement;
         menuButton = rootVisualElement.Q<Button>("MenuButton");
         mainMenuManager = FindObjectOfType<MainMenuManager>();
         
@@ -54,6 +55,8 @@ public class GameUIManager : MonoBehaviour
         {
             inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
         }
+        
+        Debug.Log($"GameUIManager: Start complete. pauseMenuDocument: {(pauseMenuDocument != null ? "assigned" : "NULL - ASSIGN IN INSPECTOR!")}, gameUIContainer: {(gameUIContainer != null ? "found" : "not found")}, uiDocument: {(uiDocument != null ? "exists" : "null")}");
     }
     
     void Update()
@@ -61,17 +64,27 @@ public class GameUIManager : MonoBehaviour
         // Only handle ESC if game UI is visible (game is actually running)
         bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
         
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && gameUIVisible)
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
+            Debug.Log($"GameUIManager: ESC pressed. gameUIVisible: {gameUIVisible}, isPaused: {isPaused}, gameUIContainer: {(gameUIContainer != null ? "exists" : "null")}");
+            
+            if (!gameUIVisible)
+            {
+                Debug.Log("GameUIManager: Game UI not visible, ignoring ESC");
+                return;
+            }
+            
             // Check for ESC key press during rebinding to cancel it
             if (pauseRebindOperation != null)
             {
+                Debug.Log("GameUIManager: Canceling rebind operation");
                 pauseRebindOperation.Cancel();
                 return;
             }
             
             if (isPaused)
             {
+                Debug.Log("GameUIManager: Game is paused, handling ESC for resume/close menus");
                 if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null && 
                     controlsPauseDocument.rootVisualElement.style.display == DisplayStyle.Flex)
                 {
@@ -91,6 +104,8 @@ public class GameUIManager : MonoBehaviour
             }
             else
             {
+                // Pause the game
+                Debug.Log("GameUIManager: Pausing game");
                 PauseGame();
             }
         }
@@ -100,7 +115,15 @@ public class GameUIManager : MonoBehaviour
     {
         if (pauseMenuDocument != null)
         {
+            pauseMenuDocument.enabled = true;
             var pauseRoot = pauseMenuDocument.rootVisualElement;
+            
+            if (pauseRoot == null)
+            {
+                Debug.LogWarning("GameUIManager: pauseMenuDocument.rootVisualElement is null during initialization!");
+                return;
+            }
+            
             pauseControlsButton = pauseRoot.Q<Button>("ControlsButton");
             pauseMainMenuButton = pauseRoot.Q<Button>("MainMenuButton");
             pauseExitButton = pauseRoot.Q<Button>("ExitButton");
@@ -120,10 +143,12 @@ public class GameUIManager : MonoBehaviour
                 pauseExitButton.clicked += OnPauseExitClicked;
             }
             
-            if (pauseMenuDocument.rootVisualElement != null)
+            // Hide pause menu initially
+            pauseRoot.style.display = DisplayStyle.None;
+        }
+        else
             {
-                pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
-            }
+            Debug.LogWarning("GameUIManager: pauseMenuDocument is null!");
         }
     }
     
@@ -474,16 +499,35 @@ public class GameUIManager : MonoBehaviour
     
     public void PauseGame()
     {
-        if (isPaused) return;
+        if (isPaused)
+        {
+            Debug.Log("GameUIManager: Already paused, skipping");
+            return;
+        }
+        
+        Debug.Log($"GameUIManager: PauseGame called. pauseMenuDocument: {(pauseMenuDocument != null ? "exists" : "NULL")}");
         
         isPaused = true;
         Time.timeScale = 0f;
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
         
-        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        if (pauseMenuDocument != null)
         {
-            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            pauseMenuDocument.enabled = true;
+            if (pauseMenuDocument.rootVisualElement != null)
+            {
+                pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+                Debug.Log("GameUIManager: Pause menu should now be visible");
+            }
+            else
+            {
+                Debug.LogError("GameUIManager: pauseMenuDocument.rootVisualElement is null! Document enabled: " + pauseMenuDocument.enabled);
+            }
+        }
+        else
+        {
+            Debug.LogError("GameUIManager: pauseMenuDocument is null! Make sure it's assigned in the inspector!");
         }
     }
     

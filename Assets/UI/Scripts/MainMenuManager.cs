@@ -82,6 +82,14 @@ public class MainMenuManager : MonoBehaviour
     
     void Update()
     {
+        // Only handle ESC if we're in the main menu context (not in game)
+        // Check if game UI is visible - if so, let GameUIManager handle ESC
+        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null && 
+            gameUIDocument.rootVisualElement.style.display == DisplayStyle.Flex)
+        {
+            return; // Game is running, let GameUIManager handle ESC
+        }
+        
         // Handle ESC key when in settings menu from main menu
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
