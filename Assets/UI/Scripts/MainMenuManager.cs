@@ -6,7 +6,7 @@ using System.Collections;
 /************************************
  * Handles main menu UI, button clicks, and scene navigation.
  * Manages Start, Controls, and Exit buttons, and coordinates with other UI managers.
- * Gleb 11/4/25
+ * Gleb 01/09/26
  * Version 1.0
  ************************************/
 public class MainMenuManager : MonoBehaviour

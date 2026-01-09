@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /************************************
  * Manages spell selection UI display in the game view.
  * Shows spell boxes in bottom right corner with highlighting for current spell.
- * Auto-generated 12/19/24
+ * Gleb 01/09/26
  * Version 1.0
  ************************************/
 public class SpellUI : MonoBehaviour

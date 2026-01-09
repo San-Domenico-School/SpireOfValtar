@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 /************************************
  * Manages game settings including mouse sensitivity and master volume.
  * Persists settings using PlayerPrefs and applies them to game systems.
- * Auto-generated 12/19/24
+ * Gleb 01/09/26
  * Version 1.0
  ************************************/
 public class SettingsManager : MonoBehaviour

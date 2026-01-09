@@ -8,7 +8,7 @@ using System.Collections.Generic;
  * Manages the controls menu UI display and navigation.
  * Handles showing/hiding controls menu and back button functionality.
  * Now includes settings management for mouse sensitivity and volume.
- * Gleb 11/4/25
+ * Gleb 01/09/26
  * Version 2.0
  ************************************/
 public class ControlsManager : MonoBehaviour

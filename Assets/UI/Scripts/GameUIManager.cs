@@ -7,7 +7,7 @@ using System.Linq;
 /************************************
  * Handles game UI, pause menu, and ESC key controls.
  * Manages pause/unpause, controls menu navigation, and menu button functionality.
- * Gleb 11/4/25
+ * Gleb 01/09/26
  * Version 1.0
  ************************************/
 public class GameUIManager : MonoBehaviour
