@@ -259,6 +259,7 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveBackward", ("Move", "down") },
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
+            { "Keybind_Jump", ("Jump", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_NextSpell", ("Next", null) },
             { "Keybind_PreviousSpell", ("Previous", null) }
@@ -323,6 +324,7 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveBackward", ("Move", "down") },
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
+            { "Keybind_Jump", ("Jump", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_NextSpell", ("Next", null) },
             { "Keybind_PreviousSpell", ("Previous", null) }
@@ -347,26 +349,69 @@ public class GameUIManager : MonoBehaviour
             var verticalScroller = scrollView.verticalScroller;
             if (verticalScroller != null)
             {
-                // Style the scrollbar track (drag container)
+                // Match UI background color exactly - no borders
+                Color darkBg = new Color(20f / 255f, 20f / 255f, 20f / 255f, 1f);
+                verticalScroller.style.backgroundColor = darkBg;
+                verticalScroller.style.borderLeftWidth = 0;
+                verticalScroller.style.borderRightWidth = 0;
+                verticalScroller.style.borderTopWidth = 0;
+                verticalScroller.style.borderBottomWidth = 0;
+                
+                // Style the scrollbar track (drag container) - match background, no borders
                 var track = verticalScroller.Q("unity-drag-container");
                 if (track != null)
                 {
-                    track.style.backgroundColor = new Color(40f / 255f, 40f / 255f, 40f / 255f, 1f);
+                    track.style.backgroundColor = darkBg;
+                    track.style.borderLeftWidth = 0;
+                    track.style.borderRightWidth = 0;
+                    track.style.borderTopWidth = 0;
+                    track.style.borderBottomWidth = 0;
                 }
                 
-                // Style the scrollbar thumb (dragger)
+                // Style scrollbar buttons (up/down arrows) - match background, no borders
+                var upButton = verticalScroller.Q("unity-up-button");
+                if (upButton != null)
+                {
+                    upButton.style.backgroundColor = darkBg;
+                    upButton.style.borderLeftWidth = 0;
+                    upButton.style.borderRightWidth = 0;
+                    upButton.style.borderTopWidth = 0;
+                    upButton.style.borderBottomWidth = 0;
+                }
+                
+                var downButton = verticalScroller.Q("unity-down-button");
+                if (downButton != null)
+                {
+                    downButton.style.backgroundColor = darkBg;
+                    downButton.style.borderLeftWidth = 0;
+                    downButton.style.borderRightWidth = 0;
+                    downButton.style.borderTopWidth = 0;
+                    downButton.style.borderBottomWidth = 0;
+                }
+                
+                // Style all children to ensure no white backgrounds and no borders
+                var allChildren = verticalScroller.Children();
+                foreach (var child in allChildren)
+                {
+                    if (child.name != "unity-dragger") // Don't override thumb color
+                    {
+                        child.style.backgroundColor = darkBg;
+                        child.style.borderLeftWidth = 0;
+                        child.style.borderRightWidth = 0;
+                        child.style.borderTopWidth = 0;
+                        child.style.borderBottomWidth = 0;
+                    }
+                }
+                
+                // Style the scrollbar thumb (dragger) - clean orange, no border
                 var thumb = verticalScroller.Q("unity-dragger");
                 if (thumb != null)
                 {
                     thumb.style.backgroundColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
-                    thumb.style.borderLeftWidth = 1;
-                    thumb.style.borderRightWidth = 1;
-                    thumb.style.borderTopWidth = 1;
-                    thumb.style.borderBottomWidth = 1;
-                    thumb.style.borderLeftColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
-                    thumb.style.borderRightColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
-                    thumb.style.borderTopColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
-                    thumb.style.borderBottomColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderLeftWidth = 0;
+                    thumb.style.borderRightWidth = 0;
+                    thumb.style.borderTopWidth = 0;
+                    thumb.style.borderBottomWidth = 0;
                     thumb.style.borderTopLeftRadius = 3;
                     thumb.style.borderTopRightRadius = 3;
                     thumb.style.borderBottomLeftRadius = 3;
@@ -576,8 +621,8 @@ public class GameUIManager : MonoBehaviour
         {
             pauseMenuDocument.enabled = true;
             if (pauseMenuDocument.rootVisualElement != null)
-            {
-                pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
                 Debug.Log("GameUIManager: Pause menu should now be visible");
             }
             else
