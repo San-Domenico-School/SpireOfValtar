@@ -21,6 +21,7 @@ public class GameUIManager : MonoBehaviour
     private Button menuButton;
     private MainMenuManager mainMenuManager;
     
+    private Button pauseResumeButton;
     private Button pauseControlsButton;
     private Button pauseMainMenuButton;
     private Button pauseExitButton;
@@ -84,27 +85,27 @@ public class GameUIManager : MonoBehaviour
             
             if (isPaused)
             {
-                Debug.Log("GameUIManager: Game is paused, handling ESC for resume/close menus");
+                Debug.Log("GameUIManager: Game is paused, handling ESC for navigation between menus");
+                // ESC can navigate between pause menu and settings, but cannot close pause menu
                 if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null && 
                     controlsPauseDocument.rootVisualElement.style.display == DisplayStyle.Flex)
                 {
+                    // Close settings and return to pause menu
                     HideControlsPauseMenu();
                     ShowPauseMenu();
                 }
                 else if (controlsDocument != null && controlsDocument.rootVisualElement != null && 
                     controlsDocument.rootVisualElement.style.display == DisplayStyle.Flex)
                 {
+                    // Close controls and return to pause menu
                     HideControlsMenu();
                     ShowPauseMenu();
                 }
-                else
-                {
-                    ResumeGame();
-                }
+                // If pause menu is open, ESC does nothing - only Resume button can close it
             }
             else
             {
-                // Pause the game
+                // Pause the game - ESC can only open pause menu
                 Debug.Log("GameUIManager: Pausing game");
                 PauseGame();
             }
@@ -124,9 +125,15 @@ public class GameUIManager : MonoBehaviour
                 return;
             }
             
+            pauseResumeButton = pauseRoot.Q<Button>("ResumeButton");
             pauseControlsButton = pauseRoot.Q<Button>("ControlsButton");
             pauseMainMenuButton = pauseRoot.Q<Button>("MainMenuButton");
             pauseExitButton = pauseRoot.Q<Button>("ExitButton");
+            
+            if (pauseResumeButton != null)
+            {
+                pauseResumeButton.clicked += OnPauseResumeClicked;
+            }
             
             if (pauseControlsButton != null)
             {
@@ -563,8 +570,7 @@ public class GameUIManager : MonoBehaviour
         
         isPaused = true;
         Time.timeScale = 0f;
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
+        UnlockCursor();
         
         if (pauseMenuDocument != null)
         {
@@ -585,15 +591,28 @@ public class GameUIManager : MonoBehaviour
         }
     }
     
+    // Public method to lock cursor - can be called from UI buttons
+    public void LockCursor()
+    {
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
+    }
+    
+    // Public method to unlock cursor - can be called from UI buttons
+    public void UnlockCursor()
+    {
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+    }
+    
     public void ResumeGame()
     {
         if (!isPaused) return;
         
         isPaused = false;
         Time.timeScale = 1f;
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
         
+        // Hide all pause-related UI first
         if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
@@ -608,6 +627,15 @@ public class GameUIManager : MonoBehaviour
         {
             controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+        
+        // Lock cursor using the button-triggered method
+        LockCursor();
+    }
+    
+    // Called when Resume button is clicked - this ensures cursor locks from button click
+    private void OnPauseResumeClicked()
+    {
+        ResumeGame();
     }
     
     private void ShowPauseMenu()
@@ -644,8 +672,7 @@ public class GameUIManager : MonoBehaviour
     
     private void OnPauseControlsClicked()
     {
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
+        UnlockCursor();
         
         if (controlsPauseDocument != null)
         {
