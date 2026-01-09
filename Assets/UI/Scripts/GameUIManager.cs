@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
+using System.Linq;
 
 /************************************
  * Handles game UI, pause menu, and ESC key controls.
@@ -24,6 +26,10 @@ public class GameUIManager : MonoBehaviour
     private Button pauseExitButton;
     
     private bool isPaused = false;
+    [SerializeField] private InputActionAsset inputActions;
+    private Dictionary<string, Button> pauseKeybindButtons = new Dictionary<string, Button>();
+    private VisualElement pauseRebindPrompt;
+    private InputActionRebindingExtensions.RebindingOperation pauseRebindOperation;
     
     void Start()
     {
@@ -42,6 +48,12 @@ public class GameUIManager : MonoBehaviour
         InitializePauseMenu();
         InitializeControlsMenu();
         InitializeControlsPauseMenu();
+        
+        // Find input actions if not assigned
+        if (inputActions == null)
+        {
+            inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
+        }
     }
     
     void Update()
@@ -186,6 +198,183 @@ public class GameUIManager : MonoBehaviour
         {
             volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
         }
+        
+        // Initialize keybinds for pause menu
+        InitializePauseKeybinds(rootVisualElement);
+    }
+    
+    private void InitializePauseKeybinds(VisualElement root)
+    {
+        if (inputActions == null) return;
+        
+        var keybindMap = new Dictionary<string, (string actionName, string partName)>
+        {
+            { "Keybind_MoveForward", ("Move", "up") },
+            { "Keybind_MoveBackward", ("Move", "down") },
+            { "Keybind_MoveLeft", ("Move", "left") },
+            { "Keybind_MoveRight", ("Move", "right") },
+            { "Keybind_CastSpell", ("Attack", null) },
+            { "Keybind_NextSpell", ("Next", null) },
+            { "Keybind_PreviousSpell", ("Previous", null) }
+        };
+        
+        var playerMap = inputActions.FindActionMap("Player");
+        if (playerMap == null) return;
+        
+        foreach (var kvp in keybindMap)
+        {
+            Button button = root.Q<Button>(kvp.Key);
+            if (button != null)
+            {
+                pauseKeybindButtons[kvp.Key] = button;
+                string keyName = GetCurrentKeyName(playerMap, kvp.Value.actionName, kvp.Value.partName);
+                button.text = keyName;
+                
+                string actionName = kvp.Value.actionName;
+                string partName = kvp.Value.partName;
+                button.clicked += () => StartPauseRebinding(kvp.Key, actionName, partName, button);
+            }
+        }
+        
+        pauseRebindPrompt = root.Q<VisualElement>("RebindPrompt");
+    }
+    
+    private string GetCurrentKeyName(InputActionMap playerMap, string actionName, string partName)
+    {
+        InputAction action = playerMap.FindAction(actionName);
+        if (action == null) return "?";
+        
+        if (partName != null)
+        {
+            foreach (var binding in action.bindings)
+            {
+                if (binding.isPartOfComposite && binding.name == partName)
+                {
+                    return FormatKeyName(binding.path);
+                }
+            }
+        }
+        else
+        {
+            foreach (var binding in action.bindings)
+            {
+                if (!binding.isComposite && !binding.isPartOfComposite)
+                {
+                    return FormatKeyName(binding.path);
+                }
+            }
+        }
+        
+        return "?";
+    }
+    
+    private string FormatKeyName(string path)
+    {
+        if (path.Contains("<Keyboard>/"))
+        {
+            string key = path.Replace("<Keyboard>/", "");
+            if (key.Length == 1) return key.ToUpper();
+            
+            switch (key.ToLower())
+            {
+                case "uparrow": return "↑";
+                case "downarrow": return "↓";
+                case "leftarrow": return "←";
+                case "rightarrow": return "→";
+                case "space": return "Space";
+                default: return char.ToUpper(key[0]) + key.Substring(1);
+            }
+        }
+        else if (path.Contains("<Mouse>/"))
+        {
+            string button = path.Replace("<Mouse>/", "");
+            if (button == "leftButton") return "Left Mouse";
+            if (button == "rightButton") return "Right Mouse";
+            return "Mouse " + button;
+        }
+        
+        return path;
+    }
+    
+    private void StartPauseRebinding(string buttonName, string actionName, string partName, Button button)
+    {
+        if (pauseRebindOperation != null) return;
+        
+        if (inputActions == null) return;
+        var playerMap = inputActions.FindActionMap("Player");
+        if (playerMap == null) return;
+        
+        InputAction action = playerMap.FindAction(actionName);
+        if (action == null) return;
+        
+        int bindingIndex = -1;
+        if (partName != null)
+        {
+            for (int i = 0; i < action.bindings.Count; i++)
+            {
+                if (action.bindings[i].isPartOfComposite && action.bindings[i].name == partName)
+                {
+                    bindingIndex = i;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < action.bindings.Count; i++)
+            {
+                if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
+                {
+                    bindingIndex = i;
+                    break;
+                }
+            }
+        }
+        
+        if (bindingIndex == -1) return;
+        
+        if (pauseRebindPrompt != null)
+        {
+            pauseRebindPrompt.style.display = DisplayStyle.Flex;
+        }
+        
+        action.Disable();
+        
+        pauseRebindOperation = action.PerformInteractiveRebinding(bindingIndex)
+            .WithControlsExcluding("<Mouse>/position")
+            .WithControlsExcluding("<Mouse>/delta")
+            .OnMatchWaitForAnother(0.1f)
+            .OnComplete(operation =>
+            {
+                string newKey = FormatKeyName(operation.selectedControl.path);
+                button.text = newKey;
+                
+                string key = $"Keybind_{buttonName}_{actionName}_{partName}";
+                PlayerPrefs.SetString(key, operation.selectedControl.path);
+                PlayerPrefs.Save();
+                
+                operation.Dispose();
+                pauseRebindOperation = null;
+                action.Enable();
+                
+                if (pauseRebindPrompt != null)
+                {
+                    pauseRebindPrompt.style.display = DisplayStyle.None;
+                }
+            })
+            .OnCancel(operation =>
+            {
+                operation.Dispose();
+                pauseRebindOperation = null;
+                action.Enable();
+                
+                if (pauseRebindPrompt != null)
+                {
+                    pauseRebindPrompt.style.display = DisplayStyle.None;
+                }
+            });
+        
+        pauseRebindOperation.Start();
     }
     
     public void PauseGame()
@@ -388,5 +577,11 @@ public class GameUIManager : MonoBehaviour
     void OnDestroy()
     {
         Time.timeScale = 1f;
+        
+        if (pauseRebindOperation != null)
+        {
+            pauseRebindOperation.Cancel();
+            pauseRebindOperation = null;
+        }
     }
 }

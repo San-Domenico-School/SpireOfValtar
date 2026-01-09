@@ -100,24 +100,64 @@ public class MainMenuManager : MonoBehaviour
     
     private void OnControlsButtonClicked()
     {
+        // Ensure game is paused when in menu
+        Time.timeScale = 0f;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        
         HideMainMenu();
         
         if (controlsUIDocument == null)
         {
+            Debug.LogWarning("MainMenuManager: controlsUIDocument is null!");
             return;
         }
+        
+        // Ensure UIDocument is enabled
+        controlsUIDocument.enabled = true;
         
         if (controlsUIDocument.rootVisualElement != null)
         {
             controlsUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
         }
         
+        // Make sure game UI is hidden
+        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
+        {
+            gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        
         if (controlsManager == null)
         {
+            Debug.LogWarning("MainMenuManager: controlsManager is null!");
             return;
         }
         
-        controlsManager.ShowControls();
+        // Ensure initialization happens before showing
+        if (controlsUIDocument != null)
+        {
+            controlsManager.InitializeFromUIDocument(controlsUIDocument);
+        }
+        
+        // Small delay to ensure everything is ready
+        StartCoroutine(ShowControlsDelayed());
+    }
+    
+    private System.Collections.IEnumerator ShowControlsDelayed()
+    {
+        yield return null; // Wait one frame
+        
+        if (controlsManager != null && controlsUIDocument != null)
+        {
+            // Double-check the document is still enabled and visible
+            controlsUIDocument.enabled = true;
+            if (controlsUIDocument.rootVisualElement != null)
+            {
+                controlsUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            }
+            
+            controlsManager.ShowControls();
+        }
     }
     
     private void OnExitButtonClicked()
