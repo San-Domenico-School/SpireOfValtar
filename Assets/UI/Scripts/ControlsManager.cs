@@ -249,6 +249,27 @@ public class ControlsManager : MonoBehaviour
                     track.style.borderRightWidth = 0;
                     track.style.borderTopWidth = 0;
                     track.style.borderBottomWidth = 0;
+                    
+                    // Also style all children of the track to ensure they're dark
+                    var trackChildren = track.Children();
+                    foreach (var trackChild in trackChildren)
+                    {
+                        if (trackChild.name != "unity-dragger")
+                        {
+                            trackChild.style.backgroundColor = darkBg;
+                            trackChild.style.borderLeftWidth = 0;
+                            trackChild.style.borderRightWidth = 0;
+                            trackChild.style.borderTopWidth = 0;
+                            trackChild.style.borderBottomWidth = 0;
+                        }
+                    }
+                }
+                
+                // Also check for slider element which might be the track
+                var slider = verticalScroller.Q<UnityEngine.UIElements.Slider>();
+                if (slider != null)
+                {
+                    slider.style.backgroundColor = darkBg;
                 }
                 
                 // Style scrollbar buttons (up/down arrows) - match background, no borders
@@ -272,6 +293,9 @@ public class ControlsManager : MonoBehaviour
                     downButton.style.borderBottomWidth = 0;
                 }
                 
+                // Get the thumb first so we can reference it
+                var thumb = verticalScroller.Q("unity-dragger");
+                
                 // Style all children to ensure no white backgrounds and no borders
                 var allChildren = verticalScroller.Children();
                 foreach (var child in allChildren)
@@ -286,8 +310,21 @@ public class ControlsManager : MonoBehaviour
                     }
                 }
                 
+                // Style all descendants recursively to catch any nested gray elements
+                var allDescendants = verticalScroller.Query<VisualElement>().ToList();
+                foreach (var descendant in allDescendants)
+                {
+                    if (descendant.name != "unity-dragger" && descendant != thumb)
+                    {
+                        descendant.style.backgroundColor = darkBg;
+                        descendant.style.borderLeftWidth = 0;
+                        descendant.style.borderRightWidth = 0;
+                        descendant.style.borderTopWidth = 0;
+                        descendant.style.borderBottomWidth = 0;
+                    }
+                }
+                
                 // Style the scrollbar thumb (dragger) - clean orange, no border
-                var thumb = verticalScroller.Q("unity-dragger");
                 if (thumb != null)
                 {
                     thumb.style.backgroundColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
