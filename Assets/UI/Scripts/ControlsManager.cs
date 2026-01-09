@@ -35,6 +35,11 @@ public class ControlsManager : MonoBehaviour
     private InputActionRebindingExtensions.RebindingOperation rebindOperation;
     private string currentRebindingAction = null;
     
+    public bool IsRebindingInProgress()
+    {
+        return rebindOperation != null;
+    }
+    
     void Start()
     {
         mainMenuManager = FindObjectOfType<MainMenuManager>();
@@ -203,6 +208,63 @@ public class ControlsManager : MonoBehaviour
         }
         
         rebindPrompt = root.Q<VisualElement>("RebindPrompt");
+        
+        // Style the scrollbar to match the design
+        StyleScrollbar(root);
+    }
+    
+    void Update()
+    {
+        // Check for ESC key press during rebinding to cancel it
+        if (rebindOperation != null && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            rebindOperation.Cancel();
+        }
+    }
+    
+    private void StyleScrollbar(VisualElement root)
+    {
+        ScrollView scrollView = root.Q<ScrollView>("ContentScrollView");
+        if (scrollView != null)
+        {
+            // Use ScrollView's verticalScroller property
+            var verticalScroller = scrollView.verticalScroller;
+            if (verticalScroller != null)
+            {
+                // Style the scrollbar track (drag container)
+                var track = verticalScroller.Q("unity-drag-container");
+                if (track != null)
+                {
+                    track.style.backgroundColor = new Color(40f / 255f, 40f / 255f, 40f / 255f, 1f);
+                }
+                
+                // Style the scrollbar thumb (dragger)
+                var thumb = verticalScroller.Q("unity-dragger");
+                if (thumb != null)
+                {
+                    thumb.style.backgroundColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
+                    thumb.style.borderLeftWidth = 1;
+                    thumb.style.borderRightWidth = 1;
+                    thumb.style.borderTopWidth = 1;
+                    thumb.style.borderBottomWidth = 1;
+                    thumb.style.borderLeftColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderRightColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderTopColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderBottomColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderTopLeftRadius = 3;
+                    thumb.style.borderTopRightRadius = 3;
+                    thumb.style.borderBottomLeftRadius = 3;
+                    thumb.style.borderBottomRightRadius = 3;
+                }
+            }
+            
+            // Hide horizontal scrollbar using the property
+            var horizontalScroller = scrollView.horizontalScroller;
+            if (horizontalScroller != null)
+            {
+                horizontalScroller.style.display = DisplayStyle.None;
+            }
+        }
     }
     
     private string GetCurrentKeyName(InputActionMap playerMap, string actionName, string partName)
@@ -305,6 +367,8 @@ public class ControlsManager : MonoBehaviour
     {
         if (rebindOperation != null) return; // Already rebinding
         
+        currentRebindingAction = actionName;
+        
         if (inputActions == null) return;
         var playerMap = inputActions.FindActionMap("Player");
         if (playerMap == null) return;
@@ -364,6 +428,7 @@ public class ControlsManager : MonoBehaviour
                 
                 operation.Dispose();
                 rebindOperation = null;
+                currentRebindingAction = null;
                 action.Enable();
                 
                 if (rebindPrompt != null)
@@ -375,6 +440,7 @@ public class ControlsManager : MonoBehaviour
             {
                 operation.Dispose();
                 rebindOperation = null;
+                currentRebindingAction = null;
                 action.Enable();
                 
                 if (rebindPrompt != null)
@@ -524,7 +590,7 @@ public class ControlsManager : MonoBehaviour
         
         if (mainMenuManager != null)
         {
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.OnBackFromSettings();
         }
     }
     

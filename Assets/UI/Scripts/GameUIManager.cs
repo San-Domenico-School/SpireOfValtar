@@ -58,8 +58,18 @@ public class GameUIManager : MonoBehaviour
     
     void Update()
     {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        // Only handle ESC if game UI is visible (game is actually running)
+        bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
+        
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && gameUIVisible)
         {
+            // Check for ESC key press during rebinding to cancel it
+            if (pauseRebindOperation != null)
+            {
+                pauseRebindOperation.Cancel();
+                return;
+            }
+            
             if (isPaused)
             {
                 if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null && 
@@ -237,6 +247,54 @@ public class GameUIManager : MonoBehaviour
         }
         
         pauseRebindPrompt = root.Q<VisualElement>("RebindPrompt");
+        
+        // Style the scrollbar to match the design
+        StylePauseScrollbar(root);
+    }
+    
+    private void StylePauseScrollbar(VisualElement root)
+    {
+        ScrollView scrollView = root.Q<ScrollView>("ContentScrollView");
+        if (scrollView != null)
+        {
+            // Use ScrollView's verticalScroller and horizontalScroller properties
+            var verticalScroller = scrollView.verticalScroller;
+            if (verticalScroller != null)
+            {
+                // Style the scrollbar track (drag container)
+                var track = verticalScroller.Q("unity-drag-container");
+                if (track != null)
+                {
+                    track.style.backgroundColor = new Color(40f / 255f, 40f / 255f, 40f / 255f, 1f);
+                }
+                
+                // Style the scrollbar thumb (dragger)
+                var thumb = verticalScroller.Q("unity-dragger");
+                if (thumb != null)
+                {
+                    thumb.style.backgroundColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
+                    thumb.style.borderLeftWidth = 1;
+                    thumb.style.borderRightWidth = 1;
+                    thumb.style.borderTopWidth = 1;
+                    thumb.style.borderBottomWidth = 1;
+                    thumb.style.borderLeftColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderRightColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderTopColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderBottomColor = new Color(255f / 255f, 220f / 255f, 120f / 255f, 1f);
+                    thumb.style.borderTopLeftRadius = 3;
+                    thumb.style.borderTopRightRadius = 3;
+                    thumb.style.borderBottomLeftRadius = 3;
+                    thumb.style.borderBottomRightRadius = 3;
+                }
+            }
+            
+            // Hide horizontal scrollbar
+            var horizontalScroller = scrollView.horizontalScroller;
+            if (horizontalScroller != null)
+            {
+                horizontalScroller.style.display = DisplayStyle.None;
+            }
+        }
     }
     
     private string GetCurrentKeyName(InputActionMap playerMap, string actionName, string partName)

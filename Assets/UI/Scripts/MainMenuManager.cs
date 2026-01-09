@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 using System.Collections;
 
 /************************************
@@ -77,6 +78,46 @@ public class MainMenuManager : MonoBehaviour
         {
             gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+    }
+    
+    void Update()
+    {
+        // Handle ESC key when in settings menu from main menu
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            // Check if rebinding is in progress - if so, let ControlsManager handle it
+            if (controlsManager != null && controlsManager.IsRebindingInProgress())
+            {
+                return; // Don't close settings, let rebinding handle ESC
+            }
+            
+            // Check if settings menu is open
+            if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null && 
+                controlsUIDocument.rootVisualElement.style.display == DisplayStyle.Flex)
+            {
+                // Check if main menu is hidden (meaning we're in settings)
+                if (mainMenuContainer != null && mainMenuContainer.style.display == DisplayStyle.None)
+                {
+                    // Go back to main menu
+                    OnBackFromSettings();
+                }
+            }
+        }
+    }
+    
+    public void OnBackFromSettings()
+    {
+        if (controlsManager != null)
+        {
+            controlsManager.HideControls();
+        }
+        
+        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
+        {
+            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        
+        ShowMainMenu();
     }
     
     private void OnStartButtonClicked()
