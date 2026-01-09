@@ -217,7 +217,9 @@ public class ControlsManager : MonoBehaviour
             {
                 if (binding.isPartOfComposite && binding.name == partName)
                 {
-                    return FormatKeyName(binding.path);
+                    // Use overridePath if available, otherwise use path
+                    string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
+                    return FormatKeyName(bindingPath);
                 }
             }
         }
@@ -228,7 +230,9 @@ public class ControlsManager : MonoBehaviour
             {
                 if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    return FormatKeyName(binding.path);
+                    // Use overridePath if available, otherwise use path
+                    string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
+                    return FormatKeyName(bindingPath);
                 }
             }
         }
@@ -238,9 +242,17 @@ public class ControlsManager : MonoBehaviour
     
     private string FormatKeyName(string path)
     {
-        if (path.Contains("<Keyboard>/"))
+        if (string.IsNullOrEmpty(path)) return "?";
+        
+        // Handle both <Keyboard>/key and /Keyboard/key formats
+        if (path.Contains("<Keyboard>/") || path.Contains("/Keyboard/"))
         {
-            string key = path.Replace("<Keyboard>/", "");
+            string key = path.Replace("<Keyboard>/", "").Replace("/Keyboard/", "");
+            if (string.IsNullOrEmpty(key)) return "?";
+            
+            // Remove leading slash if present
+            if (key.StartsWith("/")) key = key.Substring(1);
+            
             if (key.Length == 1) return key.ToUpper();
             
             switch (key.ToLower())
@@ -250,15 +262,40 @@ public class ControlsManager : MonoBehaviour
                 case "leftarrow": return "←";
                 case "rightarrow": return "→";
                 case "space": return "Space";
-                default: return char.ToUpper(key[0]) + key.Substring(1);
+                case "enter": return "Enter";
+                case "tab": return "Tab";
+                case "shift": return "Shift";
+                case "ctrl": return "Ctrl";
+                case "alt": return "Alt";
+                default: 
+                    // Capitalize first letter
+                    return char.ToUpper(key[0]) + key.Substring(1).ToLower();
             }
         }
-        else if (path.Contains("<Mouse>/"))
+        else if (path.Contains("<Mouse>/") || path.Contains("/Mouse/"))
         {
-            string button = path.Replace("<Mouse>/", "");
+            string button = path.Replace("<Mouse>/", "").Replace("/Mouse/", "");
+            if (string.IsNullOrEmpty(button)) return "?";
+            
+            // Remove leading slash if present
+            if (button.StartsWith("/")) button = button.Substring(1);
+            
             if (button == "leftButton") return "Left Mouse";
             if (button == "rightButton") return "Right Mouse";
+            if (button == "middleButton") return "Middle Mouse";
             return "Mouse " + button;
+        }
+        
+        // If path doesn't match expected formats, try to extract just the key name
+        if (path.Contains("/"))
+        {
+            string[] parts = path.Split('/');
+            if (parts.Length > 0)
+            {
+                string lastPart = parts[parts.Length - 1];
+                if (lastPart.Length == 1) return lastPart.ToUpper();
+                return lastPart;
+            }
         }
         
         return path;
