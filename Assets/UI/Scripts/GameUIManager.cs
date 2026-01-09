@@ -240,7 +240,11 @@ public class GameUIManager : MonoBehaviour
     
     private void InitializePauseKeybinds(VisualElement root)
     {
-        if (inputActions == null) return;
+        if (inputActions == null)
+        {
+            Debug.LogWarning("GameUIManager: inputActions is null, cannot initialize pause keybinds");
+            return;
+        }
         
         var keybindMap = new Dictionary<string, (string actionName, string partName)>
         {
@@ -254,27 +258,77 @@ public class GameUIManager : MonoBehaviour
         };
         
         var playerMap = inputActions.FindActionMap("Player");
-        if (playerMap == null) return;
+        if (playerMap == null)
+        {
+            Debug.LogWarning("GameUIManager: Player action map not found");
+            return;
+        }
+        
+        // Only initialize if buttons haven't been set up yet, or re-initialize if needed
+        bool needsInitialization = pauseKeybindButtons.Count == 0;
         
         foreach (var kvp in keybindMap)
         {
             Button button = root.Q<Button>(kvp.Key);
             if (button != null)
             {
-                pauseKeybindButtons[kvp.Key] = button;
+                if (needsInitialization || !pauseKeybindButtons.ContainsKey(kvp.Key))
+                {
+                    pauseKeybindButtons[kvp.Key] = button;
+                    
+                    string actionName = kvp.Value.actionName;
+                    string partName = kvp.Value.partName;
+                    string buttonName = kvp.Key; // Capture for closure
+                    
+                    // Add click handler
+                    button.clicked += () => StartPauseRebinding(buttonName, actionName, partName, button);
+                }
+                
+                // Always update the display text
                 string keyName = GetCurrentKeyName(playerMap, kvp.Value.actionName, kvp.Value.partName);
                 button.text = keyName;
-                
-                string actionName = kvp.Value.actionName;
-                string partName = kvp.Value.partName;
-                button.clicked += () => StartPauseRebinding(kvp.Key, actionName, partName, button);
+            }
+            else
+            {
+                Debug.LogWarning($"GameUIManager: Could not find button {kvp.Key} in pause controls menu");
             }
         }
         
         pauseRebindPrompt = root.Q<VisualElement>("RebindPrompt");
+        if (pauseRebindPrompt == null)
+        {
+            Debug.LogWarning("GameUIManager: Could not find RebindPrompt in pause controls menu");
+        }
         
         // Style the scrollbar to match the design
         StylePauseScrollbar(root);
+    }
+    
+    private void RefreshPauseKeybindDisplay()
+    {
+        if (inputActions == null) return;
+        var playerMap = inputActions.FindActionMap("Player");
+        if (playerMap == null) return;
+        
+        var keybindMap = new Dictionary<string, (string actionName, string partName)>
+        {
+            { "Keybind_MoveForward", ("Move", "up") },
+            { "Keybind_MoveBackward", ("Move", "down") },
+            { "Keybind_MoveLeft", ("Move", "left") },
+            { "Keybind_MoveRight", ("Move", "right") },
+            { "Keybind_CastSpell", ("Attack", null) },
+            { "Keybind_NextSpell", ("Next", null) },
+            { "Keybind_PreviousSpell", ("Previous", null) }
+        };
+        
+        foreach (var kvp in keybindMap)
+        {
+            if (pauseKeybindButtons.ContainsKey(kvp.Key) && pauseKeybindButtons[kvp.Key] != null)
+            {
+                string keyName = GetCurrentKeyName(playerMap, kvp.Value.actionName, kvp.Value.partName);
+                pauseKeybindButtons[kvp.Key].text = keyName;
+            }
+        }
     }
     
     private void StylePauseScrollbar(VisualElement root)
@@ -601,8 +655,14 @@ public class GameUIManager : MonoBehaviour
             {
                 controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.Flex;
                 
+                // Initialize keybinds if not already done, or re-initialize to ensure they work
+                InitializePauseKeybinds(controlsPauseDocument.rootVisualElement);
+                
                 // Refresh settings values when opening
                 RefreshPauseControlsSettings();
+                
+                // Refresh keybind displays
+                RefreshPauseKeybindDisplay();
             }
         }
         
