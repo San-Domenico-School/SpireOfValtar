@@ -522,6 +522,7 @@ public class ControlsManager : MonoBehaviour
         int bindingIndex = -1;
         if (partName != null)
         {
+            // For composite actions (like Move), find the specific part
             for (int i = 0; i < action.bindings.Count; i++)
             {
                 if (action.bindings[i].isPartOfComposite && action.bindings[i].name == partName)
@@ -533,17 +534,41 @@ public class ControlsManager : MonoBehaviour
         }
         else
         {
+            // For non-composite actions, prefer Keyboard&Mouse bindings
+            // First pass: look for Keyboard&Mouse group
             for (int i = 0; i < action.bindings.Count; i++)
             {
-                if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
+                var binding = action.bindings[i];
+                if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    bindingIndex = i;
-                    break;
+                    // Check if this binding is for Keyboard&Mouse
+                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
+                    {
+                        bindingIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            // Second pass: if no Keyboard&Mouse binding found, use first non-composite binding
+            if (bindingIndex == -1)
+            {
+                for (int i = 0; i < action.bindings.Count; i++)
+                {
+                    if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
+                    {
+                        bindingIndex = i;
+                        break;
+                    }
                 }
             }
         }
         
-        if (bindingIndex == -1) return;
+        if (bindingIndex == -1)
+        {
+            Debug.LogWarning($"ControlsManager: Could not find binding index for action {actionName}, partName: {partName}");
+            return;
+        }
         
         // Show prompt
         if (rebindPrompt != null)
@@ -551,7 +576,13 @@ public class ControlsManager : MonoBehaviour
             rebindPrompt.style.display = DisplayStyle.Flex;
         }
         
-        // Disable the action for rebinding
+        // Ensure the action map is enabled for rebinding to work
+        if (!playerMap.enabled)
+        {
+            playerMap.Enable();
+        }
+        
+        // Disable the action for rebinding (but keep the map enabled)
         action.Disable();
         
         // Start rebinding operation
