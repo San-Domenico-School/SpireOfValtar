@@ -5,6 +5,7 @@ using System.Collections;
 /************************************
  * Creates a red flash effect on screen edges when player takes damage.
  * Uses UI Toolkit to display an overlay that fades out over time.
+ * Gleb 01/09/26
  * Version 1.0
  * 
  * Add this script to the same GameObject as the UIDocument.
@@ -12,8 +13,6 @@ using System.Collections;
  * Assign the PlayerHealth in the Inspector.
  * The script will automatically find the PlayerHealth component in the scene.
  * The script will automatically find the UIDocument component in the scene.
- * Gleb
- * December 5, 2025
  ************************************/
 public class DamageFlashUI : MonoBehaviour
 {
@@ -50,13 +49,11 @@ public class DamageFlashUI : MonoBehaviour
         
         if (uiDocument == null)
         {
-            Debug.LogWarning("DamageFlashUI: No UIDocument found. Please assign one in the Inspector.");
             return;
         }
         
         if (playerHealth == null)
         {
-            Debug.LogWarning("DamageFlashUI: No PlayerHealth found. Please assign one in the Inspector.");
             return;
         }
         

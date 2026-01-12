@@ -945,6 +945,51 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 786888224565440292, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
+--- !u!1 &1025317801
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1025317802}
+  - component: {fileID: 1025317803}
+  m_Layer: 0
+  m_Name: Keybinds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1025317802
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025317801}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.23, y: 3.35396, z: -0.1337}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1025317803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025317801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55757c7011d804d8cb00af85700b2d9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KeybindingManager
+  inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &1038128491 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3215728508509212452, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -1521,6 +1566,28 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -7506021418080437589, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
+--- !u!1 &1401653265 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1820786876712878410, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+  m_PrefabInstance: {fileID: 4868112149460240186}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1401653268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401653265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19408aba6c55f4a338255b55c3aed7ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpellUI
+  uiDocument: {fileID: 8650492187293151942}
+  spellNames:
+  - Lightning
+  - Fireball
+  - Freeze
 --- !u!1 &1419228638 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1259345002033123823, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -1717,6 +1784,10 @@ PrefabInstance:
     - target: {fileID: 3177292819868564285, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5233339416854855808, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
+      propertyPath: currentSpeedMultiplier
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7090493283282442718, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
       propertyPath: stairs
@@ -2393,6 +2464,25 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 69393407360877816, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
+--- !u!1 &2027426376 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1699642764503225338, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+  m_PrefabInstance: {fileID: 4868112149460240186}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2027426379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027426376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5af0edb24517a416a946009f62020d7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlsManager
+  controlsImage: {fileID: 2800000, guid: 56438728568364e4aad127933b27f12f, type: 3}
+  inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &2028707695 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2181743766629440291, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -2491,6 +2581,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 4220763070154417613, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+      propertyPath: sourceAsset
+      value: 
+      objectReference: {fileID: 9197481963319205126, guid: cb21470ac023447d790696b6624d7de6, type: 3}
     - target: {fileID: 5588750606060276492, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.48355
@@ -2535,6 +2629,12 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1820786876712878410, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1401653268}
+    - targetCorrespondingSourceObject: {fileID: 1699642764503225338, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2027426379}
     - targetCorrespondingSourceObject: {fileID: 4446561019528792011, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8650492187293151945}
@@ -2583,3 +2683,4 @@ SceneRoots:
   - {fileID: 1331499952}
   - {fileID: 1679775812}
   - {fileID: 1652083368}
+  - {fileID: 1025317802}
