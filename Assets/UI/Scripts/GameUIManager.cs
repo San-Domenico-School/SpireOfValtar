@@ -498,6 +498,57 @@ public class GameUIManager : MonoBehaviour
         return "?";
     }
     
+    private string FormatMouseButtonName(string button)
+    {
+        if (string.IsNullOrEmpty(button)) return "?";
+        
+        // Remove leading slash if present
+        if (button.StartsWith("/")) button = button.Substring(1);
+        
+        // Normalize to lowercase for comparison
+        string buttonLower = button.ToLower();
+        
+        // Handle standard button names
+        if (buttonLower == "leftbutton" || buttonLower == "button" || buttonLower == "button<0>" || buttonLower == "button0") 
+            return "Left Mouse";
+        if (buttonLower == "rightbutton" || buttonLower == "button<1>" || buttonLower == "button1") 
+            return "Right Mouse";
+        if (buttonLower == "middlebutton" || buttonLower == "button<2>" || buttonLower == "button2") 
+            return "Middle Mouse";
+        
+        // Handle directional button names (buttonWest, button west, button<west>, etc.)
+        // Check for west, east, north, south in any format (case-insensitive)
+        if (buttonLower.Contains("west"))
+            return "Mouse Button 4";
+        if (buttonLower.Contains("east"))
+            return "Mouse Button 5";
+        if (buttonLower.Contains("north"))
+            return "Mouse Button 6";
+        if (buttonLower.Contains("south"))
+            return "Mouse Button 7";
+        
+        // Try to extract button number if it's in format "button<X>" or "buttonX"
+        if (buttonLower.StartsWith("button"))
+        {
+            // Remove "button" prefix and angle brackets
+            string numberPart = buttonLower.Replace("button<", "").Replace(">", "").Replace("button", "");
+            
+            // Try to parse as number
+            if (int.TryParse(numberPart, out int buttonNum))
+            {
+                switch (buttonNum)
+                {
+                    case 0: return "Left Mouse";
+                    case 1: return "Right Mouse";
+                    case 2: return "Middle Mouse";
+                    default: return $"Mouse Button {buttonNum + 1}";
+                }
+            }
+        }
+        
+        return "Mouse " + button;
+    }
+    
     private string FormatKeyName(string path)
     {
         if (string.IsNullOrEmpty(path)) return "?";
@@ -538,10 +589,14 @@ public class GameUIManager : MonoBehaviour
             // Remove leading slash if present
             if (button.StartsWith("/")) button = button.Substring(1);
             
-            if (button == "leftButton") return "Left Mouse";
-            if (button == "rightButton") return "Right Mouse";
-            if (button == "middleButton") return "Middle Mouse";
-            return "Mouse " + button;
+            return FormatMouseButtonName(button);
+        }
+        
+        // Check if it's a mouse button path without Mouse prefix (e.g., just "buttonWest")
+        string pathLower = path.ToLower();
+        if (pathLower.StartsWith("button") || pathLower.Contains("button"))
+        {
+            return FormatMouseButtonName(path);
         }
         
         // If path doesn't match expected formats, try to extract just the key name
@@ -551,6 +606,12 @@ public class GameUIManager : MonoBehaviour
             if (parts.Length > 0)
             {
                 string lastPart = parts[parts.Length - 1];
+                // Check if last part is a mouse button
+                string lastPartLower = lastPart.ToLower();
+                if (lastPartLower.StartsWith("button") || lastPartLower.Contains("button"))
+                {
+                    return FormatMouseButtonName(lastPart);
+                }
                 if (lastPart.Length == 1) return lastPart.ToUpper();
                 return lastPart;
             }
