@@ -124,6 +124,67 @@ public class GameUIManager : MonoBehaviour
             {
                 controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
             }
+            
+            // Initialize settings UI for pause controls
+            InitializePauseControlsSettings();
+        }
+    }
+    
+    private void InitializePauseControlsSettings()
+    {
+        if (controlsPauseDocument == null) return;
+        
+        var rootVisualElement = controlsPauseDocument.rootVisualElement;
+        if (rootVisualElement == null) return;
+        
+        SettingsManager settingsManager = SettingsManager.Instance;
+        if (settingsManager == null) return;
+        
+        Slider sensitivitySlider = rootVisualElement.Q<Slider>("SensitivitySlider");
+        Slider volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
+        Label sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
+        Label volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        
+        if (sensitivitySlider != null)
+        {
+            sensitivitySlider.value = settingsManager.GetMouseSensitivity();
+            sensitivitySlider.RegisterValueChangedCallback(evt => {
+                settingsManager.SetMouseSensitivity(evt.newValue);
+            });
+        }
+        
+        if (volumeSlider != null)
+        {
+            volumeSlider.value = settingsManager.GetMasterVolume();
+            volumeSlider.RegisterValueChangedCallback(evt => {
+                settingsManager.SetMasterVolume(evt.newValue);
+            });
+        }
+        
+        // Update labels when settings change
+        settingsManager.OnSensitivityChanged += (value) => {
+            if (sensitivityValueLabel != null)
+            {
+                sensitivityValueLabel.text = value.ToString("F2");
+            }
+        };
+        
+        settingsManager.OnVolumeChanged += (value) => {
+            if (volumeValueLabel != null)
+            {
+                volumeValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
+            }
+        };
+        
+        // Initialize labels
+        if (sensitivityValueLabel != null)
+        {
+            sensitivityValueLabel.text = settingsManager.GetMouseSensitivity().ToString("F2");
+        }
+        
+        if (volumeValueLabel != null)
+        {
+            volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
         }
     }
     
@@ -211,12 +272,51 @@ public class GameUIManager : MonoBehaviour
             if (controlsPauseDocument.rootVisualElement != null)
             {
                 controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+                
+                // Refresh settings values when opening
+                RefreshPauseControlsSettings();
             }
         }
         
         if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
+    
+    private void RefreshPauseControlsSettings()
+    {
+        if (controlsPauseDocument == null) return;
+        
+        var rootVisualElement = controlsPauseDocument.rootVisualElement;
+        if (rootVisualElement == null) return;
+        
+        SettingsManager settingsManager = SettingsManager.Instance;
+        if (settingsManager == null) return;
+        
+        Slider sensitivitySlider = rootVisualElement.Q<Slider>("SensitivitySlider");
+        Slider volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
+        Label sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
+        Label volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        
+        if (sensitivitySlider != null)
+        {
+            sensitivitySlider.value = settingsManager.GetMouseSensitivity();
+        }
+        
+        if (volumeSlider != null)
+        {
+            volumeSlider.value = settingsManager.GetMasterVolume();
+        }
+        
+        if (sensitivityValueLabel != null)
+        {
+            sensitivityValueLabel.text = settingsManager.GetMouseSensitivity().ToString("F2");
+        }
+        
+        if (volumeValueLabel != null)
+        {
+            volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
         }
     }
     

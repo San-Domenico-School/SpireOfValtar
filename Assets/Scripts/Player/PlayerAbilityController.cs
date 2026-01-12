@@ -28,6 +28,7 @@ public class PlayerAbilityController : MonoBehaviour
 
     [Header("UI")] // ✅ Added UI connection
     [SerializeField] private UIDocument uiDocument; // Drag your UI Document here
+    [SerializeField] private SpellUI spellUI; // Reference to SpellUI component
     private ProgressBar staminaBar; // Reference to ProgressBar in UI Builder
 
     private int currentIndex = 0;
@@ -72,6 +73,21 @@ public class PlayerAbilityController : MonoBehaviour
             else
             {
                 Debug.LogWarning("No ProgressBar named 'StaminaProgressBar' found in UI Document!");
+            }
+        }
+
+        // Initialize spell UI
+        if (spellUI != null)
+        {
+            spellUI.SetCurrentSpell(currentIndex);
+        }
+        else
+        {
+            // Try to find SpellUI automatically if not assigned
+            spellUI = FindFirstObjectByType<SpellUI>();
+            if (spellUI != null)
+            {
+                spellUI.SetCurrentSpell(currentIndex);
             }
         }
     }
@@ -138,12 +154,22 @@ public class PlayerAbilityController : MonoBehaviour
     {
         currentIndex = (currentIndex + 1) % 3;
         Debug.Log($"Selected Spell {currentIndex + 1}");
+        UpdateSpellUI();
     }
 
     private void OnPrevious(InputAction.CallbackContext context)
     {
         currentIndex = (currentIndex - 1 + 3) % 3;
         Debug.Log($"Selected Spell {currentIndex + 1}");
+        UpdateSpellUI();
+    }
+
+    private void UpdateSpellUI()
+    {
+        if (spellUI != null)
+        {
+            spellUI.SetCurrentSpell(currentIndex);
+        }
     }
 
     private void OnAttack(InputAction.CallbackContext context)

@@ -5,8 +5,9 @@ using System.Linq;
 /************************************
  * Manages the controls menu UI display and navigation.
  * Handles showing/hiding controls menu and back button functionality.
+ * Now includes settings management for mouse sensitivity and volume.
  * Gleb 11/4/25
- * Version 1.0
+ * Version 2.0
  ************************************/
 public class ControlsManager : MonoBehaviour
 {
@@ -18,9 +19,17 @@ public class ControlsManager : MonoBehaviour
     private Button backButton;
     private MainMenuManager mainMenuManager;
     
+    // Settings UI elements
+    private Slider sensitivitySlider;
+    private Slider volumeSlider;
+    private Label sensitivityValueLabel;
+    private Label volumeValueLabel;
+    private SettingsManager settingsManager;
+    
     void Start()
     {
         mainMenuManager = FindObjectOfType<MainMenuManager>();
+        settingsManager = SettingsManager.Instance;
         HideControls();
     }
     
@@ -49,6 +58,36 @@ public class ControlsManager : MonoBehaviour
         if (backButton != null)
         {
             backButton.clicked += OnBackButtonClicked;
+        }
+        
+        // Initialize settings UI
+        sensitivitySlider = rootVisualElement.Q<Slider>("SensitivitySlider");
+        volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
+        sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
+        volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        
+        if (settingsManager != null)
+        {
+            // Load current settings
+            if (sensitivitySlider != null)
+            {
+                sensitivitySlider.value = settingsManager.GetMouseSensitivity();
+                sensitivitySlider.RegisterValueChangedCallback(OnSensitivityChanged);
+            }
+            
+            if (volumeSlider != null)
+            {
+                volumeSlider.value = settingsManager.GetMasterVolume();
+                volumeSlider.RegisterValueChangedCallback(OnVolumeChanged);
+            }
+            
+            // Subscribe to settings changes to update labels
+            settingsManager.OnSensitivityChanged += UpdateSensitivityLabel;
+            settingsManager.OnVolumeChanged += UpdateVolumeLabel;
+            
+            // Initialize labels
+            UpdateSensitivityLabel(settingsManager.GetMouseSensitivity());
+            UpdateVolumeLabel(settingsManager.GetMasterVolume());
         }
     }
     
@@ -103,6 +142,47 @@ public class ControlsManager : MonoBehaviour
         if (controlsImageContainer != null && image != null)
         {
             controlsImageContainer.style.backgroundImage = new StyleBackground(image);
+        }
+    }
+    
+    private void OnSensitivityChanged(ChangeEvent<float> evt)
+    {
+        if (settingsManager != null)
+        {
+            settingsManager.SetMouseSensitivity(evt.newValue);
+        }
+    }
+    
+    private void OnVolumeChanged(ChangeEvent<float> evt)
+    {
+        if (settingsManager != null)
+        {
+            settingsManager.SetMasterVolume(evt.newValue);
+        }
+    }
+    
+    private void UpdateSensitivityLabel(float value)
+    {
+        if (sensitivityValueLabel != null)
+        {
+            sensitivityValueLabel.text = value.ToString("F2");
+        }
+    }
+    
+    private void UpdateVolumeLabel(float value)
+    {
+        if (volumeValueLabel != null)
+        {
+            volumeValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
+        }
+    }
+    
+    private void OnDestroy()
+    {
+        if (settingsManager != null)
+        {
+            settingsManager.OnSensitivityChanged -= UpdateSensitivityLabel;
+            settingsManager.OnVolumeChanged -= UpdateVolumeLabel;
         }
     }
 }
