@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 using System.Collections;
 
 /************************************
  * Handles main menu UI, button clicks, and scene navigation.
  * Manages Start, Controls, and Exit buttons, and coordinates with other UI managers.
- * Gleb 11/4/25
+ * Gleb 01/09/26
  * Version 1.0
  ************************************/
 public class MainMenuManager : MonoBehaviour
@@ -79,6 +80,54 @@ public class MainMenuManager : MonoBehaviour
         }
     }
     
+    void Update()
+    {
+        // Only handle ESC if we're in the main menu context (not in game)
+        // Check if game UI is visible - if so, let GameUIManager handle ESC
+        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null && 
+            gameUIDocument.rootVisualElement.style.display == DisplayStyle.Flex)
+        {
+            return; // Game is running, let GameUIManager handle ESC
+        }
+        
+        // Handle ESC key when in settings menu from main menu
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            // Check if rebinding is in progress - if so, let ControlsManager handle it
+            if (controlsManager != null && controlsManager.IsRebindingInProgress())
+            {
+                return; // Don't close settings, let rebinding handle ESC
+            }
+            
+            // Check if settings menu is open
+            if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null && 
+                controlsUIDocument.rootVisualElement.style.display == DisplayStyle.Flex)
+            {
+                // Check if main menu is hidden (meaning we're in settings)
+                if (mainMenuContainer != null && mainMenuContainer.style.display == DisplayStyle.None)
+                {
+                    // Go back to main menu
+                    OnBackFromSettings();
+                }
+            }
+        }
+    }
+    
+    public void OnBackFromSettings()
+    {
+        if (controlsManager != null)
+        {
+            controlsManager.HideControls();
+        }
+        
+        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
+        {
+            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        
+        ShowMainMenu();
+    }
+    
     private void OnStartButtonClicked()
     {
         Time.timeScale = 1f;
@@ -100,6 +149,11 @@ public class MainMenuManager : MonoBehaviour
     
     private void OnControlsButtonClicked()
     {
+        // Ensure game is paused when in menu
+        Time.timeScale = 0f;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        
         HideMainMenu();
         
         if (controlsUIDocument == null)
@@ -107,9 +161,18 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
         
+        // Ensure UIDocument is enabled
+        controlsUIDocument.enabled = true;
+        
         if (controlsUIDocument.rootVisualElement != null)
         {
             controlsUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+        }
+        
+        // Make sure game UI is hidden
+        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
+        {
+            gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
         
         if (controlsManager == null)
@@ -117,7 +180,31 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
         
-        controlsManager.ShowControls();
+        // Ensure initialization happens before showing
+        if (controlsUIDocument != null)
+        {
+            controlsManager.InitializeFromUIDocument(controlsUIDocument);
+        }
+        
+        // Small delay to ensure everything is ready
+        StartCoroutine(ShowControlsDelayed());
+    }
+    
+    private System.Collections.IEnumerator ShowControlsDelayed()
+    {
+        yield return null; // Wait one frame
+        
+        if (controlsManager != null && controlsUIDocument != null)
+        {
+            // Double-check the document is still enabled and visible
+            controlsUIDocument.enabled = true;
+            if (controlsUIDocument.rootVisualElement != null)
+            {
+                controlsUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            }
+            
+            controlsManager.ShowControls();
+        }
     }
     
     private void OnExitButtonClicked()

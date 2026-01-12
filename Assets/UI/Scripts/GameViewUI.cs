@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 /************************************
  * Manages health and stamina bars display in the game view.
  * Updates UI elements based on current health and stamina values.
- * Gleb 11/4/25
+ * Gleb 01/09/26
  * Version 1.0
  ************************************/
 public class GameViewUI : MonoBehaviour

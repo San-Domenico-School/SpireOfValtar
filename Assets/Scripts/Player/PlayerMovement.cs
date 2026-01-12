@@ -29,6 +29,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float ceilingRestitution = 0.2f; // 0=no bounce, 1=elastic
     [SerializeField] private float minCeilingBounceSpeed = 3f; // minimum downward speed after head hit
     [SerializeField] private float turnSensitivity = 1.2f;
+    
+    public void SetMouseSensitivity(float sensitivity)
+    {
+        turnSensitivity = sensitivity;
+    }
+    
+    public float GetMouseSensitivity()
+    {
+        return turnSensitivity;
+    }
 
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private Transform groundCheck;     // put at feet
