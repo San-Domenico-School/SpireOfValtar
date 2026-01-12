@@ -551,28 +551,38 @@ public class ControlsManager : MonoBehaviour
             rebindPrompt.style.display = DisplayStyle.Flex;
         }
         
+        // Disable the action for rebinding
         action.Disable();
         
-        // Start rebinding
+        // Start rebinding operation
         rebindOperation = action.PerformInteractiveRebinding(bindingIndex)
             .WithControlsExcluding("<Mouse>/position")
             .WithControlsExcluding("<Mouse>/delta")
+            .WithCancelingThrough("<Keyboard>/escape")
             .OnMatchWaitForAnother(0.1f)
             .OnComplete(operation =>
             {
+                // Apply the binding override to the action
+                action.ApplyBindingOverride(bindingIndex, operation.selectedControl.path);
+                
+                // Update button text with formatted key name
                 string newKey = FormatKeyName(operation.selectedControl.path);
                 button.text = newKey;
                 
-                // Save binding
+                // Save binding to PlayerPrefs
                 string key = $"Keybind_{buttonName}_{actionName}_{partName}";
                 PlayerPrefs.SetString(key, operation.selectedControl.path);
                 PlayerPrefs.Save();
                 
+                // Cleanup
                 operation.Dispose();
                 rebindOperation = null;
                 currentRebindingAction = null;
+                
+                // Re-enable the action
                 action.Enable();
                 
+                // Hide prompt
                 if (rebindPrompt != null)
                 {
                     rebindPrompt.style.display = DisplayStyle.None;
@@ -580,17 +590,22 @@ public class ControlsManager : MonoBehaviour
             })
             .OnCancel(operation =>
             {
+                // Cleanup on cancel
                 operation.Dispose();
                 rebindOperation = null;
                 currentRebindingAction = null;
+                
+                // Re-enable the action
                 action.Enable();
                 
+                // Hide prompt
                 if (rebindPrompt != null)
                 {
                     rebindPrompt.style.display = DisplayStyle.None;
                 }
             });
         
+        // Start the rebinding operation
         rebindOperation.Start();
     }
     
