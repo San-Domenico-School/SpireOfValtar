@@ -29,7 +29,6 @@ public class SpellUI : MonoBehaviour
 
         if (uiDocument == null)
         {
-            Debug.LogError("SpellUI: UIDocument not found!");
             return;
         }
 
@@ -43,7 +42,6 @@ public class SpellUI : MonoBehaviour
 
         if (spellContainer == null)
         {
-            Debug.LogError("SpellUI: SpellContainer not found in UXML!");
             return;
         }
 
@@ -135,10 +133,6 @@ public class SpellUI : MonoBehaviour
         {
             currentSpellIndex = index;
             UpdateHighlight(index);
-        }
-        else
-        {
-            Debug.LogWarning($"SpellUI: Invalid spell index {index}. Valid range: 0-{spellBoxes.Count - 1}");
         }
     }
 

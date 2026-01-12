@@ -158,7 +158,6 @@ public class MainMenuManager : MonoBehaviour
         
         if (controlsUIDocument == null)
         {
-            Debug.LogWarning("MainMenuManager: controlsUIDocument is null!");
             return;
         }
         
@@ -178,7 +177,6 @@ public class MainMenuManager : MonoBehaviour
         
         if (controlsManager == null)
         {
-            Debug.LogWarning("MainMenuManager: controlsManager is null!");
             return;
         }
         

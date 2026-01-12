@@ -56,8 +56,6 @@ public class GameUIManager : MonoBehaviour
         {
             inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
         }
-        
-        Debug.Log($"GameUIManager: Start complete. pauseMenuDocument: {(pauseMenuDocument != null ? "assigned" : "NULL - ASSIGN IN INSPECTOR!")}, gameUIContainer: {(gameUIContainer != null ? "found" : "not found")}, uiDocument: {(uiDocument != null ? "exists" : "null")}");
     }
     
     void Update()
@@ -67,25 +65,20 @@ public class GameUIManager : MonoBehaviour
         
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            Debug.Log($"GameUIManager: ESC pressed. gameUIVisible: {gameUIVisible}, isPaused: {isPaused}, gameUIContainer: {(gameUIContainer != null ? "exists" : "null")}");
-            
             if (!gameUIVisible)
             {
-                Debug.Log("GameUIManager: Game UI not visible, ignoring ESC");
                 return;
             }
             
             // Check for ESC key press during rebinding to cancel it
             if (pauseRebindOperation != null)
             {
-                Debug.Log("GameUIManager: Canceling rebind operation");
                 pauseRebindOperation.Cancel();
                 return;
             }
             
             if (isPaused)
             {
-                Debug.Log("GameUIManager: Game is paused, handling ESC for navigation between menus");
                 // ESC can navigate between pause menu and settings, but cannot close pause menu
                 if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null && 
                     controlsPauseDocument.rootVisualElement.style.display == DisplayStyle.Flex)
@@ -106,7 +99,6 @@ public class GameUIManager : MonoBehaviour
             else
             {
                 // Pause the game - ESC can only open pause menu
-                Debug.Log("GameUIManager: Pausing game");
                 PauseGame();
             }
         }
@@ -121,7 +113,6 @@ public class GameUIManager : MonoBehaviour
             
             if (pauseRoot == null)
             {
-                Debug.LogWarning("GameUIManager: pauseMenuDocument.rootVisualElement is null during initialization!");
                 return;
             }
             
@@ -152,10 +143,6 @@ public class GameUIManager : MonoBehaviour
             
             // Hide pause menu initially
             pauseRoot.style.display = DisplayStyle.None;
-        }
-        else
-            {
-            Debug.LogWarning("GameUIManager: pauseMenuDocument is null!");
         }
     }
     
@@ -249,7 +236,6 @@ public class GameUIManager : MonoBehaviour
     {
         if (inputActions == null)
         {
-            Debug.LogWarning("GameUIManager: inputActions is null, cannot initialize pause keybinds");
             return;
         }
         
@@ -268,7 +254,6 @@ public class GameUIManager : MonoBehaviour
         var playerMap = inputActions.FindActionMap("Player");
         if (playerMap == null)
         {
-            Debug.LogWarning("GameUIManager: Player action map not found");
             return;
         }
         
@@ -296,17 +281,9 @@ public class GameUIManager : MonoBehaviour
                 string keyName = GetCurrentKeyName(playerMap, kvp.Value.actionName, kvp.Value.partName);
                 button.text = keyName;
             }
-            else
-            {
-                Debug.LogWarning($"GameUIManager: Could not find button {kvp.Key} in pause controls menu");
-            }
         }
         
         pauseRebindPrompt = root.Q<VisualElement>("RebindPrompt");
-        if (pauseRebindPrompt == null)
-        {
-            Debug.LogWarning("GameUIManager: Could not find RebindPrompt in pause controls menu");
-        }
         
         // Style the scrollbar to match the design
         StylePauseScrollbar(root);
@@ -678,7 +655,6 @@ public class GameUIManager : MonoBehaviour
         
         if (bindingIndex == -1)
         {
-            Debug.LogWarning($"GameUIManager: Could not find binding index for action {actionName}, partName: {partName}");
             return;
         }
         
@@ -753,11 +729,8 @@ public class GameUIManager : MonoBehaviour
     {
         if (isPaused)
         {
-            Debug.Log("GameUIManager: Already paused, skipping");
             return;
         }
-        
-        Debug.Log($"GameUIManager: PauseGame called. pauseMenuDocument: {(pauseMenuDocument != null ? "exists" : "NULL")}");
         
         isPaused = true;
         Time.timeScale = 0f;
@@ -767,18 +740,9 @@ public class GameUIManager : MonoBehaviour
         {
             pauseMenuDocument.enabled = true;
             if (pauseMenuDocument.rootVisualElement != null)
-        {
-            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
-                Debug.Log("GameUIManager: Pause menu should now be visible");
-            }
-            else
             {
-                Debug.LogError("GameUIManager: pauseMenuDocument.rootVisualElement is null! Document enabled: " + pauseMenuDocument.enabled);
+                pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
             }
-        }
-        else
-        {
-            Debug.LogError("GameUIManager: pauseMenuDocument is null! Make sure it's assigned in the inspector!");
         }
     }
     

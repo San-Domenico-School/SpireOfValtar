@@ -115,15 +115,9 @@ public class ControlsManager : MonoBehaviour
                 if (elem.name == "ControlsContainer")
                 {
                     controlsContainer = elem;
-                    Debug.Log("ControlsManager: Found ControlsContainer via full descendant search!");
                     break;
                 }
             }
-        }
-        
-        if (controlsContainer == null)
-        {
-            Debug.LogWarning("ControlsManager: ControlsContainer not found in InitializeFromUIDocument. Root: " + rootVisualElement.name + ", children: " + rootVisualElement.childCount);
         }
         
         var allVisualElements = rootVisualElement.Query<VisualElement>().ToList();
@@ -566,7 +560,6 @@ public class ControlsManager : MonoBehaviour
         
         if (bindingIndex == -1)
         {
-            Debug.LogWarning($"ControlsManager: Could not find binding index for action {actionName}, partName: {partName}");
             return;
         }
         
@@ -645,7 +638,6 @@ public class ControlsManager : MonoBehaviour
         // If no document is set, we can't show controls
         if (controlledUIDocument == null)
         {
-            Debug.LogWarning("ControlsManager: No UIDocument set! Make sure InitializeFromUIDocument is called first.");
             return;
         }
         
@@ -655,7 +647,6 @@ public class ControlsManager : MonoBehaviour
         // Wait a frame to ensure rootVisualElement is created
         if (controlledUIDocument.rootVisualElement == null)
         {
-            Debug.LogWarning("ControlsManager: rootVisualElement is null! UIDocument may not be ready.");
             return;
         }
         
@@ -698,7 +689,6 @@ public class ControlsManager : MonoBehaviour
                     if (elem.name == "ControlsContainer")
                     {
                         controlsContainer = elem;
-                        Debug.Log("ControlsManager: Found ControlsContainer via full search!");
                         break;
                     }
                 }
@@ -709,15 +699,6 @@ public class ControlsManager : MonoBehaviour
         if (controlsContainer != null)
         {
             controlsContainer.style.display = DisplayStyle.Flex;
-        }
-        else
-        {
-            Debug.LogError("ControlsManager: ControlsContainer not found! Root name: " + controlledUIDocument.rootVisualElement.name + ", children: " + controlledUIDocument.rootVisualElement.childCount);
-            // List all children for debugging
-            foreach (var child in controlledUIDocument.rootVisualElement.Children())
-            {
-                Debug.Log("ControlsManager: Found child: " + child.name);
-            }
         }
         
         // Ensure root is still visible (in case something hid it)
@@ -730,8 +711,6 @@ public class ControlsManager : MonoBehaviour
         
         // Refresh keybind displays
         RefreshKeybindDisplays();
-        
-        Debug.Log("ControlsManager: ShowControls completed. Root display: " + controlledUIDocument.rootVisualElement.style.display);
     }
     
     private void RefreshKeybindDisplays()

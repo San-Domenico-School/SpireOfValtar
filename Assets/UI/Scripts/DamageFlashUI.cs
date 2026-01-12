@@ -49,13 +49,11 @@ public class DamageFlashUI : MonoBehaviour
         
         if (uiDocument == null)
         {
-            Debug.LogWarning("DamageFlashUI: No UIDocument found. Please assign one in the Inspector.");
             return;
         }
         
         if (playerHealth == null)
         {
-            Debug.LogWarning("DamageFlashUI: No PlayerHealth found. Please assign one in the Inspector.");
             return;
         }
         
