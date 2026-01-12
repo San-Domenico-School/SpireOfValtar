@@ -484,22 +484,6 @@ public class GameUIManager : MonoBehaviour
         }
         else
         {
-            // For regular actions - prefer Keyboard&Mouse bindings over gamepad (especially for Attack/CastSpell)
-            // First, try to find a Keyboard&Mouse binding
-            foreach (var binding in action.bindings)
-            {
-                if (!binding.isComposite && !binding.isPartOfComposite)
-                {
-                    // Check if this binding is for Keyboard&Mouse group
-                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
-                    {
-                        string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
-                        return FormatKeyName(bindingPath);
-                    }
-                }
-            }
-            
-            // If no Keyboard&Mouse binding found, use the first non-composite binding
             foreach (var binding in action.bindings)
             {
                 if (!binding.isComposite && !binding.isPartOfComposite)
@@ -554,9 +538,9 @@ public class GameUIManager : MonoBehaviour
             // Remove leading slash if present
             if (button.StartsWith("/")) button = button.Substring(1);
             
-            if (button == "leftButton") return "Mouse 1";
-            if (button == "rightButton") return "Mouse 2";
-            if (button == "middleButton") return "Mouse 3";
+            if (button == "leftButton") return "Left Mouse";
+            if (button == "rightButton") return "Right Mouse";
+            if (button == "middleButton") return "Middle Mouse";
             return "Mouse " + button;
         }
         
@@ -600,30 +584,12 @@ public class GameUIManager : MonoBehaviour
         }
         else
         {
-            // For rebinding, prefer Keyboard&Mouse bindings (especially for Attack/CastSpell)
-            // First, try to find a Keyboard&Mouse binding
             for (int i = 0; i < action.bindings.Count; i++)
             {
                 if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
                 {
-                    if (action.bindings[i].groups != null && action.bindings[i].groups.Contains("Keyboard&Mouse"))
-                    {
-                        bindingIndex = i;
-                        break;
-                    }
-                }
-            }
-            
-            // If no Keyboard&Mouse binding found, use the first non-composite binding
-            if (bindingIndex == -1)
-            {
-                for (int i = 0; i < action.bindings.Count; i++)
-                {
-                    if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
-                    {
-                        bindingIndex = i;
-                        break;
-                    }
+                    bindingIndex = i;
+                    break;
                 }
             }
         }
