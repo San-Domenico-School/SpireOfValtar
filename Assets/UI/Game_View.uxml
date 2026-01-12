@@ -12,4 +12,5 @@
             <ui:ProgressBar name="HealthBar" low-value="0" high-value="100" value="100" style="width: 50%;" />
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement name="SpellContainer" picking-mode="Ignore" style="position: absolute; right: 2%; bottom: 5%; flex-direction: row; align-items: flex-end; gap: 15px;" />
 </ui:UXML>
