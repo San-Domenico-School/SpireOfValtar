@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /************************************
  * Manages spell selection UI display in the game view.
  * Shows spell boxes in bottom right corner with highlighting for current spell.
- * Auto-generated 12/19/24
+ * Gleb 01/09/26
  * Version 1.0
  ************************************/
 public class SpellUI : MonoBehaviour
@@ -29,7 +29,6 @@ public class SpellUI : MonoBehaviour
 
         if (uiDocument == null)
         {
-            Debug.LogError("SpellUI: UIDocument not found!");
             return;
         }
 
@@ -43,7 +42,6 @@ public class SpellUI : MonoBehaviour
 
         if (spellContainer == null)
         {
-            Debug.LogError("SpellUI: SpellContainer not found in UXML!");
             return;
         }
 
@@ -135,10 +133,6 @@ public class SpellUI : MonoBehaviour
         {
             currentSpellIndex = index;
             UpdateHighlight(index);
-        }
-        else
-        {
-            Debug.LogWarning($"SpellUI: Invalid spell index {index}. Valid range: 0-{spellBoxes.Count - 1}");
         }
     }
 
