@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Linq;
+using UI.MouseFollow;
 
 /************************************
  * Handles game UI, pause menu, and ESC key controls.
@@ -16,6 +17,7 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private UIDocument pauseMenuDocument;
     [SerializeField] private UIDocument controlsDocument;
     [SerializeField] private UIDocument controlsPauseDocument;
+    [SerializeField] private ReticleController reticleController;
     
     private VisualElement gameUIContainer;
     private Button menuButton;
@@ -46,6 +48,11 @@ public class GameUIManager : MonoBehaviour
             menuButton.clicked += OnMenuButtonClicked;
         }
         
+        if (reticleController == null)
+        {
+            reticleController = FindObjectOfType<ReticleController>(true);
+        }
+
         HideGameUI();
         InitializePauseMenu();
         InitializeControlsMenu();
@@ -927,6 +934,7 @@ public class GameUIManager : MonoBehaviour
         {
             gameUIContainer.style.display = DisplayStyle.Flex;
         }
+        SetReticleVisible(true);
         
         if (controlsDocument != null && controlsDocument.rootVisualElement != null)
         {
@@ -945,6 +953,7 @@ public class GameUIManager : MonoBehaviour
         {
             gameUIContainer.style.display = DisplayStyle.None;
         }
+        SetReticleVisible(false);
     }
     
     private void OnMenuButtonClicked()
@@ -967,6 +976,20 @@ public class GameUIManager : MonoBehaviour
         {
             pauseRebindOperation.Cancel();
             pauseRebindOperation = null;
+        }
+    }
+
+    private void SetReticleVisible(bool isVisible)
+    {
+        if (reticleController == null)
+        {
+            return;
+        }
+
+        reticleController.enabled = isVisible;
+        if (reticleController.reticle != null)
+        {
+            reticleController.reticle.gameObject.SetActive(isVisible);
         }
     }
 }

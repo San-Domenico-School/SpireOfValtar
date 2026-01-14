@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 public class RestartManager : MonoBehaviour
 {
     private const string RestartMenuResourcePath = "RestartMenu";
+    private static string initialSceneName;
 
     [Header("Restart UI (UI Toolkit)")]
     [SerializeField] private UIDocument restartUIDocument;
@@ -30,11 +31,27 @@ public class RestartManager : MonoBehaviour
     private Button exitButton;
     private bool hasShownMenu = false;
     private Coroutine fadeCoroutine;
+    private bool pendingReturnToMainMenu = false;
 
     private void Awake()
     {
+        if (string.IsNullOrEmpty(initialSceneName))
+        {
+            initialSceneName = SceneManager.GetActiveScene().name;
+        }
+
         CacheRestartUI();
         HideRestartMenuInstant();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Start()
@@ -79,6 +96,20 @@ public class RestartManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void ReturnToMainMenuAndRestart()
+    {
+        pendingReturnToMainMenu = true;
+        Time.timeScale = 1f;
+
+        ResetPersistentPlayer();
+
+        string targetScene = string.IsNullOrEmpty(initialSceneName)
+            ? SceneManager.GetActiveScene().name
+            : initialSceneName;
+
+        SceneManager.LoadScene(targetScene);
+    }
+
     public void ExitGame()
     {
         #if UNITY_EDITOR
@@ -94,8 +125,8 @@ public class RestartManager : MonoBehaviour
 
         if (restartButton != null)
         {
-            restartButton.clicked -= RestartLevel;
-            restartButton.clicked += RestartLevel;
+            restartButton.clicked -= ReturnToMainMenuAndRestart;
+            restartButton.clicked += ReturnToMainMenuAndRestart;
         }
 
         if (exitButton != null)
@@ -136,6 +167,22 @@ public class RestartManager : MonoBehaviour
                     document.rootVisualElement.style.display = DisplayStyle.None;
                 }
             }
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!pendingReturnToMainMenu)
+        {
+            return;
+        }
+
+        pendingReturnToMainMenu = false;
+
+        var mainMenuManager = FindObjectOfType<MainMenuManager>();
+        if (mainMenuManager != null)
+        {
+            mainMenuManager.ShowMainMenu();
         }
     }
 
@@ -253,5 +300,17 @@ public class RestartManager : MonoBehaviour
         document.visualTreeAsset = visualTree;
         document.panelSettings = panelSettings;
         return document;
+    }
+
+    private void ResetPersistentPlayer()
+    {
+        var players = FindObjectsOfType<Player>(true);
+        foreach (var player in players)
+        {
+            if (player != null)
+            {
+                Destroy(player.gameObject);
+            }
+        }
     }
 }
