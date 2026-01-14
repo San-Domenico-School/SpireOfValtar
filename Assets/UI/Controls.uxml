@@ -37,6 +37,11 @@
                         </ui:VisualElement>
                         
                         <ui:VisualElement style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                            <ui:Label text="Melee Attack" style="color: rgb(236, 165, 41); font-size: 16px; flex-grow: 1; margin-right: 20px;" />
+                            <ui:Button text="F" name="Keybind_MeleeAttack" style="min-width: 100px; height: 40px; font-size: 16px; -unity-font-style: bold; background-color: rgb(60, 60, 60); color: rgb(236, 165, 41); border-left-color: rgb(255, 220, 120); border-right-color: rgb(255, 220, 120); border-top-color: rgb(255, 220, 120); border-bottom-color: rgb(255, 220, 120); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-radius: 6px;" />
+                        </ui:VisualElement>
+                        
+                        <ui:VisualElement style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                             <ui:Label text="Next Spell" style="color: rgb(236, 165, 41); font-size: 16px; flex-grow: 1; margin-right: 20px;" />
                             <ui:Button text="1" name="Keybind_NextSpell" style="min-width: 100px; height: 40px; font-size: 16px; -unity-font-style: bold; background-color: rgb(60, 60, 60); color: rgb(236, 165, 41); border-left-color: rgb(255, 220, 120); border-right-color: rgb(255, 220, 120); border-top-color: rgb(255, 220, 120); border-bottom-color: rgb(255, 220, 120); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-radius: 6px;" />
                         </ui:VisualElement>
