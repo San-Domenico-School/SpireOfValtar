@@ -50,6 +50,8 @@ public class ControlsManager : MonoBehaviour
         {
             inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
         }
+
+        KeybindUtils.ApplySavedKeybinds(inputActions);
         
         HideControls();
     }

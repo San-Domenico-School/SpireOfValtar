@@ -63,7 +63,15 @@ public class MeleeAttack : MonoBehaviour
             }
         }
         
-        // Intentionally rely on Input System bindings so rebinding works via settings.
+        // Fallback: Check F key directly using new Input System (if PlayerInput isn't wired up)
+        if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            if (canAttack)
+            {
+                PerformMeleeAttack();
+                lastAttackTime = Time.time; // Update last attack time
+            }
+        }
     }
     
     /// <summary>

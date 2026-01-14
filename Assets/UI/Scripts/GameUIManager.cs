@@ -56,6 +56,8 @@ public class GameUIManager : MonoBehaviour
         {
             inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
         }
+
+        KeybindUtils.ApplySavedKeybinds(inputActions);
     }
     
     void Update()
