@@ -247,6 +247,7 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
             { "Keybind_CastSpell", ("Attack", null) },
+            { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
             { "Keybind_PreviousSpell", ("Previous", null) }
         };
@@ -303,6 +304,7 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
             { "Keybind_CastSpell", ("Attack", null) },
+            { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
             { "Keybind_PreviousSpell", ("Previous", null) }
         };

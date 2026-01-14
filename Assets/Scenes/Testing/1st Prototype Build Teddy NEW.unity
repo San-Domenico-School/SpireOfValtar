@@ -2076,6 +2076,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &1697453824 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4654921610813067680, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+  m_PrefabInstance: {fileID: 1904238748}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1697453840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697453824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caac4a6660a914d89bee864bca30acc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
+  meleeDamage: 25
+  attackRange: 2
+  cooldown: 2
+  attackAnimator: {fileID: 0}
 --- !u!1 &1714454510 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4446561019528792011, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
@@ -2167,6 +2188,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6144566078965563371, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6144566078965563371, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[19].m_ActionId
+      value: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      objectReference: {fileID: 0}
+    - target: {fileID: 6144566078965563371, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[19].m_ActionName
+      value: 'Player/MeleeAttack[/Keyboard/f]'
+      objectReference: {fileID: 0}
     - target: {fileID: 6559808826553660517, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.9916
@@ -2214,7 +2247,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4654921610813067680, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1697453840}
   m_SourcePrefab: {fileID: 100100000, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
 --- !u!1 &1927378854 stripped
 GameObject:
