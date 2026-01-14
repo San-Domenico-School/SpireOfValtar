@@ -18,6 +18,9 @@ public class MeleeAttack : MonoBehaviour
     
     [Header("Animation")]
     [SerializeField] private Animator attackAnimator; // Animator for attack animations (to be assigned later)
+
+    [Header("Input")]
+    [SerializeField] private InputActionReference meleeAction;
     
     // Components
     private CharacterController characterController;
@@ -38,6 +41,32 @@ public class MeleeAttack : MonoBehaviour
         if (attackAnimator == null)
         {
             attackAnimator = GetComponent<Animator>();
+        }
+
+        // Ensure saved keybinds are applied to the PlayerInput actions at runtime
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+        {
+            KeybindUtils.ApplySavedKeybinds(playerInput.actions);
+        }
+    }
+
+    private void OnEnable()
+    {
+        InputAction action = ResolveMeleeAction();
+        if (action != null)
+        {
+            action.performed += OnMeleeActionPerformed;
+            action.Enable();
+        }
+    }
+
+    private void OnDisable()
+    {
+        InputAction action = ResolveMeleeAction();
+        if (action != null)
+        {
+            action.performed -= OnMeleeActionPerformed;
         }
     }
     
@@ -63,15 +92,7 @@ public class MeleeAttack : MonoBehaviour
             }
         }
         
-        // Fallback: Check F key directly using new Input System (if PlayerInput isn't wired up)
-        if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
-        {
-            if (canAttack)
-            {
-                PerformMeleeAttack();
-                lastAttackTime = Time.time; // Update last attack time
-            }
-        }
+        // Intentionally rely on Input System bindings so rebinding works via settings.
     }
     
     /// <summary>
@@ -140,6 +161,30 @@ public class MeleeAttack : MonoBehaviour
         {
             meleeAttackPressed = true;
         }
+    }
+
+    private void OnMeleeActionPerformed(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            meleeAttackPressed = true;
+        }
+    }
+
+    private InputAction ResolveMeleeAction()
+    {
+        if (meleeAction != null)
+        {
+            return meleeAction.action;
+        }
+
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null && playerInput.actions != null)
+        {
+            return playerInput.actions.FindAction("MeleeAttack");
+        }
+
+        return null;
     }
     
     /// <summary>
