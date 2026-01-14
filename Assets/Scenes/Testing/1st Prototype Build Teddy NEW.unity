@@ -148,6 +148,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 319d9c0afea6140f9a788ea190e3d102, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RestartManager
+  restartUIDocument: {fileID: 0}
+  restartRootName: GameOverRoot
+  restartButtonName: RestartButton
+  exitButtonName: ExitButton
+  panelSettingsOverride: {fileID: 0}
+  fadeDuration: 2
+  uiDocumentsToHide: []
+  gameUIManager: {fileID: 0}
+  restartMenuSfx: {fileID: 0}
+  restartMenuSfxSource: {fileID: 0}
 --- !u!4 &126691050
 Transform:
   m_ObjectHideFlags: 0
@@ -2094,9 +2104,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
   meleeDamage: 25
-  attackRange: 2
+  attackRange: 5
   cooldown: 2
   attackAnimator: {fileID: 0}
+  meleeAction: {fileID: 0}
 --- !u!1 &1714454510 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4446561019528792011, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
@@ -2166,7 +2177,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: maxHealth
-      value: 100
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: restartManager

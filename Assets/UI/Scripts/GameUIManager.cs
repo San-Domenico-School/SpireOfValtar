@@ -18,6 +18,9 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private UIDocument controlsDocument;
     [SerializeField] private UIDocument controlsPauseDocument;
     [SerializeField] private ReticleController reticleController;
+    [SerializeField] private int gameUISortOrder = 0;
+    [SerializeField] private int pauseMenuSortOrder = 10;
+    [SerializeField] private int controlsMenuSortOrder = 20;
     
     private VisualElement gameUIContainer;
     private Button menuButton;
@@ -53,6 +56,7 @@ public class GameUIManager : MonoBehaviour
             reticleController = FindObjectOfType<ReticleController>(true);
         }
 
+        ApplyUIDocumentSorting();
         HideGameUI();
         InitializePauseMenu();
         InitializeControlsMenu();
@@ -177,6 +181,29 @@ public class GameUIManager : MonoBehaviour
             
             // Initialize settings UI for pause controls
             InitializePauseControlsSettings();
+        }
+    }
+
+    private void ApplyUIDocumentSorting()
+    {
+        if (uiDocument != null)
+        {
+            uiDocument.sortingOrder = gameUISortOrder;
+        }
+
+        if (pauseMenuDocument != null)
+        {
+            pauseMenuDocument.sortingOrder = pauseMenuSortOrder;
+        }
+
+        if (controlsDocument != null)
+        {
+            controlsDocument.sortingOrder = controlsMenuSortOrder;
+        }
+
+        if (controlsPauseDocument != null)
+        {
+            controlsPauseDocument.sortingOrder = controlsMenuSortOrder;
         }
     }
     
@@ -935,6 +962,15 @@ public class GameUIManager : MonoBehaviour
             gameUIContainer.style.display = DisplayStyle.Flex;
         }
         SetReticleVisible(true);
+
+        // Ensure no pause/settings panels remain visible after restart/start.
+        isPaused = false;
+        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        HideControlsMenu();
+        HideControlsPauseMenu();
         
         if (controlsDocument != null && controlsDocument.rootVisualElement != null)
         {
@@ -954,6 +990,23 @@ public class GameUIManager : MonoBehaviour
             gameUIContainer.style.display = DisplayStyle.None;
         }
         SetReticleVisible(false);
+    }
+
+    public void ForceHideAllMenus()
+    {
+        isPaused = false;
+        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        HideControlsMenu();
+        HideControlsPauseMenu();
+    }
+
+    public void ResetForMainMenu()
+    {
+        HideGameUI();
+        ForceHideAllMenus();
     }
     
     private void OnMenuButtonClicked()

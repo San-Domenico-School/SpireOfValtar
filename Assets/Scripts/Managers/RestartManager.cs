@@ -32,6 +32,7 @@ public class RestartManager : MonoBehaviour
     private bool hasShownMenu = false;
     private Coroutine fadeCoroutine;
     private bool pendingReturnToMainMenu = false;
+    private bool runtimeDocumentCreated = false;
 
     private void Awake()
     {
@@ -67,6 +68,7 @@ public class RestartManager : MonoBehaviour
         }
 
         CacheRestartUI();
+        InitializeButtons();
         if (restartRoot == null)
         {
             Debug.LogWarning("RestartManager: Restart UI root not found in UIDocument.");
@@ -96,18 +98,22 @@ public class RestartManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void ReturnToMainMenuAndRestart()
+    public void FullRestartGame()
     {
         pendingReturnToMainMenu = true;
         Time.timeScale = 1f;
 
+        HideRestartMenuInstant();
+        DisableRestartUIDocument();
+
+        ResetAllGameUIManagers();
         ResetPersistentPlayer();
 
         string targetScene = string.IsNullOrEmpty(initialSceneName)
             ? SceneManager.GetActiveScene().name
             : initialSceneName;
 
-        SceneManager.LoadScene(targetScene);
+        SceneManager.LoadScene(targetScene, LoadSceneMode.Single);
     }
 
     public void ExitGame()
@@ -125,8 +131,8 @@ public class RestartManager : MonoBehaviour
 
         if (restartButton != null)
         {
-            restartButton.clicked -= ReturnToMainMenuAndRestart;
-            restartButton.clicked += ReturnToMainMenuAndRestart;
+            restartButton.clicked -= FullRestartGame;
+            restartButton.clicked += FullRestartGame;
         }
 
         if (exitButton != null)
@@ -156,6 +162,7 @@ public class RestartManager : MonoBehaviour
         if (gameUIManager != null)
         {
             gameUIManager.HideGameUI();
+            gameUIManager.ForceHideAllMenus();
         }
 
         if (uiDocumentsToHide != null)
@@ -178,6 +185,11 @@ public class RestartManager : MonoBehaviour
         }
 
         pendingReturnToMainMenu = false;
+        hasShownMenu = false;
+
+        HideRestartMenuInstant();
+        DisableRestartUIDocument();
+        ResetAllGameUIManagers();
 
         var mainMenuManager = FindObjectOfType<MainMenuManager>();
         if (mainMenuManager != null)
@@ -299,6 +311,7 @@ public class RestartManager : MonoBehaviour
         var document = restartObject.AddComponent<UIDocument>();
         document.visualTreeAsset = visualTree;
         document.panelSettings = panelSettings;
+        runtimeDocumentCreated = true;
         return document;
     }
 
@@ -311,6 +324,35 @@ public class RestartManager : MonoBehaviour
             {
                 Destroy(player.gameObject);
             }
+        }
+    }
+
+    private void ResetAllGameUIManagers()
+    {
+        var managers = FindObjectsOfType<GameUIManager>(true);
+        foreach (var manager in managers)
+        {
+            if (manager != null)
+            {
+                manager.ResetForMainMenu();
+            }
+        }
+    }
+
+    private void DisableRestartUIDocument()
+    {
+        if (restartUIDocument == null)
+        {
+            return;
+        }
+
+        restartUIDocument.enabled = false;
+
+        if (runtimeDocumentCreated)
+        {
+            Destroy(restartUIDocument.gameObject);
+            restartUIDocument = null;
+            runtimeDocumentCreated = false;
         }
     }
 }
