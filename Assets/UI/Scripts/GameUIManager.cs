@@ -221,6 +221,8 @@ public class GameUIManager : MonoBehaviour
         Slider volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
         Label sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
         Label volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        Slider uiScaleSlider = rootVisualElement.Q<Slider>("UIScaleSlider");
+        Label uiScaleValueLabel = rootVisualElement.Q<Label>("UIScaleValueLabel");
         
         if (sensitivitySlider != null)
         {
@@ -235,6 +237,14 @@ public class GameUIManager : MonoBehaviour
             volumeSlider.value = settingsManager.GetMasterVolume();
             volumeSlider.RegisterValueChangedCallback(evt => {
                 settingsManager.SetMasterVolume(evt.newValue);
+            });
+        }
+
+        if (uiScaleSlider != null)
+        {
+            uiScaleSlider.value = settingsManager.GetUIScale();
+            uiScaleSlider.RegisterValueChangedCallback(evt => {
+                settingsManager.SetUIScale(evt.newValue);
             });
         }
         
@@ -252,6 +262,13 @@ public class GameUIManager : MonoBehaviour
                 volumeValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
             }
         };
+
+        settingsManager.OnUIScaleChanged += (value) => {
+            if (uiScaleValueLabel != null)
+            {
+                uiScaleValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
+            }
+        };
         
         // Initialize labels
         if (sensitivityValueLabel != null)
@@ -262,6 +279,11 @@ public class GameUIManager : MonoBehaviour
         if (volumeValueLabel != null)
         {
             volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
+        }
+
+        if (uiScaleValueLabel != null)
+        {
+            uiScaleValueLabel.text = Mathf.RoundToInt(settingsManager.GetUIScale() * 100f).ToString() + "%";
         }
         
         // Initialize keybinds for pause menu
@@ -906,6 +928,8 @@ public class GameUIManager : MonoBehaviour
         Slider volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
         Label sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
         Label volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        Slider uiScaleSlider = rootVisualElement.Q<Slider>("UIScaleSlider");
+        Label uiScaleValueLabel = rootVisualElement.Q<Label>("UIScaleValueLabel");
         
         if (sensitivitySlider != null)
         {
@@ -916,6 +940,11 @@ public class GameUIManager : MonoBehaviour
         {
             volumeSlider.value = settingsManager.GetMasterVolume();
         }
+
+        if (uiScaleSlider != null)
+        {
+            uiScaleSlider.value = settingsManager.GetUIScale();
+        }
         
         if (sensitivityValueLabel != null)
         {
@@ -925,6 +954,11 @@ public class GameUIManager : MonoBehaviour
         if (volumeValueLabel != null)
         {
             volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
+        }
+
+        if (uiScaleValueLabel != null)
+        {
+            uiScaleValueLabel.text = Mathf.RoundToInt(settingsManager.GetUIScale() * 100f).ToString() + "%";
         }
     }
     
