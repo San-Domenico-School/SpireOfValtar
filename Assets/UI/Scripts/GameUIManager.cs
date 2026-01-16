@@ -1025,23 +1025,6 @@ public class GameUIManager : MonoBehaviour
         }
         SetReticleVisible(false);
     }
-
-    public void ForceHideAllMenus()
-    {
-        isPaused = false;
-        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
-        {
-            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
-        }
-        HideControlsMenu();
-        HideControlsPauseMenu();
-    }
-
-    public void ResetForMainMenu()
-    {
-        HideGameUI();
-        ForceHideAllMenus();
-    }
     
     private void OnMenuButtonClicked()
     {

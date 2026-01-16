@@ -18,15 +18,6 @@ public class PlayerHealth : MonoBehaviour
         health = maxHealth;
         Debug.Log("Health = 100");
 
-        if (restartManager == null)
-        {
-            restartManager = FindObjectOfType<RestartManager>();
-            if (restartManager == null)
-            {
-                Debug.LogWarning("PlayerHealth: RestartManager not found in scene.");
-            }
-        }
-
         // --- Initialize UI ---
         if (healthUIDocument != null)
         {
@@ -56,14 +47,7 @@ public class PlayerHealth : MonoBehaviour
         if (health <= 0)
         {
             Debug.Log("Player has died");
-            if (restartManager != null)
-            {
-                restartManager.ShowRestartMenu();
-            }
-            else
-            {
-                Debug.LogWarning("PlayerHealth: RestartManager is not assigned.");
-            }
+            restartManager.RestartLevel();
         }
     }
 

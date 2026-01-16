@@ -148,16 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 319d9c0afea6140f9a788ea190e3d102, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RestartManager
-  restartUIDocument: {fileID: 0}
-  restartRootName: GameOverRoot
-  restartButtonName: RestartButton
-  exitButtonName: ExitButton
-  panelSettingsOverride: {fileID: 0}
-  fadeDuration: 2
-  uiDocumentsToHide: []
-  gameUIManager: {fileID: 0}
-  restartMenuSfx: {fileID: 0}
-  restartMenuSfxSource: {fileID: 0}
 --- !u!4 &126691050
 Transform:
   m_ObjectHideFlags: 0
