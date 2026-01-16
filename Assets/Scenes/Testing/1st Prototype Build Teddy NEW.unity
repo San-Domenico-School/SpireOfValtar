@@ -1339,7 +1339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 236391ad37a814e24acb487cb3b94cc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneManagement
-  sceneToLoad: Switch Scene Test
+  sceneToLoad: TeddyFinalBossArenaPrototype
 --- !u!65 &1331499949
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2097,6 +2097,7 @@ MonoBehaviour:
   attackRange: 2
   cooldown: 2
   attackAnimator: {fileID: 0}
+  meleeAction: {fileID: 0}
 --- !u!1 &1714454510 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4446561019528792011, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
