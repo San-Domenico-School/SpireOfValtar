@@ -3,12 +3,19 @@ using UnityEngine.AI;
 
 public class EnemyFleeing : MonoBehaviour
 {
+    // Movement
     public Transform player;
     public float fleeDistance = 10f;
     public float moveSpeed = 3f;
+
+    // Rotate enemy
     public float rotationSpeed = 10f;
     public float lockedY = 2f;
-    
+
+    // Check distance from wall
+    public float wallCheckDistance = 1f;
+    public LayerMask wallLayer;
+
 
     void Start()
     {
@@ -23,7 +30,15 @@ public class EnemyFleeing : MonoBehaviour
         if (distance <= fleeDistance)
         {
             Vector3 fleeDirection = (transform.position - player.position).normalized;
-            transform.position += fleeDirection * moveSpeed * Time.deltaTime;
+            if (!Physics.Raycast(transform.position, fleeDirection, wallCheckDistance, wallLayer))
+            {
+                transform.position += fleeDirection * moveSpeed * Time.deltaTime;
+            }
+            else
+            {
+                // Optional: slightly turn away if hitting a wall
+                fleeDirection = Quaternion.Euler(0, Random.Range(-90, 90), 0) * fleeDirection;
+            }
 
             if (fleeDirection != Vector3.zero)
             {
@@ -56,6 +71,7 @@ public class EnemyFleeing : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Destroy(gameObject);
+
             Debug.Log($"{gameObject.name} was caught");
         }
     }
