@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Linq;
+using UI.MouseFollow;
 
 /************************************
  * Handles game UI, pause menu, and ESC key controls.
@@ -16,6 +17,10 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private UIDocument pauseMenuDocument;
     [SerializeField] private UIDocument controlsDocument;
     [SerializeField] private UIDocument controlsPauseDocument;
+    [SerializeField] private ReticleController reticleController;
+    [SerializeField] private int gameUISortOrder = 0;
+    [SerializeField] private int pauseMenuSortOrder = 10;
+    [SerializeField] private int controlsMenuSortOrder = 20;
     
     private VisualElement gameUIContainer;
     private Button menuButton;
@@ -46,6 +51,12 @@ public class GameUIManager : MonoBehaviour
             menuButton.clicked += OnMenuButtonClicked;
         }
         
+        if (reticleController == null)
+        {
+            reticleController = FindObjectOfType<ReticleController>(true);
+        }
+
+        ApplyUIDocumentSorting();
         HideGameUI();
         InitializePauseMenu();
         InitializeControlsMenu();
@@ -172,6 +183,29 @@ public class GameUIManager : MonoBehaviour
             InitializePauseControlsSettings();
         }
     }
+
+    private void ApplyUIDocumentSorting()
+    {
+        if (uiDocument != null)
+        {
+            uiDocument.sortingOrder = gameUISortOrder;
+        }
+
+        if (pauseMenuDocument != null)
+        {
+            pauseMenuDocument.sortingOrder = pauseMenuSortOrder;
+        }
+
+        if (controlsDocument != null)
+        {
+            controlsDocument.sortingOrder = controlsMenuSortOrder;
+        }
+
+        if (controlsPauseDocument != null)
+        {
+            controlsPauseDocument.sortingOrder = controlsMenuSortOrder;
+        }
+    }
     
     private void InitializePauseControlsSettings()
     {
@@ -187,6 +221,8 @@ public class GameUIManager : MonoBehaviour
         Slider volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
         Label sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
         Label volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        Slider uiScaleSlider = rootVisualElement.Q<Slider>("UIScaleSlider");
+        Label uiScaleValueLabel = rootVisualElement.Q<Label>("UIScaleValueLabel");
         
         if (sensitivitySlider != null)
         {
@@ -201,6 +237,14 @@ public class GameUIManager : MonoBehaviour
             volumeSlider.value = settingsManager.GetMasterVolume();
             volumeSlider.RegisterValueChangedCallback(evt => {
                 settingsManager.SetMasterVolume(evt.newValue);
+            });
+        }
+
+        if (uiScaleSlider != null)
+        {
+            uiScaleSlider.value = settingsManager.GetUIScale();
+            uiScaleSlider.RegisterValueChangedCallback(evt => {
+                settingsManager.SetUIScale(evt.newValue);
             });
         }
         
@@ -218,6 +262,13 @@ public class GameUIManager : MonoBehaviour
                 volumeValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
             }
         };
+
+        settingsManager.OnUIScaleChanged += (value) => {
+            if (uiScaleValueLabel != null)
+            {
+                uiScaleValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
+            }
+        };
         
         // Initialize labels
         if (sensitivityValueLabel != null)
@@ -228,6 +279,11 @@ public class GameUIManager : MonoBehaviour
         if (volumeValueLabel != null)
         {
             volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
+        }
+
+        if (uiScaleValueLabel != null)
+        {
+            uiScaleValueLabel.text = Mathf.RoundToInt(settingsManager.GetUIScale() * 100f).ToString() + "%";
         }
         
         // Initialize keybinds for pause menu
@@ -872,6 +928,8 @@ public class GameUIManager : MonoBehaviour
         Slider volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
         Label sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
         Label volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        Slider uiScaleSlider = rootVisualElement.Q<Slider>("UIScaleSlider");
+        Label uiScaleValueLabel = rootVisualElement.Q<Label>("UIScaleValueLabel");
         
         if (sensitivitySlider != null)
         {
@@ -882,6 +940,11 @@ public class GameUIManager : MonoBehaviour
         {
             volumeSlider.value = settingsManager.GetMasterVolume();
         }
+
+        if (uiScaleSlider != null)
+        {
+            uiScaleSlider.value = settingsManager.GetUIScale();
+        }
         
         if (sensitivityValueLabel != null)
         {
@@ -891,6 +954,11 @@ public class GameUIManager : MonoBehaviour
         if (volumeValueLabel != null)
         {
             volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
+        }
+
+        if (uiScaleValueLabel != null)
+        {
+            uiScaleValueLabel.text = Mathf.RoundToInt(settingsManager.GetUIScale() * 100f).ToString() + "%";
         }
     }
     
@@ -927,6 +995,16 @@ public class GameUIManager : MonoBehaviour
         {
             gameUIContainer.style.display = DisplayStyle.Flex;
         }
+        SetReticleVisible(true);
+
+        // Ensure no pause/settings panels remain visible after restart/start.
+        isPaused = false;
+        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        HideControlsMenu();
+        HideControlsPauseMenu();
         
         if (controlsDocument != null && controlsDocument.rootVisualElement != null)
         {
@@ -945,6 +1023,7 @@ public class GameUIManager : MonoBehaviour
         {
             gameUIContainer.style.display = DisplayStyle.None;
         }
+        SetReticleVisible(false);
     }
     
     private void OnMenuButtonClicked()
@@ -967,6 +1046,20 @@ public class GameUIManager : MonoBehaviour
         {
             pauseRebindOperation.Cancel();
             pauseRebindOperation = null;
+        }
+    }
+
+    private void SetReticleVisible(bool isVisible)
+    {
+        if (reticleController == null)
+        {
+            return;
+        }
+
+        reticleController.enabled = isVisible;
+        if (reticleController.reticle != null)
+        {
+            reticleController.reticle.gameObject.SetActive(isVisible);
         }
     }
 }

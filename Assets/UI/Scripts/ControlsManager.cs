@@ -26,6 +26,8 @@ public class ControlsManager : MonoBehaviour
     private Slider volumeSlider;
     private Label sensitivityValueLabel;
     private Label volumeValueLabel;
+    private Slider uiScaleSlider;
+    private Label uiScaleValueLabel;
     private SettingsManager settingsManager;
     
     // Keybinding
@@ -137,6 +139,8 @@ public class ControlsManager : MonoBehaviour
         volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
         sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
         volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        uiScaleSlider = rootVisualElement.Q<Slider>("UIScaleSlider");
+        uiScaleValueLabel = rootVisualElement.Q<Label>("UIScaleValueLabel");
         
         if (settingsManager != null)
         {
@@ -152,14 +156,22 @@ public class ControlsManager : MonoBehaviour
                 volumeSlider.value = settingsManager.GetMasterVolume();
                 volumeSlider.RegisterValueChangedCallback(OnVolumeChanged);
             }
+
+            if (uiScaleSlider != null)
+            {
+                uiScaleSlider.value = settingsManager.GetUIScale();
+                uiScaleSlider.RegisterValueChangedCallback(OnUIScaleChanged);
+            }
             
             // Subscribe to settings changes to update labels
             settingsManager.OnSensitivityChanged += UpdateSensitivityLabel;
             settingsManager.OnVolumeChanged += UpdateVolumeLabel;
+            settingsManager.OnUIScaleChanged += UpdateUIScaleLabel;
             
             // Initialize labels
             UpdateSensitivityLabel(settingsManager.GetMouseSensitivity());
             UpdateVolumeLabel(settingsManager.GetMasterVolume());
+            UpdateUIScaleLabel(settingsManager.GetUIScale());
         }
         
         // Initialize keybinds
@@ -806,6 +818,22 @@ public class ControlsManager : MonoBehaviour
             volumeValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
         }
     }
+
+    private void OnUIScaleChanged(ChangeEvent<float> evt)
+    {
+        if (settingsManager != null)
+        {
+            settingsManager.SetUIScale(evt.newValue);
+        }
+    }
+
+    private void UpdateUIScaleLabel(float value)
+    {
+        if (uiScaleValueLabel != null)
+        {
+            uiScaleValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
+        }
+    }
     
     private void OnDestroy()
     {
@@ -813,6 +841,7 @@ public class ControlsManager : MonoBehaviour
         {
             settingsManager.OnSensitivityChanged -= UpdateSensitivityLabel;
             settingsManager.OnVolumeChanged -= UpdateVolumeLabel;
+            settingsManager.OnUIScaleChanged -= UpdateUIScaleLabel;
         }
         
         // Cancel any ongoing rebinding
