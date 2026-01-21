@@ -1339,7 +1339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 236391ad37a814e24acb487cb3b94cc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneManagement
-  sceneToLoad: TeddyFinalBossArenaPrototype
+  sceneToLoad: ChasingLevelTeddy
 --- !u!65 &1331499949
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2166,8 +2166,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: health
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: maxHealth
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: restartManager
