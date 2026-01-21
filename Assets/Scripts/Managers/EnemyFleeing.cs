@@ -20,9 +20,28 @@ public class EnemyFleeing : MonoBehaviour
     void Start()
     {
         lockedY = transform.position.y;
+
+        AssignPlayer();
     }
 
- 
+    void AssignPlayer()
+    {
+        if (player != null)
+        {
+            GameObject foundPlayer = GameObject.FindWithTag("Player");
+
+            if (foundPlayer != null)
+            {
+                player = foundPlayer.transform;
+            }
+
+            else
+            {
+                Debug.LogWarning("No 'Player' found.");
+            }
+        }
+    }
+
     void Update()
     {
         float distance = Vector3.Distance(transform.position, player.position);
