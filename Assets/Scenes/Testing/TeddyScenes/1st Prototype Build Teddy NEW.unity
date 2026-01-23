@@ -544,6 +544,37 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4719513536371146957, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
+--- !u!1 &405173433
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 405173434}
+  m_Layer: 0
+  m_Name: Spawnpoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &405173434
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405173433}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.769, y: 2.514, z: 8.097}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &414360643
 GameObject:
   m_ObjectHideFlags: 0
@@ -2207,15 +2238,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6559808826553660517, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.9916
+      value: 0.769
       objectReference: {fileID: 0}
     - target: {fileID: 6559808826553660517, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.99
+      value: 2.514
       objectReference: {fileID: 0}
     - target: {fileID: 6559808826553660517, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 7.06565
+      value: 8.097
       objectReference: {fileID: 0}
     - target: {fileID: 6559808826553660517, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2556,3 +2587,4 @@ SceneRoots:
   - {fileID: 1331499952}
   - {fileID: 1679775812}
   - {fileID: 1025317802}
+  - {fileID: 405173434}
