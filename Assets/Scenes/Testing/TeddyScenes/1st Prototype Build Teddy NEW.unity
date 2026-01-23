@@ -1347,7 +1347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 236391ad37a814e24acb487cb3b94cc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneManagement
-  sceneToLoad: Sebastian Library Testing Scene
+  sceneToLoad: ChasingLevelTeddy
 --- !u!65 &1331499949
 BoxCollider:
   m_ObjectHideFlags: 0
