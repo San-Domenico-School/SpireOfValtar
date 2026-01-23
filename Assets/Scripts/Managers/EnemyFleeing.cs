@@ -16,28 +16,32 @@ public class EnemyFleeing : MonoBehaviour
     public float wallCheckDistance = 1f;
     public LayerMask wallLayer;
 
+    // Level Progression GameObject
+    public GameObject Teleporter;
 
     void Start()
     {
         lockedY = transform.position.y;
+    }
 
+    private void Awake()
+    {
         AssignPlayer();
     }
 
     void AssignPlayer()
     {
-        if (player != null)
+        if (player == null)
         {
-            GameObject foundPlayer = GameObject.FindWithTag("Player");
+            GameObject foundPlayer = GameObject.FindGameObjectWithTag("Player");
 
             if (foundPlayer != null)
             {
                 player = foundPlayer.transform;
             }
-
             else
             {
-                Debug.LogWarning("No 'Player' found.");
+                Debug.LogError("Player not found in scene!");
             }
         }
     }
@@ -89,6 +93,12 @@ public class EnemyFleeing : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            if (Teleporter != null)
+            {
+                Teleporter.SetActive(true);
+                Debug.Log("Next room is open");
+            }
+
             Destroy(gameObject);
 
             Debug.Log($"{gameObject.name} was caught");

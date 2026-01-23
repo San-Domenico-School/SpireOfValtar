@@ -1229,11 +1229,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 384517158661324152, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
---- !u!4 &1190806370 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6559808826553660517, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
-  m_PrefabInstance: {fileID: 1904238748}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1267328355 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6710916338463916353, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -1352,7 +1347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 236391ad37a814e24acb487cb3b94cc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneManagement
-  sceneToLoad: ChasingLevelTeddy
+  sceneToLoad: Sebastian Library Testing Scene
 --- !u!65 &1331499949
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1575,67 +1570,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -8840267237788964114, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
---- !u!1001 &1453469501
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1296916844248590325, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 1190806370}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1.42544
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.53481
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6422934308861247570, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: m_Name
-      value: Flying Book
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
 --- !u!1 &1461214830 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1196788452691655541, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -2321,12 +2255,8 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
-      propertyPath: health
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: maxHealth
-      value: 100
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: restartManager
@@ -2712,4 +2642,3 @@ SceneRoots:
   - {fileID: 1679775812}
   - {fileID: 1652083368}
   - {fileID: 1025317802}
-  - {fileID: 1453469501}
