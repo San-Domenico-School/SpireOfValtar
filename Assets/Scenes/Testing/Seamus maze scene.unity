@@ -167,18 +167,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4753384638102513918, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: MaxDistance
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4753384638102513918, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: MinDistance
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4753384638102513918, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
-      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6422934308861247570, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
       propertyPath: m_Name
       value: Flying Book
