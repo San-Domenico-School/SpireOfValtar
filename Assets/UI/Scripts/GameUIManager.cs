@@ -57,7 +57,15 @@ public class GameUIManager : MonoBehaviour
         }
 
         ApplyUIDocumentSorting();
-        HideGameUI();
+        bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
+        if (gameUIVisible)
+        {
+            StartGame();
+        }
+        else
+        {
+            HideGameUI();
+        }
         InitializePauseMenu();
         InitializeControlsMenu();
         InitializeControlsPauseMenu();

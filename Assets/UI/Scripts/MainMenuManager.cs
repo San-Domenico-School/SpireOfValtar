@@ -25,24 +25,22 @@ public class MainMenuManager : MonoBehaviour
     
     void Awake()
     {
-        Time.timeScale = 0f;
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
-
         DontDestroyOnLoad(gameObject);
+    }
+
+    void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     
     void Start()
     {
-        var rootVisualElement = uiDocument.rootVisualElement;
-        
-        mainMenuContainer = rootVisualElement.Q<VisualElement>("MainMenuContainer");
-        startButton = rootVisualElement.Q<Button>("Start");
-        controlsButton = rootVisualElement.Q<Button>("Controls");
-        exitButton = rootVisualElement.Q<Button>("Exit");
-        
-        controlsManager = FindObjectOfType<ControlsManager>();
-        gameUIManager = FindObjectOfType<GameUIManager>();
+        BindUI();
         
         if (controlsManager == null)
         {
@@ -55,28 +53,28 @@ public class MainMenuManager : MonoBehaviour
             StartCoroutine(InitializeControlsManagerDelayed());
         }
         
-        if (startButton != null)
+        if (mainMenuContainer != null)
         {
-            startButton.clicked += OnStartButtonClicked;
+            ShowMainMenu();
         }
-        
-        if (controlsButton != null)
+        else
         {
-            controlsButton.clicked += OnControlsButtonClicked;
-        }
-        
-        if (exitButton != null)
-        {
-            exitButton.clicked += OnExitButtonClicked;
-        }
-        
-        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
-        {
-            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
-        }
-        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
-        {
-            gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+            Time.timeScale = 1f;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+            UnityEngine.Cursor.visible = false;
+
+            EnsureGameUI();
+            if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
+            {
+                gameUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            }
+
+            if (gameUIManager != null)
+            {
+                gameUIManager.StartGame();
+            }
+
+            HideSecondaryUI();
         }
     }
     
@@ -135,12 +133,13 @@ public class MainMenuManager : MonoBehaviour
         UnityEngine.Cursor.visible = false;
         
         HideMainMenu();
-        
+
+        EnsureGameUI();
         if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
         {
             gameUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
         }
-        
+
         if (gameUIManager != null)
         {
             gameUIManager.StartGame();
@@ -155,7 +154,8 @@ public class MainMenuManager : MonoBehaviour
         UnityEngine.Cursor.visible = true;
         
         HideMainMenu();
-        
+
+        EnsureControlsUI();
         if (controlsUIDocument == null)
         {
             return;
@@ -221,20 +221,23 @@ public class MainMenuManager : MonoBehaviour
         Time.timeScale = 0f;
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-        
+
+        BindUI();
+        if (uiDocument != null)
+        {
+            uiDocument.enabled = true;
+            if (uiDocument.rootVisualElement != null)
+            {
+                uiDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            }
+        }
+        DisableDeathUIDocument();
         if (mainMenuContainer != null)
         {
             mainMenuContainer.style.display = DisplayStyle.Flex;
         }
         
-        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
-        {
-            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
-        }
-        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
-        {
-            gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
-        }
+        HideSecondaryUI();
     }
     
     public void HideMainMenu()
@@ -253,5 +256,120 @@ public class MainMenuManager : MonoBehaviour
         {
             controlsManager.InitializeFromUIDocument(controlsUIDocument);
         }
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        BindUI();
+        HideSecondaryUI();
+    }
+
+    private void BindUI()
+    {
+        if (uiDocument == null || uiDocument.rootVisualElement == null)
+        {
+            uiDocument = FindDocumentWithElement("MainMenuContainer");
+        }
+
+        if (uiDocument != null)
+        {
+            var rootVisualElement = uiDocument.rootVisualElement;
+            if (rootVisualElement != null)
+            {
+                mainMenuContainer = rootVisualElement.Q<VisualElement>("MainMenuContainer");
+                startButton = rootVisualElement.Q<Button>("Start");
+                controlsButton = rootVisualElement.Q<Button>("Controls");
+                exitButton = rootVisualElement.Q<Button>("Exit");
+            }
+        }
+
+        if (startButton != null)
+        {
+            startButton.clicked -= OnStartButtonClicked;
+            startButton.clicked += OnStartButtonClicked;
+        }
+
+        if (controlsButton != null)
+        {
+            controlsButton.clicked -= OnControlsButtonClicked;
+            controlsButton.clicked += OnControlsButtonClicked;
+        }
+
+        if (exitButton != null)
+        {
+            exitButton.clicked -= OnExitButtonClicked;
+            exitButton.clicked += OnExitButtonClicked;
+        }
+
+        controlsManager = FindObjectOfType<ControlsManager>();
+        gameUIManager = FindObjectOfType<GameUIManager>();
+
+        if (controlsManager == null)
+        {
+            GameObject controlsManagerObject = new GameObject("ControlsManager");
+            controlsManager = controlsManagerObject.AddComponent<ControlsManager>();
+        }
+
+        EnsureControlsUI();
+        EnsureGameUI();
+    }
+
+    private void DisableDeathUIDocument()
+    {
+        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals("DeathScreen", System.StringComparison.OrdinalIgnoreCase))
+            {
+                document.enabled = false;
+            }
+        }
+    }
+
+    private void EnsureControlsUI()
+    {
+        if (controlsUIDocument == null || controlsUIDocument.rootVisualElement == null)
+        {
+            controlsUIDocument = FindDocumentWithElement("ControlsContainer");
+        }
+    }
+
+    private void EnsureGameUI()
+    {
+        if (gameUIDocument == null || gameUIDocument.rootVisualElement == null)
+        {
+            gameUIDocument = FindDocumentWithElement("GameContentArea");
+        }
+    }
+
+    private void HideSecondaryUI()
+    {
+        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
+        {
+            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
+        {
+            gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
+
+    private UIDocument FindDocumentWithElement(string elementName)
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.rootVisualElement == null) continue;
+            if (document.rootVisualElement.Q<VisualElement>(elementName) != null)
+            {
+                return document;
+            }
+        }
+        return null;
     }
 }

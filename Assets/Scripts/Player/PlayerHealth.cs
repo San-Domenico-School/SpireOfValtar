@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -6,7 +7,14 @@ public class PlayerHealth : MonoBehaviour
     public int health;
     public int maxHealth = 100;
 
-    [SerializeField] RestartManager restartManager;
+    public event Action<int, int> OnHealthChanged;
+    public event Action OnDeath;
+
+    private bool isDead;
+    private bool suppressDeathEvents;
+
+    public int CurrentHealth => health;
+    public bool IsDead => isDead;
 
     // --- UI Elements ---
     [Header("UI")]
@@ -15,7 +23,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
-        health = maxHealth;
+        ResetHealth();
         Debug.Log("Health = 100");
 
         // --- Initialize UI ---
@@ -39,16 +47,64 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        health -= amount;
+        if (isDead) return;
+        if (suppressDeathEvents) return;
+
+        int previousHealth = health;
+        int newHealth = health - amount;
+        SetHealth(newHealth);
         Debug.Log($"Player has taken {amount} damage, remaining health = {health}");
 
-        UpdateHealthUI();
+        // #region agent log
+        RuntimeDebugLogger.Log(
+            "PlayerHealth.cs:TakeDamage",
+            "Damage applied",
+            "H2",
+            "{\"amount\":" + amount +
+            ",\"previous\":" + previousHealth +
+            ",\"current\":" + health +
+            ",\"isDead\":" + (isDead ? "true" : "false") +
+            ",\"suppress\":" + (suppressDeathEvents ? "true" : "false") + "}"
+        );
+        // #endregion
 
-        if (health <= 0)
+        if (previousHealth > 0 && newHealth <= 0)
         {
+            isDead = true;
             Debug.Log("Player has died");
-            restartManager.RestartLevel();
+            OnDeath?.Invoke();
         }
+    }
+
+    public void ResetHealth()
+    {
+        isDead = false;
+        SetHealth(maxHealth);
+    }
+
+    public void ResetForRespawn()
+    {
+        suppressDeathEvents = true;
+        isDead = false;
+        SetHealth(maxHealth);
+        suppressDeathEvents = false;
+    }
+
+    public void SuppressDeathEvents(bool suppress)
+    {
+        suppressDeathEvents = suppress;
+    }
+
+    public void SetSuppressEvents(bool value)
+    {
+        suppressDeathEvents = value;
+    }
+
+    private void SetHealth(int value)
+    {
+        health = Mathf.Clamp(value, 0, maxHealth);
+        UpdateHealthUI();
+        OnHealthChanged?.Invoke(health, maxHealth);
     }
 
     // --- UI Update Method ---

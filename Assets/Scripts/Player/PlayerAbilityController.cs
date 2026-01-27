@@ -38,6 +38,14 @@ public class PlayerAbilityController : MonoBehaviour
         currentStamina = maxStamina;
     }
 
+    public void ResetState()
+    {
+        currentStamina = maxStamina;
+        currentIndex = 0;
+        UpdateStaminaUI();
+        UpdateSpellUI();
+    }
+
     private void OnEnable()
     {
         if (nextAction != null)
