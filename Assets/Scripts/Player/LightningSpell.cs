@@ -16,7 +16,15 @@ public class LightningSpell : MonoBehaviour
 
     private bool isOnCooldown = false;
 
+    [Header("Audio (optional)")]
+    [SerializeField] private SpellAudioController spellAudio;
+
     public bool canCast => !isOnCooldown && Time.timeScale > 0f;
+
+    private void Awake()
+    {
+        if (spellAudio == null) spellAudio = GetComponentInParent<SpellAudioController>();
+    }
 
     // This is the method called by PlayerAbilityController
     public void OnCast()
@@ -47,6 +55,7 @@ public class LightningSpell : MonoBehaviour
             // Apply damage if the hit object is an enemy
             if (hit.collider.CompareTag("Enemy"))
             {
+                if (spellAudio != null) spellAudio.PlayHit(SpellSfxId.Lightning, hit.point);
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
                 if (enemyHealth != null)
                 {

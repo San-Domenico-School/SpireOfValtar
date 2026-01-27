@@ -2098,6 +2098,35 @@ MonoBehaviour:
   cooldown: 2
   attackAnimator: {fileID: 0}
   meleeAction: {fileID: 0}
+--- !u!114 &1697453856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697453824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 427677d6fa4504887b047355684a4c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSoundController
+  footstepLoopClip: {fileID: 8300000, guid: ffa21e4cd34c14c6ba261c0e4ee1a4bb, type: 3}
+  footstepVolume: 1
+  minPlanarSpeed: 0.2
+  runSpeedThreshold: 6.5
+  walkStepInterval: 0.5
+  runStepInterval: 0.35
+  useDistanceBasedOneShots: 1
+  walkStepDistance: 1.4
+  runStepDistance: 1.9
+  groundedGraceSeconds: 0.08
+  scaleLoopPitchWithSpeed: 0
+  footstepClips: []
+  spellCastClip: {fileID: 0}
+  spellCastVolume: 0.9
+  footstepsSource: {fileID: 0}
+  spellSource: {fileID: 0}
+  debugWarnings: 0
 --- !u!1 &1714454510 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4446561019528792011, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
@@ -2186,6 +2215,10 @@ PrefabInstance:
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2470579908735636197, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2470579908735636197, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: runMultiplier
       value: 1
       objectReference: {fileID: 0}
@@ -2256,6 +2289,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4654921610813067680, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1697453840}
+    - targetCorrespondingSourceObject: {fileID: 4654921610813067680, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1697453856}
   m_SourcePrefab: {fileID: 100100000, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
 --- !u!1 &1927378854 stripped
 GameObject:
