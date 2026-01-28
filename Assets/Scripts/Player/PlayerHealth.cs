@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 public class PlayerHealth : MonoBehaviour
 {
     public int health;
-    public int maxHealth = 100;
+    public int maxHealth;
 
     [SerializeField] RestartManager restartManager;
 
@@ -18,7 +18,7 @@ public class PlayerHealth : MonoBehaviour
     public void SetHealthAtStart()
     {
         health = RestartEvents.maxHealth;
-        Debug.Log("Health = 100");
+        Debug.Log($"Health Value = {health}");
 
         // --- Initialize UI ---
         if (healthUIDocument != null)
