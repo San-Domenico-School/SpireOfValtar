@@ -45,7 +45,6 @@ public class DeathUIController : MonoBehaviour
 
         BindUI();
         HideImmediate();
-        Debug.Log("[DeathUI] Awake -> UI disabled");
     }
 
     void OnEnable()
@@ -95,22 +94,6 @@ public class DeathUIController : MonoBehaviour
 
     private void ShowDeathUI()
     {
-        Debug.Log(
-            "[DeathUI] SHOW CALLED\n" +
-            UnityEngine.StackTraceUtility.ExtractStackTrace()
-        );
-
-        // #region agent log
-        RuntimeDebugLogger.Log(
-            "DeathUIController.cs:ShowDeathUI",
-            "ShowDeathUI called",
-            "H1",
-            "{\"stack\":\"" + RuntimeDebugLogger.Escape(UnityEngine.StackTraceUtility.ExtractStackTrace()) + "\"}"
-        );
-        // #endregion
-
-        Debug.Log("[DeathUI] Showing Death UI");
-
         ResolveUIDocument();
 
         if (uiDocument == null)
@@ -140,8 +123,6 @@ public class DeathUIController : MonoBehaviour
 
     public void HideImmediate()
     {
-        Debug.Log("[DeathUI] Hiding Death UI");
-
         ResolveUIDocument();
 
         if (uiDocument != null)
@@ -173,14 +154,12 @@ public class DeathUIController : MonoBehaviour
 
         if (uiDocument == null)
         {
-            Debug.LogWarning("[DeathUI] UIDocument not found.");
             return;
         }
 
         root = uiDocument.rootVisualElement;
         if (root == null)
         {
-            Debug.LogWarning("[DeathUI] Root VisualElement not found.");
             return;
         }
 

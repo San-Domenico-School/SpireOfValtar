@@ -117,25 +117,6 @@ public class PlayerHealth : MonoBehaviour
             isDead = true;
             Debug.Log("Player has died");
             OnDeath?.Invoke();
-
-            if (OnDeath == null)
-            {
-                var gameUI = FindFirstObjectByType<GameUIManager>(FindObjectsInactive.Include);
-                if (gameUI != null)
-                {
-                    gameUI.HideGameUI();
-                }
-
-                var deathUI = FindFirstObjectByType<DeathUIController>(FindObjectsInactive.Include);
-                if (deathUI != null)
-                {
-                    deathUI.PlayDeathSequence();
-                }
-                else
-                {
-                    Debug.LogWarning("PlayerHealth: DeathUIController not found.");
-                }
-            }
         }
     }
 
