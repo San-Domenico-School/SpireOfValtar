@@ -13,10 +13,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private UIDocument healthUIDocument;  // Assign in Inspector
     private ProgressBar healthBar;  
     
-    void Start()
-    {
-        SetHealthAtStart();
-    }                      // ProgressBar instead of VisualElement
+
 
     public void SetHealthAtStart()
     {

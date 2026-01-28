@@ -17,7 +17,8 @@ public static class RestartEvents
 {
     // 1. THE NOTEBOOK (This is where the data is stored)
     // This array stays in memory as long as the game is open.
-    public static int maxHealth = 100; 
+    public static int SceneIndex = 0;
+    public static int maxHealth = 2; 
 
     // 2. THE RADIO STATION (The Event)
     public static Action<int, int> OnScoreAdded;
@@ -25,12 +26,9 @@ public static class RestartEvents
     public static Action<int> OnSceneChange;
 
     // 3. THE BROADCASTERS (The helper method)
-    public static void SendScore(int teamID, int points)
+   public static void SendSceneIndex()
     {
-        // Update the actual data in the "Notebook"
-        //TeamScores[teamID] += points;
-
-        // Shout the news over the "Radio" so the UI updates
-        //OnScoreAdded?.Invoke(teamID, points);
+        SceneIndex++;
+        OnSceneChange?.Invoke(SceneIndex);
     }
 }
