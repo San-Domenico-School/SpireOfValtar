@@ -3,7 +3,8 @@ using UnityEngine;
 public class PlayerDeathHandler : MonoBehaviour
 {
     [SerializeField] private PlayerHealth playerHealth;
-    [SerializeField] private RestartManager restartManager;
+    [SerializeField] private DeathUIController deathUIController;
+    [SerializeField] private GameUIManager gameUIManager;
 
     void Awake()
     {
@@ -15,12 +16,18 @@ public class PlayerDeathHandler : MonoBehaviour
 
     void OnEnable()
     {
-        // Disabled: RestartManager is the single death authority.
+        if (playerHealth != null)
+        {
+            playerHealth.OnDeath += HandleDeath;
+        }
     }
 
     void OnDisable()
     {
-        // Disabled: RestartManager is the single death authority.
+        if (playerHealth != null)
+        {
+            playerHealth.OnDeath -= HandleDeath;
+        }
     }
 
     private void HandleDeath()
@@ -34,18 +41,32 @@ public class PlayerDeathHandler : MonoBehaviour
         );
         // #endregion
 
-        if (restartManager == null)
+        if (deathUIController == null)
         {
-            restartManager = RestartManager.Instance;
+            deathUIController = FindFirstObjectByType<DeathUIController>(FindObjectsInactive.Include);
         }
 
-        if (restartManager != null)
+        if (gameUIManager == null)
         {
-            restartManager.HandlePlayerDeath();
+            gameUIManager = FindFirstObjectByType<GameUIManager>(FindObjectsInactive.Include);
+        }
+
+        if (gameUIManager != null)
+        {
+            gameUIManager.HideGameUI();
+        }
+
+        Time.timeScale = 0f;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+
+        if (deathUIController != null)
+        {
+            deathUIController.PlayDeathSequence();
         }
         else
         {
-            Debug.LogWarning("PlayerDeathHandler: RestartManager not found.");
+            Debug.LogWarning("PlayerDeathHandler: DeathUIController not found.");
         }
     }
 }

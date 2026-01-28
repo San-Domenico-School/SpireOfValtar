@@ -25,7 +25,6 @@ public class MainMenuManager : MonoBehaviour
     
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
     }
 
     void OnEnable()
@@ -135,9 +134,19 @@ public class MainMenuManager : MonoBehaviour
         HideMainMenu();
 
         EnsureGameUI();
-        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
+        if (gameUIDocument != null)
         {
-            gameUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            gameUIDocument.enabled = true;
+            if (gameUIDocument.rootVisualElement != null)
+            {
+                gameUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            }
+        }
+
+        var spawner = FindFirstObjectByType<PlayerSpawner>(FindObjectsInactive.Include);
+        if (spawner != null)
+        {
+            spawner.StartGame();
         }
 
         if (gameUIManager != null)
@@ -232,6 +241,7 @@ public class MainMenuManager : MonoBehaviour
             }
         }
         DisableDeathUIDocument();
+        HideGameUIDocuments();
         if (mainMenuContainer != null)
         {
             mainMenuContainer.style.display = DisplayStyle.Flex;
@@ -356,6 +366,27 @@ public class MainMenuManager : MonoBehaviour
         if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
         {
             gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
+
+    private void HideGameUIDocuments()
+    {
+        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals("Game_View", System.StringComparison.OrdinalIgnoreCase))
+            {
+                document.enabled = false;
+                if (document.rootVisualElement != null)
+                {
+                    document.rootVisualElement.style.display = DisplayStyle.None;
+                }
+            }
         }
     }
 

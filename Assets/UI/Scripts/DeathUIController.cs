@@ -258,9 +258,10 @@ public class DeathUIController : MonoBehaviour
 
     private void OnRestartClicked()
     {
-        if (RestartManager.Instance != null)
+        var spawner = FindFirstObjectByType<PlayerSpawner>(FindObjectsInactive.Include);
+        if (spawner != null)
         {
-            RestartManager.Instance.RequestRestartFromDeath();
+            spawner.RestartGame();
         }
     }
 

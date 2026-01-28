@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class PlayerHealth : MonoBehaviour
@@ -21,15 +22,58 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private UIDocument healthUIDocument;  // Assign in Inspector
     private ProgressBar healthBar;                        // ProgressBar instead of VisualElement
 
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        BindHealthUI();
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     void Start()
     {
         ResetHealth();
         Debug.Log("Health = 100");
 
         // --- Initialize UI ---
+        BindHealthUI();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        BindHealthUI();
+    }
+
+    private void BindHealthUI()
+    {
+        if (healthUIDocument == null)
+        {
+            var documents = FindObjectsOfType<UIDocument>(true);
+            foreach (var document in documents)
+            {
+                if (document == null || document.rootVisualElement == null)
+                {
+                    continue;
+                }
+
+                if (document.rootVisualElement.Q<ProgressBar>("HealthBar") != null)
+                {
+                    healthUIDocument = document;
+                    break;
+                }
+            }
+        }
+
         if (healthUIDocument != null)
         {
             var root = healthUIDocument.rootVisualElement;
+            if (root == null)
+            {
+                return;
+            }
 
             // CHANGE "HealthBar" to whatever the Progress Bar name is in UI Builder
             healthBar = root.Q<ProgressBar>("HealthBar");
@@ -57,7 +101,7 @@ public class PlayerHealth : MonoBehaviour
 
         // #region agent log
         RuntimeDebugLogger.Log(
-            "PlayerHealth.cs:TakeDamage",
+            "PlayerHealth.cs:TakeDai run 1st promage",
             "Damage applied",
             "H2",
             "{\"amount\":" + amount +
@@ -73,6 +117,25 @@ public class PlayerHealth : MonoBehaviour
             isDead = true;
             Debug.Log("Player has died");
             OnDeath?.Invoke();
+
+            if (OnDeath == null)
+            {
+                var gameUI = FindFirstObjectByType<GameUIManager>(FindObjectsInactive.Include);
+                if (gameUI != null)
+                {
+                    gameUI.HideGameUI();
+                }
+
+                var deathUI = FindFirstObjectByType<DeathUIController>(FindObjectsInactive.Include);
+                if (deathUI != null)
+                {
+                    deathUI.PlayDeathSequence();
+                }
+                else
+                {
+                    Debug.LogWarning("PlayerHealth: DeathUIController not found.");
+                }
+            }
         }
     }
 
@@ -98,6 +161,12 @@ public class PlayerHealth : MonoBehaviour
     public void SetSuppressEvents(bool value)
     {
         suppressDeathEvents = value;
+    }
+
+    public void ApplySessionData(int current, int max)
+    {
+        maxHealth = Mathf.Max(1, max);
+        SetHealth(current);
     }
 
     private void SetHealth(int value)

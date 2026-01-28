@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 3009785914778040112}
   - component: {fileID: 4380578801919735770}
   - component: {fileID: 648765997522169627}
-  - component: {fileID: 1900900126447633119}
+  - component: {fileID: 8058498361456050140}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -286,6 +286,7 @@ MonoBehaviour:
   maxStamina: 100
   regenRate: 10
   uiDocument: {fileID: 0}
+  spellUI: {fileID: 0}
 --- !u!114 &1311476162909644520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -610,9 +611,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   health: 0
   maxHealth: 100
-  restartManager: {fileID: 0}
   healthUIDocument: {fileID: 0}
---- !u!114 &1900900126447633119
+--- !u!114 &8058498361456050140
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -623,7 +623,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c826ef8031a30440b87950d22f92a626, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DontDestroyPlayer
+  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0

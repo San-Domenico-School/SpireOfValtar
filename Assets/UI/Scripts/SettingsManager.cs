@@ -36,12 +36,6 @@ public class SettingsManager : MonoBehaviour
             if (instance == null)
             {
                 instance = FindFirstObjectByType<SettingsManager>();
-                if (instance == null)
-                {
-                    GameObject settingsObject = new GameObject("SettingsManager");
-                    instance = settingsObject.AddComponent<SettingsManager>();
-                    DontDestroyOnLoad(settingsObject);
-                }
             }
             return instance;
         }
@@ -52,7 +46,6 @@ public class SettingsManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
             LoadSettings();
         }
         else if (instance != this)

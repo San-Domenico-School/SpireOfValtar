@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements; // ✅ Added for UI Toolkit
 
 public class PlayerAbilityController : MonoBehaviour
@@ -33,6 +34,16 @@ public class PlayerAbilityController : MonoBehaviour
 
     private int currentIndex = 0;
 
+    public float CurrentStamina => currentStamina;
+    public float MaxStamina => maxStamina;
+
+    public void ApplySessionData(float current, float max)
+    {
+        maxStamina = Mathf.Max(1f, max);
+        currentStamina = Mathf.Clamp(current, 0f, maxStamina);
+        UpdateStaminaUI();
+    }
+
     private void Awake()
     {
         currentStamina = maxStamina;
@@ -48,6 +59,8 @@ public class PlayerAbilityController : MonoBehaviour
 
     private void OnEnable()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         if (nextAction != null)
         {
             nextAction.action.performed += OnNext;
@@ -68,21 +81,7 @@ public class PlayerAbilityController : MonoBehaviour
 
         Debug.Log("Starting on Spell 1");
 
-        if (uiDocument != null)
-        {
-            var root = uiDocument.rootVisualElement;
-            staminaBar = root.Q<ProgressBar>("StaminaProgressBar"); // Must match name in UI Builder
-            if (staminaBar != null)
-            {
-                staminaBar.lowValue = 0;
-                staminaBar.highValue = maxStamina;
-                staminaBar.value = currentStamina;
-            }
-            else
-            {
-                Debug.LogWarning("No ProgressBar named 'StaminaProgressBar' found in UI Document!");
-            }
-        }
+        BindStaminaUI();
 
         // Initialize spell UI
         if (spellUI != null)
@@ -102,6 +101,8 @@ public class PlayerAbilityController : MonoBehaviour
 
     private void OnDisable()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
         if (nextAction != null)
         {
             nextAction.action.performed -= OnNext;
@@ -118,6 +119,52 @@ public class PlayerAbilityController : MonoBehaviour
         {
             attackAction.action.performed -= OnAttack;
             attackAction.action.Disable();
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        BindStaminaUI();
+    }
+
+    private void BindStaminaUI()
+    {
+        if (uiDocument == null)
+        {
+            var documents = FindObjectsOfType<UIDocument>(true);
+            foreach (var document in documents)
+            {
+                if (document == null || document.rootVisualElement == null)
+                {
+                    continue;
+                }
+
+                if (document.rootVisualElement.Q<ProgressBar>("StaminaProgressBar") != null)
+                {
+                    uiDocument = document;
+                    break;
+                }
+            }
+        }
+
+        if (uiDocument != null)
+        {
+            var root = uiDocument.rootVisualElement;
+            if (root == null)
+            {
+                return;
+            }
+            staminaBar = root.Q<ProgressBar>("StaminaProgressBar"); // Must match name in UI Builder
+            if (staminaBar != null)
+            {
+                staminaBar.lowValue = 0;
+                staminaBar.highValue = maxStamina;
+                staminaBar.value = currentStamina;
+            }
+            else
+            {
+                Debug.LogWarning("No ProgressBar named 'StaminaProgressBar' found in UI Document!");
+            }
         }
     }
 
