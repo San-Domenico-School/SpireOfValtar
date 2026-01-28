@@ -11,11 +11,16 @@ public class PlayerHealth : MonoBehaviour
     // --- UI Elements ---
     [Header("UI")]
     [SerializeField] private UIDocument healthUIDocument;  // Assign in Inspector
-    private ProgressBar healthBar;                        // ProgressBar instead of VisualElement
-
+    private ProgressBar healthBar;  
+    
     void Start()
     {
-        health = maxHealth;
+        SetHealthAtStart();
+    }                      // ProgressBar instead of VisualElement
+
+    public void SetHealthAtStart()
+    {
+        health = RestartEvents.maxHealth;
         Debug.Log("Health = 100");
 
         // --- Initialize UI ---
