@@ -100,6 +100,31 @@ public class PlayerMovement : MonoBehaviour
         if (walkLoopClip != null) walkLoopSource.clip = walkLoopClip;
     }
 
+    public void ResetMovementState(bool resetCameraPitch = true)
+    {
+        isDodging = false;
+        isLunging = false;
+        lastDodgeTime = -999f;
+        lastSprintTime = -999f;
+        currentStamina = maxStamina;
+        velocity = Vector3.zero;
+
+        moveInput = Vector2.zero;
+        turnInput = Vector2.zero;
+        jumpPressedFrame = false;
+        attackPressedFrame = false;
+        crouchPressedFrame = false;
+
+        if (resetCameraPitch)
+        {
+            cameraPitchDegrees = 0f;
+            if (cameraPivot != null)
+            {
+                cameraPivot.localRotation = Quaternion.identity;
+            }
+        }
+    }
+
     void Update()
     {
         // Don't process input when game is paused (Time.timeScale == 0)
