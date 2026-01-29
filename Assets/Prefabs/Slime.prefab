@@ -301,6 +301,7 @@ GameObject:
   - component: {fileID: 436963044692907946}
   - component: {fileID: 6415398406886276423}
   - component: {fileID: 7153141226696430092}
+  - component: {fileID: 7306059522408865722}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Enemy
@@ -408,6 +409,36 @@ MonoBehaviour:
   speedParam: Speed
   damage: 15
   damageInterval: 3
+  enemySound: {fileID: 0}
+--- !u!114 &7306059522408865722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043927312112991726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed9b67e2493f2439a9ffe35d5c9ed843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySoundController
+  moveLoopClip: {fileID: 8300000, guid: 05f69c89a0dd046ba8adb28ef8ba5271, type: 3}
+  moveVolume: 0.7
+  moveSpeedThreshold: 0.15
+  scaleMovePitchWithSpeed: 0
+  movePitchRange: {x: 0.95, y: 1.1}
+  attackClips:
+  - {fileID: 8300000, guid: fd70f1431b93c442db9a79dbfda6ebc6, type: 3}
+  attackVolume: 0.9
+  attackPitchRange: {x: 0.97, y: 1.03}
+  playIn3D: 1
+  minDistance: 2
+  maxDistance: 35
+  rolloffMode: 1
+  navAgent: {fileID: 0}
+  moveSource: {fileID: 0}
+  attackSource: {fileID: 0}
+  debugWarnings: 0
 --- !u!1 &6697825833002519335
 GameObject:
   m_ObjectHideFlags: 0
