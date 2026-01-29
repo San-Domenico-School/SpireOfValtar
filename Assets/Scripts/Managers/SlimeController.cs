@@ -38,6 +38,9 @@ public class SlimeController : MonoBehaviour
     [SerializeField] private float damageInterval = 3f;
     private Coroutine damageCoroutine;
 
+    [Header("Audio (optional)")]
+    [SerializeField] private EnemySoundController enemySound;
+
     void Start()
     {
         playerHealth = FindFirstObjectByType<PlayerHealth>();
@@ -53,6 +56,10 @@ public class SlimeController : MonoBehaviour
             Debug.LogError("SlimeController requires a NavMeshAgent component!");
             return;
         }
+
+        if (enemySound == null) enemySound = GetComponent<EnemySoundController>();
+        if (enemySound == null) enemySound = GetComponentInParent<EnemySoundController>();
+        if (enemySound == null) enemySound = GetComponentInChildren<EnemySoundController>();
 
         // Find Animator if not assigned (usually on the model child)
         if (animator == null)
@@ -143,6 +150,7 @@ public class SlimeController : MonoBehaviour
         isAttacking = true;
         // TODO: Add attack logic here (you can also trigger attack animations)
         // Example: animator?.SetTrigger("Attack");
+        if (enemySound != null) enemySound.PlayAttackSfx();
     }
 
     private void StopAttack()
@@ -211,6 +219,7 @@ public class SlimeController : MonoBehaviour
 
             if (playerHealth != null)
             {
+                if (enemySound != null) enemySound.PlayAttackSfx();
                 playerHealth.TakeDamage(damage); // initial instant damage
                 Debug.Log($"{gameObject.name} has hit Player!");
 
@@ -240,6 +249,7 @@ public class SlimeController : MonoBehaviour
         {
             if (playerHealth != null)
             {
+                if (enemySound != null) enemySound.PlayAttackSfx();
                 playerHealth.TakeDamage(damage);
                 Debug.Log($"{gameObject.name} dealt periodic damage: {damage}");
             }
