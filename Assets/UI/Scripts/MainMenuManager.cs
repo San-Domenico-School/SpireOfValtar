@@ -14,6 +14,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private UIDocument uiDocument;
     [SerializeField] private UIDocument controlsUIDocument;
     [SerializeField] private UIDocument gameUIDocument;
+    [SerializeField] private string mainMenuSceneName = "1st Prototype Build Teddy NEW";
     
     private VisualElement mainMenuContainer;
     private Button startButton;
@@ -52,28 +53,13 @@ public class MainMenuManager : MonoBehaviour
             StartCoroutine(InitializeControlsManagerDelayed());
         }
         
-        if (mainMenuContainer != null)
+        if (mainMenuContainer != null && ShouldShowMainMenuForScene())
         {
             ShowMainMenu();
         }
         else
         {
-            Time.timeScale = 1f;
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-            UnityEngine.Cursor.visible = false;
-
-            EnsureGameUI();
-            if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
-            {
-                gameUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
-            }
-
-            if (gameUIManager != null)
-            {
-                gameUIManager.StartGame();
-            }
-
-            HideSecondaryUI();
+            StartGameplayUI();
         }
     }
     
@@ -227,6 +213,13 @@ public class MainMenuManager : MonoBehaviour
     
     public void ShowMainMenu()
     {
+        if (!ShouldShowMainMenuForScene())
+        {
+            HideMainMenu();
+            StartGameplayUI();
+            return;
+        }
+
         Time.timeScale = 0f;
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
@@ -271,7 +264,7 @@ public class MainMenuManager : MonoBehaviour
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
         BindUI();
-        HideSecondaryUI();
+        UpdateMainMenuVisibility();
     }
 
     private void BindUI()
@@ -369,6 +362,14 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+    private void HideControlsUI()
+    {
+        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
+        {
+            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
+
     private void HideGameUIDocuments()
     {
         var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
@@ -388,6 +389,60 @@ public class MainMenuManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void StartGameplayUI()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
+
+        HideMainMenu();
+        EnsureGameUI();
+        if (gameUIDocument != null)
+        {
+            gameUIDocument.enabled = true;
+            if (gameUIDocument.rootVisualElement != null)
+            {
+                gameUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            }
+        }
+
+        var spawner = FindFirstObjectByType<PlayerSpawner>(FindObjectsInactive.Include);
+        if (spawner != null)
+        {
+            spawner.StartGame();
+        }
+
+        if (gameUIManager != null)
+        {
+            gameUIManager.StartGame();
+        }
+
+        HideControlsUI();
+    }
+
+    private void UpdateMainMenuVisibility()
+    {
+        if (ShouldShowMainMenuForScene())
+        {
+            ShowMainMenu();
+        }
+        else
+        {
+            StartGameplayUI();
+        }
+    }
+
+    private bool ShouldShowMainMenuForScene()
+    {
+        if (string.IsNullOrEmpty(mainMenuSceneName))
+        {
+            return true;
+        }
+
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        return sceneName == mainMenuSceneName;
     }
 
     private UIDocument FindDocumentWithElement(string elementName)
