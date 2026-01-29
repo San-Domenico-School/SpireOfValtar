@@ -37,7 +37,16 @@ public class SpellUI : MonoBehaviour
 
     private void InitializeSpellUI()
     {
+        if (uiDocument == null)
+        {
+            return;
+        }
+
         var root = uiDocument.rootVisualElement;
+        if (root == null)
+        {
+            return;
+        }
         spellContainer = root.Q<VisualElement>("SpellContainer");
 
         if (spellContainer == null)
