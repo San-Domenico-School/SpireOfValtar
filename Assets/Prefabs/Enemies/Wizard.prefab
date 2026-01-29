@@ -521,14 +521,16 @@ MonoBehaviour:
   movePitchRange: {x: 0.95, y: 1.1}
   attackClips:
   - {fileID: 8300000, guid: 130627d77f5bb42e5905c0f35a8c7577, type: 3}
-  attackVolume: 0.9
+  attackVolume: 0.227
   attackPitchRange: {x: 0.97, y: 1.03}
+  playIn3D: 1
   minDistance: 2
   maxDistance: 35
   rolloffMode: 1
   navAgent: {fileID: 0}
   moveSource: {fileID: 0}
   attackSource: {fileID: 0}
+  debugWarnings: 0
 --- !u!1 &6697825833002519335
 GameObject:
   m_ObjectHideFlags: 0
