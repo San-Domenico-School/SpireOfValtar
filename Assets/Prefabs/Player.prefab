@@ -162,9 +162,6 @@ GameObject:
   - component: {fileID: 4380578801919735770}
   - component: {fileID: 648765997522169627}
   - component: {fileID: 1900900126447633119}
-  - component: {fileID: 8532385380272531006}
-  - component: {fileID: 5120069922879719842}
-  - component: {fileID: 920295508002725075}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -283,15 +280,12 @@ MonoBehaviour:
   spell1: {fileID: 1311476162909644520}
   spell2: {fileID: 4850373086718553156}
   spell3: {fileID: 3865945351040155882}
-  spellAudio: {fileID: 0}
-  playerSound: {fileID: 0}
   nextAction: {fileID: 7476244043514120974, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   previousAction: {fileID: 2411907206095950430, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   attackAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   maxStamina: 100
   regenRate: 10
   uiDocument: {fileID: 0}
-  spellUI: {fileID: 0}
 --- !u!114 &1311476162909644520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,11 +300,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   range: 30
   cooldown: 0
-  damage: 25
+  damage: 75
   lightningVFXPrefab: {fileID: 4159723444550947670, guid: 18eccc8d944514aebb6f083126b3214d, type: 3}
   boltHeight: 6
   vfxLifetime: 2
-  spellAudio: {fileID: 0}
 --- !u!114 &4850373086718553156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,7 +318,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FireballCaster
   fireballPrefab: {fileID: 2081132082438070434, guid: de2d963b15f744a0aa0e4627569839f2, type: 3}
   cooldown: 0
-  spellAudio: {fileID: 0}
 --- !u!114 &3865945351040155882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,7 +333,6 @@ MonoBehaviour:
   freezePrefab: {fileID: 8449232247961012594, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
   cooldown: 0
   spawnDistance: 1
-  spellAudio: {fileID: 0}
 --- !u!114 &6144566078965563371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -491,10 +482,6 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-    m_ActionName: 'Player/MeleeAttack[/Keyboard/f]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: 
@@ -513,14 +500,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 5
-  runMultiplier: 1
+  runMultiplier: 1.6
   jumpHeight: 1.5
   gravity: -20
-  enableWalkLoopAudio: 1
-  walkLoopSource: {fileID: 0}
-  walkLoopClip: {fileID: 0}
-  walkLoopVolume: 0.8
-  walkMinMoveSqrMagnitude: 0.01
   maxStamina: 100
   sprintStaminaCostPerSecond: 25
   staminaRecoveryPerSecond: 15
@@ -642,92 +624,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c826ef8031a30440b87950d22f92a626, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DontDestroyPlayer
---- !u!114 &8532385380272531006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4654921610813067680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: caac4a6660a914d89bee864bca30acc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
-  meleeDamage: 25
-  attackRange: 5
-  cooldown: 2
-  attackAnimator: {fileID: 0}
-  meleeAction: {fileID: 0}
---- !u!114 &5120069922879719842
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4654921610813067680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 427677d6fa4504887b047355684a4c47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerSoundController
-  footstepLoopClip: {fileID: 8300000, guid: ffa21e4cd34c14c6ba261c0e4ee1a4bb, type: 3}
-  footstepVolume: 1
-  minPlanarSpeed: 0.2
-  runSpeedThreshold: 6.5
-  walkStepInterval: 0.5
-  runStepInterval: 0.35
-  useDistanceBasedOneShots: 1
-  walkStepDistance: 1.4
-  runStepDistance: 1.9
-  groundedGraceSeconds: 0.08
-  scaleLoopPitchWithSpeed: 0
-  footstepClips: []
-  spellCastClip: {fileID: 0}
-  spellCastVolume: 0.9
-  footstepsSource: {fileID: 0}
-  spellSource: {fileID: 0}
-  debugWarnings: 0
---- !u!114 &920295508002725075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4654921610813067680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8634011b008cf4914b86123ed3c4c411, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellAudioController
-  sfxSets:
-  - spell: 0
-    castClips:
-    - {fileID: 8300000, guid: 3334f1246bb254dc4856651b1005f219, type: 3}
-    castVolume: 0.767
-    hitClips: []
-    hitVolume: 0
-    pitchRange: {x: 0.97, y: 0.33333334}
-  - spell: 1
-    castClips:
-    - {fileID: 8300000, guid: 819047ef605494cb68c2a20b9c549a59, type: 3}
-    castVolume: 0.866
-    hitClips: []
-    hitVolume: 0
-    pitchRange: {x: 0.97, y: 1.03}
-  - spell: 2
-    castClips:
-    - {fileID: 8300000, guid: eb2043d0ffac24a3788ad0049b9f641d, type: 3}
-    castVolume: 0.767
-    hitClips: []
-    hitVolume: 0
-    pitchRange: {x: 0.97, y: 1.03}
-  hitsAre3D: 1
-  hitMinDistance: 2
-  hitMaxDistance: 25
-  hitRolloffMode: 1
-  debugWarnings: 1
-  castSource: {fileID: 0}
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0
