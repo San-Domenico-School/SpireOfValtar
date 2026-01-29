@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 /************************************
  * Manages health and stamina bars display in the game view.
@@ -14,28 +15,107 @@ public class GameViewUI : MonoBehaviour
     private ProgressBar staminaBar;
     private Label healthValueLabel;
 
+    [Header("Player References")]
+    [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private PlayerAbilityController playerAbilityController;
+
     private float currentHealth = 100f;
     private float maxHealth = 100f;
     private float currentStamina = 100f;
     private float maxStamina = 100f;
 
-    void Start()
+    void OnEnable()
     {
-        uiDocument = GetComponent<UIDocument>();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        BindUI();
+        CachePlayerReferences();
+        SubscribeToPlayer();
+        SyncFromPlayer();
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnsubscribeFromPlayer();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        BindUI();
+        CachePlayerReferences();
+        SubscribeToPlayer();
+        SyncFromPlayer();
+    }
+
+    private void BindUI()
+    {
+        if (uiDocument == null)
+        {
+            uiDocument = GetComponent<UIDocument>();
+        }
+
         if (uiDocument == null)
         {
             return;
         }
 
         var root = uiDocument.rootVisualElement;
-
-        healthBar = root.Q<ProgressBar>("HealthProgressBar");
+        healthBar = root.Q<ProgressBar>("HealthBar");
         staminaBar = root.Q<ProgressBar>("StaminaProgressBar");
         healthValueLabel = root.Q<Label>("HealthValueLabel");
+    }
 
-        healthBar.highValue = maxHealth;
-        staminaBar.highValue = maxStamina;
-        
+    private void CachePlayerReferences()
+    {
+        if (playerHealth == null)
+        {
+            playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        }
+
+        if (playerAbilityController == null)
+        {
+            playerAbilityController = FindFirstObjectByType<PlayerAbilityController>(FindObjectsInactive.Include);
+        }
+    }
+
+    private void SubscribeToPlayer()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.OnHealthChanged -= HandleHealthChanged;
+            playerHealth.OnHealthChanged += HandleHealthChanged;
+        }
+    }
+
+    private void UnsubscribeFromPlayer()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.OnHealthChanged -= HandleHealthChanged;
+        }
+    }
+
+    private void HandleHealthChanged(int current, int max)
+    {
+        maxHealth = max;
+        currentHealth = current;
+        UpdateHealthBar();
+    }
+
+    private void SyncFromPlayer()
+    {
+        if (playerHealth != null)
+        {
+            maxHealth = playerHealth.maxHealth;
+            currentHealth = playerHealth.CurrentHealth;
+        }
+
+        if (playerAbilityController != null)
+        {
+            maxStamina = playerAbilityController.MaxStamina;
+            currentStamina = playerAbilityController.CurrentStamina;
+        }
+
         UpdateHealthBar();
         UpdateStaminaBar();
     }
@@ -49,7 +129,6 @@ public class GameViewUI : MonoBehaviour
     public void SetMaxHealth(float max)
     {
         maxHealth = max;
-        healthBar.highValue = maxHealth;
         UpdateHealthBar();
     }
 
@@ -62,7 +141,6 @@ public class GameViewUI : MonoBehaviour
     public void SetMaxStamina(float max)
     {
         maxStamina = max;
-        staminaBar.highValue = maxStamina;
         UpdateStaminaBar();
     }
 
@@ -70,6 +148,7 @@ public class GameViewUI : MonoBehaviour
     {
         if (healthBar != null)
         {
+            healthBar.highValue = maxHealth;
             healthBar.value = currentHealth;
         }
         
@@ -83,7 +162,22 @@ public class GameViewUI : MonoBehaviour
     {
         if (staminaBar != null)
         {
+            staminaBar.highValue = maxStamina;
             staminaBar.value = currentStamina;
+        }
+    }
+
+    private void Update()
+    {
+        if (playerAbilityController != null)
+        {
+            if (!Mathf.Approximately(currentStamina, playerAbilityController.CurrentStamina) ||
+                !Mathf.Approximately(maxStamina, playerAbilityController.MaxStamina))
+            {
+                currentStamina = playerAbilityController.CurrentStamina;
+                maxStamina = playerAbilityController.MaxStamina;
+                UpdateStaminaBar();
+            }
         }
     }
 
