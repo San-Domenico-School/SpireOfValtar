@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Testing/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Testing/Switch Scene Test.unity
     guid: 8445f76818b944689a88ed0fad6d42f1
   - enabled: 1
@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Testing/Switch Scene Test.unity
     guid: 8445f76818b944689a88ed0fad6d42f1
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Testing/Sebastian Library Testing Scene.unity
     guid: c505580cf9cb24bbfad147a2d441fcec
   m_configObjects:
