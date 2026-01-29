@@ -12,6 +12,15 @@ public class FreezeProjectile : MonoBehaviour
     [SerializeField] private float freezeDuration = 4f; // How long the freeze effect lasts - Balanced for souls-like
     [SerializeField] private float freezeRadius = 5f; // AOE
 
+    private SpellAudioController spellAudio;
+    private SpellSfxId spellId = SpellSfxId.Freeze;
+
+    public void Init(SpellAudioController audio, SpellSfxId id)
+    {
+        spellAudio = audio;
+        spellId = id;
+    }
+
     // Called by FreezeCaster
     public void Launch(Vector3 direction)
     {
@@ -54,6 +63,7 @@ public class FreezeProjectile : MonoBehaviour
                 if (hit.collider.CompareTag("Enemy"))
                 {
                     Debug.Log("Freeze spell hit an enemy! Effecting...");
+                    if (spellAudio != null) spellAudio.PlayHit(spellId, hit.point);
 
                     Collider[] hitCollider = Physics.OverlapSphere(hit.point, freezeRadius);
                     foreach (Collider nearby in hitCollider)

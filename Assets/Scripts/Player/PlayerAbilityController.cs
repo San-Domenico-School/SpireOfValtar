@@ -17,6 +17,14 @@ public class PlayerAbilityController : MonoBehaviour
     [SerializeField] private FireballCaster spell2;
     [SerializeField] private FreezeCaster spell3;
 
+    [Header("Spell Audio")]
+    [Tooltip("Optional: plays cast/hit SFX for spells. Put SpellAudioController on the Player and assign here, or leave empty to auto-find on this GameObject.")]
+    [SerializeField] private SpellAudioController spellAudio;
+
+    [Header("Audio")]
+    [Tooltip("Optional: plays a sound each time a spell is successfully cast.")]
+    [SerializeField] private PlayerSoundController playerSound;
+
     [Header("Input Actions")]
     [SerializeField] private InputActionReference nextAction;
     [SerializeField] private InputActionReference previousAction;
@@ -47,6 +55,10 @@ public class PlayerAbilityController : MonoBehaviour
     private void Awake()
     {
         currentStamina = maxStamina;
+        if (playerSound == null) playerSound = GetComponent<PlayerSoundController>();
+        if (spellAudio == null) spellAudio = GetComponent<SpellAudioController>();
+        if (spellAudio == null) spellAudio = GetComponentInParent<SpellAudioController>();
+        if (spellAudio == null) spellAudio = FindFirstObjectByType<SpellAudioController>();
     }
 
     public void ResetState()
@@ -241,6 +253,7 @@ public class PlayerAbilityController : MonoBehaviour
                     if (TryUseStamina(30f)) // Balanced for souls-like: High cost for high damage
                     {
                         Debug.Log("Casting Spell 1 (Lightning)");
+                        if (spellAudio != null) spellAudio.PlayCast(SpellSfxId.Lightning);
                         spell1.OnCast();
                     }
                 }
@@ -257,6 +270,7 @@ public class PlayerAbilityController : MonoBehaviour
                     if (TryUseStamina(25f)) // Balanced for souls-like: Medium cost for AOE damage
                     {
                         Debug.Log("Casting Spell 2 (Fireball)");
+                        if (spellAudio != null) spellAudio.PlayCast(SpellSfxId.Fireball);
                         spell2.OnCast();
                     }
                 }
@@ -273,6 +287,7 @@ public class PlayerAbilityController : MonoBehaviour
                     if (TryUseStamina(30f)) // Balanced for souls-like: High cost for utility/CC
                     {
                         Debug.Log("Casting Spell 3 (Freeze)");
+                        if (spellAudio != null) spellAudio.PlayCast(SpellSfxId.Freeze);
                         spell3.OnCast();
                     }
                 }
