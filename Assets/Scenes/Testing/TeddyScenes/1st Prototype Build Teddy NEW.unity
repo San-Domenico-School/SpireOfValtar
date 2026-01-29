@@ -464,7 +464,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5759314653938209581, guid: 6715b058957f941dd82d00bddcb0096e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -552,37 +552,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4719513536371146957, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
---- !u!1 &405173433
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 405173434}
-  m_Layer: 0
-  m_Name: Spawnpoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &405173434
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 405173433}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.769, y: 2.514, z: 8.097}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &414360643
 GameObject:
   m_ObjectHideFlags: 0
@@ -1021,15 +990,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1427325297843683170, guid: c0f1bc86aacf34d60aaa330e434371ff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.45
+      value: -2.55
       objectReference: {fileID: 0}
     - target: {fileID: 1427325297843683170, guid: c0f1bc86aacf34d60aaa330e434371ff, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.78
+      value: 4.45
       objectReference: {fileID: 0}
     - target: {fileID: 1427325297843683170, guid: c0f1bc86aacf34d60aaa330e434371ff, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.24
+      value: -5.98
       objectReference: {fileID: 0}
     - target: {fileID: 1481833225495379245, guid: c0f1bc86aacf34d60aaa330e434371ff, type: 3}
       propertyPath: m_Name
@@ -1719,87 +1688,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6368600389825872054, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
---- !u!1001 &1652083368
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -4.2905436
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.154
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.10926056
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633260949874965941, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3177292819868564285, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_Name
-      value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 3177292819868564285, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5233339416854855808, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: detectionRange
-      value: 9.91
-      objectReference: {fileID: 0}
-    - target: {fileID: 7090493283282442718, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: stairs
-      value: 
-      objectReference: {fileID: 1679775816}
-    - target: {fileID: 7090493283282442718, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: greatHall
-      value: 
-      objectReference: {fileID: 1679775813}
-    - target: {fileID: 8560453381884413085, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8560453381884413085, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2d094bb6ea4c1430bb41dece128cb46f, type: 3}
 --- !u!1001 &1679775812
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2287,7 +2175,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: maxHealth
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 648765997522169627, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
       propertyPath: restartManager
@@ -2671,6 +2559,4 @@ SceneRoots:
   - {fileID: 126691050}
   - {fileID: 1331499952}
   - {fileID: 1679775812}
-  - {fileID: 1652083368}
   - {fileID: 1025317802}
-  - {fileID: 405173434}
