@@ -151,7 +151,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 100100000, guid: 6088c9be7f9304067999ae746b3d72e1, type: 3}
   spawnPoint: {fileID: 0}
   spawnOnStart: 0
-  startSceneName: 
+  startSceneIndex: -1
 --- !u!4 &126691050
 Transform:
   m_ObjectHideFlags: 0
@@ -2292,6 +2292,10 @@ PrefabInstance:
     - target: {fileID: 1605073192443320191, guid: 784aabaa398d047f68e0fe71b17896e5, type: 3}
       propertyPath: m_Name
       value: SpawnPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 6109423038831439174, guid: 784aabaa398d047f68e0fe71b17896e5, type: 3}
+      propertyPath: startSceneIndex
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6652294703714958127, guid: 784aabaa398d047f68e0fe71b17896e5, type: 3}
       propertyPath: m_LocalPosition.x

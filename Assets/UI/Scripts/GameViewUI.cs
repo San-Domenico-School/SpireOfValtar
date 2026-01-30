@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
  ************************************/
 public class GameViewUI : MonoBehaviour
 {
+    private const string GameViewUxmlName = "Game_View";
     private UIDocument uiDocument;
     private ProgressBar healthBar;
     private ProgressBar staminaBar;
@@ -23,6 +24,7 @@ public class GameViewUI : MonoBehaviour
     private float maxHealth = 100f;
     private float currentStamina = 100f;
     private float maxStamina = 100f;
+    private PlayerHealth subscribedHealth;
 
     void OnEnable()
     {
@@ -47,12 +49,18 @@ public class GameViewUI : MonoBehaviour
         SyncFromPlayer();
     }
 
+    public void RefreshUI()
+    {
+        UnsubscribeFromPlayer();
+        BindUI();
+        CachePlayerReferences();
+        SubscribeToPlayer();
+        SyncFromPlayer();
+    }
+
     private void BindUI()
     {
-        if (uiDocument == null)
-        {
-            uiDocument = GetComponent<UIDocument>();
-        }
+        ResolveUIDocument();
 
         if (uiDocument == null)
         {
@@ -65,8 +73,45 @@ public class GameViewUI : MonoBehaviour
         healthValueLabel = root.Q<Label>("HealthValueLabel");
     }
 
+    private void ResolveUIDocument()
+    {
+        if (uiDocument != null)
+        {
+            return;
+        }
+
+        uiDocument = GetComponent<UIDocument>();
+        if (uiDocument != null)
+        {
+            return;
+        }
+
+        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals(GameViewUxmlName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                uiDocument = document;
+                return;
+            }
+        }
+    }
+
     private void CachePlayerReferences()
     {
+        var player = FindFirstObjectByType<Player>(FindObjectsInactive.Include);
+        if (player != null)
+        {
+            playerHealth = player.GetComponent<PlayerHealth>();
+            playerAbilityController = player.GetComponent<PlayerAbilityController>();
+            return;
+        }
+
         if (playerHealth == null)
         {
             playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
@@ -80,18 +125,27 @@ public class GameViewUI : MonoBehaviour
 
     private void SubscribeToPlayer()
     {
-        if (playerHealth != null)
+        if (playerHealth == null)
         {
-            playerHealth.OnHealthChanged -= HandleHealthChanged;
-            playerHealth.OnHealthChanged += HandleHealthChanged;
+            return;
         }
+
+        if (subscribedHealth != null && subscribedHealth != playerHealth)
+        {
+            subscribedHealth.OnHealthChanged -= HandleHealthChanged;
+        }
+
+        playerHealth.OnHealthChanged -= HandleHealthChanged;
+        playerHealth.OnHealthChanged += HandleHealthChanged;
+        subscribedHealth = playerHealth;
     }
 
     private void UnsubscribeFromPlayer()
     {
-        if (playerHealth != null)
+        if (subscribedHealth != null)
         {
-            playerHealth.OnHealthChanged -= HandleHealthChanged;
+            subscribedHealth.OnHealthChanged -= HandleHealthChanged;
+            subscribedHealth = null;
         }
     }
 
@@ -169,6 +223,29 @@ public class GameViewUI : MonoBehaviour
 
     private void Update()
     {
+        if (playerHealth == null || playerHealth != subscribedHealth)
+        {
+            CachePlayerReferences();
+            SubscribeToPlayer();
+            SyncFromPlayer();
+        }
+
+        if (playerAbilityController == null)
+        {
+            CachePlayerReferences();
+        }
+
+        if (playerHealth != null)
+        {
+            if (!Mathf.Approximately(currentHealth, playerHealth.CurrentHealth) ||
+                !Mathf.Approximately(maxHealth, playerHealth.maxHealth))
+            {
+                currentHealth = playerHealth.CurrentHealth;
+                maxHealth = playerHealth.maxHealth;
+                UpdateHealthBar();
+            }
+        }
+
         if (playerAbilityController != null)
         {
             if (!Mathf.Approximately(currentStamina, playerAbilityController.CurrentStamina) ||

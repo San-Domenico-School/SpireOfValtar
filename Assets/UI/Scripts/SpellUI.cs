@@ -35,6 +35,11 @@ public class SpellUI : MonoBehaviour
         InitializeSpellUI();
     }
 
+    public void RefreshSpellUI()
+    {
+        InitializeSpellUI();
+    }
+
     private void InitializeSpellUI()
     {
         if (uiDocument == null)
