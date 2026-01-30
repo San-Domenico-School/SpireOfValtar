@@ -133,6 +133,18 @@ public class GameUIManager : MonoBehaviour
         {
             gameViewUI.RefreshUI();
         }
+
+        var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null)
+        {
+            playerHealth.RefreshHealthUI();
+        }
+
+        var abilityController = FindFirstObjectByType<PlayerAbilityController>(FindObjectsInactive.Include);
+        if (abilityController != null)
+        {
+            abilityController.RefreshStaminaUI();
+        }
     }
     
     void Update()
@@ -1119,6 +1131,18 @@ public class GameUIManager : MonoBehaviour
         if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        var gameViewUI = FindFirstObjectByType<GameViewUI>(FindObjectsInactive.Include);
+        if (gameViewUI != null)
+        {
+            gameViewUI.RefreshUI();
+        }
+
+        var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null)
+        {
+            playerHealth.RefreshHealthUI();
         }
     }
     

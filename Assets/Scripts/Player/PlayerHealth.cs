@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 
 public class PlayerHealth : MonoBehaviour
 {
+    private const string GameViewUxmlName = "Game_View";
     public int health;
     public int maxHealth = 100;
 
@@ -49,29 +50,14 @@ public class PlayerHealth : MonoBehaviour
 
     private void BindHealthUI()
     {
-        if (healthUIDocument == null)
-        {
-            var documents = FindObjectsOfType<UIDocument>(true);
-            foreach (var document in documents)
-            {
-                if (document == null || document.rootVisualElement == null)
-                {
-                    continue;
-                }
-
-                if (document.rootVisualElement.Q<ProgressBar>("HealthBar") != null)
-                {
-                    healthUIDocument = document;
-                    break;
-                }
-            }
-        }
+        ResolveHealthUIDocument();
 
         if (healthUIDocument != null)
         {
             var root = healthUIDocument.rootVisualElement;
             if (root == null)
             {
+                healthUIDocument = null;
                 return;
             }
 
@@ -87,6 +73,53 @@ public class PlayerHealth : MonoBehaviour
         {
             Debug.LogWarning("PlayerHealth: No UIDocument assigned for health UI.");
         }
+    }
+
+    private void ResolveHealthUIDocument()
+    {
+        if (healthUIDocument != null)
+        {
+            return;
+        }
+
+        var liveDocuments = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in liveDocuments)
+        {
+            if (document == null || document.rootVisualElement == null)
+            {
+                continue;
+            }
+
+            if (document.rootVisualElement.Q<ProgressBar>("HealthBar") != null)
+            {
+                healthUIDocument = document;
+                return;
+            }
+        }
+
+        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals(GameViewUxmlName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                if (document.rootVisualElement != null)
+                {
+                    healthUIDocument = document;
+                }
+                return;
+            }
+        }
+    }
+
+    public void RefreshHealthUI()
+    {
+        healthUIDocument = null;
+        BindHealthUI();
     }
 
     public void TakeDamage(int amount)
