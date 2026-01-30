@@ -32,6 +32,8 @@ public class PlayerHealth : MonoBehaviour
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        healthUIDocument = null;
+        healthBar = null;
     }
 
     void Start()
@@ -97,7 +99,7 @@ public class PlayerHealth : MonoBehaviour
             }
         }
 
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)

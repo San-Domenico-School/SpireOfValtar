@@ -133,6 +133,9 @@ public class PlayerAbilityController : MonoBehaviour
             attackAction.action.performed -= OnAttack;
             attackAction.action.Disable();
         }
+
+        staminaBar = null;
+        uiDocument = null;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -188,7 +191,7 @@ public class PlayerAbilityController : MonoBehaviour
             }
         }
 
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)

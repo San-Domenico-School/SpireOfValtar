@@ -945,7 +945,7 @@ public class GameUIManager : MonoBehaviour
 
     private void DisableMainMenuDocument()
     {
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)

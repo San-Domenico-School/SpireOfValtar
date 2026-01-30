@@ -344,7 +344,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void DisableDeathUIDocument()
     {
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)
@@ -382,7 +382,7 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)
@@ -438,7 +438,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void HideGameUIDocuments()
     {
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)
@@ -556,7 +556,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void EnableAllGameViewDocuments()
     {
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)
@@ -622,7 +622,7 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)

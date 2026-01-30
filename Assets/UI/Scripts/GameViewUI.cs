@@ -39,6 +39,10 @@ public class GameViewUI : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         UnsubscribeFromPlayer();
+        uiDocument = null;
+        healthBar = null;
+        staminaBar = null;
+        healthValueLabel = null;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -86,7 +90,7 @@ public class GameViewUI : MonoBehaviour
             return;
         }
 
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)
