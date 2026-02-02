@@ -200,7 +200,7 @@ public class DeathUIController : MonoBehaviour
             return;
         }
 
-        var documents = Resources.FindObjectsOfTypeAll<UIDocument>();
+        var documents = FindObjectsOfType<UIDocument>(true);
         foreach (var document in documents)
         {
             if (document == null || document.visualTreeAsset == null)

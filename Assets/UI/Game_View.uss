@@ -1,0 +1,84 @@
+ .hud-panel {
+     position: absolute;
+     left: 2%;
+     bottom: 4%;
+     flex-direction: column;
+     gap: 8px;
+     padding: 8px 10px 10px 10px;
+     width: 240px;
+     background-color: rgba(12, 12, 12, 0.6);
+     border-top-width: 1px;
+     border-right-width: 1px;
+     border-bottom-width: 1px;
+     border-left-width: 1px;
+     border-left-color: rgba(236, 165, 41, 0.6);
+     border-right-color: rgba(236, 165, 41, 0.6);
+     border-top-color: rgba(236, 165, 41, 0.6);
+     border-bottom-color: rgba(236, 165, 41, 0.6);
+     border-radius: 8px;
+     align-items: stretch;
+ }
+ 
+ .bar-block {
+     flex-direction: column;
+     gap: 4px;
+     width: 100%;
+     margin-top: -2px;
+ }
+ 
+ .hud-label {
+     color: rgba(236, 165, 41, 0.95);
+     font-size: 14px;
+     -unity-font-style: bold;
+     letter-spacing: 0.5px;
+ }
+ 
+ .hud-bar {
+     width: 100%;
+     height: 10px;
+     background-color: rgb(0, 0, 0);
+     border-top-width: 0px;
+     border-right-width: 0px;
+     border-bottom-width: 0px;
+     border-left-width: 0px;
+     border-radius: 6px;
+     overflow: hidden;
+     align-items: stretch;
+     justify-content: flex-start;
+ }
+ 
+ .hud-bar .unity-progress-bar__background {
+    background-color: rgba(0, 0, 0, 0);
+     height: 100%;
+     border-radius: 6px;
+     padding-left: 200px;
+     padding-right: 24px;
+     padding-top: 0;
+     padding-bottom: 0;
+     margin-top: -2px;
+     
+ }
+ 
+ .hud-bar .unity-progress-bar__progress {
+     border-radius: 5px;
+     height: 100%;
+     margin-top: 0;
+     align-self: stretch;
+    margin-left: 0;
+    margin-right: 0;
+     margin-bottom: 0;
+     margin-left: -10px;
+     padding-left: 0;
+     padding-right: 0;
+     padding-top: 0;
+     padding-bottom: 0;
+     margin-top: -2px;
+ }
+ 
+ .stamina-bar .unity-progress-bar__progress {
+     background-color: rgb(80, 210, 255);
+ }
+ 
+ .health-bar .unity-progress-bar__progress {
+     background-color: rgb(220, 50, 50);
+ }

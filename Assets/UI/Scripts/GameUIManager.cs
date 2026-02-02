@@ -9,6 +9,9 @@ using UI.MouseFollow;
 /************************************
  * Handles game UI, pause menu, and ESC key controls.
  * Manages pause/unpause, controls menu navigation, and menu button functionality.
+ * Dont look into this script too much, it's a mess.
+ * I'm not proud of it.
+ * Even I don't understand it myself.
  * Gleb 01/09/26
  * Version 1.0
  ************************************/
@@ -110,19 +113,44 @@ public class GameUIManager : MonoBehaviour
         isInitialized = true;
         return true;
     }
+
+    public void RebindGameUI()
+    {
+        isInitialized = false;
+        if (!TryInitializeUI())
+        {
+            StartCoroutine(WaitForRootAndInitialize());
+        }
+
+        var spellUI = FindFirstObjectByType<SpellUI>(FindObjectsInactive.Include);
+        if (spellUI != null)
+        {
+            spellUI.RefreshSpellUI();
+        }
+
+        var gameViewUI = FindFirstObjectByType<GameViewUI>(FindObjectsInactive.Include);
+        if (gameViewUI != null)
+        {
+            gameViewUI.RefreshUI();
+        }
+
+        var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null)
+        {
+            playerHealth.RefreshHealthUI();
+        }
+
+        var abilityController = FindFirstObjectByType<PlayerAbilityController>(FindObjectsInactive.Include);
+        if (abilityController != null)
+        {
+            abilityController.RefreshStaminaUI();
+        }
+    }
     
     void Update()
     {
-        // Only handle ESC if game UI is visible (game is actually running)
-        bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
-        
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            if (!gameUIVisible)
-            {
-                return;
-            }
-            
             // Check for ESC key press during rebinding to cancel it
             if (pauseRebindOperation != null)
             {
@@ -362,6 +390,7 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
@@ -419,6 +448,7 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
@@ -579,11 +609,24 @@ public class GameUIManager : MonoBehaviour
         }
         else
         {
+            // Prefer Keyboard&Mouse bindings
             foreach (var binding in action.bindings)
             {
                 if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    // Use overridePath if available, otherwise use path
+                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
+                    {
+                        string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
+                        return FormatKeyName(bindingPath);
+                    }
+                }
+            }
+
+            // Fallback to first non-composite binding
+            foreach (var binding in action.bindings)
+            {
+                if (!binding.isComposite && !binding.isPartOfComposite)
+                {
                     string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
                     return FormatKeyName(bindingPath);
                 }
@@ -853,12 +896,16 @@ public class GameUIManager : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
         UnlockCursor();
+        HideGameUI();
+        DisableMainMenuDocument();
         
         if (pauseMenuDocument != null)
         {
             pauseMenuDocument.enabled = true;
             if (pauseMenuDocument.rootVisualElement != null)
             {
+                // Re-bind buttons in case the root was rebuilt.
+                InitializePauseMenu();
                 pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
             }
         }
@@ -900,9 +947,36 @@ public class GameUIManager : MonoBehaviour
         {
             controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+
+        if (gameUIContainer != null)
+        {
+            gameUIContainer.style.display = DisplayStyle.Flex;
+        }
+        SetReticleVisible(true);
         
         // Lock cursor using the button-triggered method
         LockCursor();
+    }
+
+    private void DisableMainMenuDocument()
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals("MainMenu", System.StringComparison.OrdinalIgnoreCase))
+            {
+                document.enabled = false;
+                if (document.rootVisualElement != null)
+                {
+                    document.rootVisualElement.style.display = DisplayStyle.None;
+                }
+            }
+        }
     }
     
     // Called when Resume button is clicked - this ensures cursor locks from button click
@@ -1032,7 +1106,7 @@ public class GameUIManager : MonoBehaviour
         
         if (mainMenuManager != null)
         {
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.ForceShowMainMenu();
         }
         
         CleanupGame();
@@ -1073,6 +1147,18 @@ public class GameUIManager : MonoBehaviour
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+
+        var gameViewUI = FindFirstObjectByType<GameViewUI>(FindObjectsInactive.Include);
+        if (gameViewUI != null)
+        {
+            gameViewUI.RefreshUI();
+        }
+
+        var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null)
+        {
+            playerHealth.RefreshHealthUI();
+        }
     }
     
     public void HideGameUI()
@@ -1082,6 +1168,29 @@ public class GameUIManager : MonoBehaviour
             gameUIContainer.style.display = DisplayStyle.None;
         }
         SetReticleVisible(false);
+    }
+
+    public void ResetForMainMenu()
+    {
+        isPaused = false;
+        HideGameUI();
+        HideControlsMenu();
+        HideControlsPauseMenu();
+
+        if (controlsDocument != null && controlsDocument.rootVisualElement != null)
+        {
+            controlsDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null)
+        {
+            controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
     }
     
     private void OnMenuButtonClicked()

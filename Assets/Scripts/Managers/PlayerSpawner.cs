@@ -16,7 +16,7 @@ public class PlayerSpawner : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private PlayerSpawnPoint spawnPoint;
     [SerializeField] private bool spawnOnStart = false;
-    [SerializeField] private string startSceneName = "";
+    [SerializeField] private int startSceneIndex = -1;
 
     private PlayerSession session;
     private Player currentPlayer;
@@ -26,9 +26,9 @@ public class PlayerSpawner : MonoBehaviour
         EnsureSession();
         CacheSpawnPoint();
 
-        if (string.IsNullOrEmpty(startSceneName))
+        if (startSceneIndex < 0)
         {
-            startSceneName = SceneManager.GetActiveScene().name;
+            startSceneIndex = SceneManager.GetActiveScene().buildIndex;
         }
     }
 
@@ -80,7 +80,7 @@ public class PlayerSpawner : MonoBehaviour
         }
 
         Time.timeScale = 1f;
-        SceneManager.LoadScene(startSceneName);
+        SceneManager.LoadScene(startSceneIndex);
     }
 
     private void SpawnIfMissing()
