@@ -179,6 +179,16 @@ public class PlayerHealth : MonoBehaviour
         suppressDeathEvents = value;
     }
 
+    public bool TryHeal(int amount)
+    {
+        if (isDead) return false;
+        if (amount <= 0) return false;
+
+        int previousHealth = health;
+        SetHealth(health + amount);
+        return health > previousHealth;
+    }
+
     public void ApplySessionData(int current, int max)
     {
         maxHealth = Mathf.Max(1, max);
