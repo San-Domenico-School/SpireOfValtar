@@ -1,16 +1,16 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/Game_View.uss?fileID=7433441132597879392&amp;guid=7a49d7a2a3b344ec94f51c9b74c4a6d1&amp;type=3#Game_View" />
+    <Style src="project://database/Assets/UI/Game_View.uss?fileID=7433441132597879392&amp;guid=99bf6e5b609834cfc838086f3be04711&amp;type=3#Game_View" />
     <ui:VisualElement name="GameContentArea" style="width: 90px; height: 90%;">
         <ui:Label text="&#10;" />
     </ui:VisualElement>
-    <ui:VisualElement name="HUD_BottomLeft" class="hud-panel" picking-mode="Ignore">
+    <ui:VisualElement name="HUD_BottomLeft" picking-mode="Ignore" class="hud-panel">
         <ui:VisualElement class="bar-block">
             <ui:Label text="Stamina" name="StaminaLabel" class="hud-label" />
-            <ui:ProgressBar name="StaminaProgressBar" class="hud-bar stamina-bar" low-value="0" high-value="100" value="100" />
+            <ui:ProgressBar name="StaminaProgressBar" low-value="0" high-value="100" value="100" class="hud-bar stamina-bar" />
         </ui:VisualElement>
+        <ui:Label text="Health" name="HealthLabel" class="hud-label" />
         <ui:VisualElement class="bar-block">
-            <ui:Label text="Health" name="HealthLabel" class="hud-label" />
-            <ui:ProgressBar name="HealthBar" class="hud-bar health-bar" low-value="0" high-value="100" value="100" />
+            <ui:ProgressBar name="HealthBar" low-value="0" high-value="100" value="100" class="hud-bar health-bar" />
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="SpellContainer" picking-mode="Ignore" style="position: absolute; right: 2%; bottom: 5%; flex-direction: row; align-items: flex-end; gap: 15px;" />
