@@ -22,12 +22,13 @@ public class EnemyFleeing : MonoBehaviour
     void Start()
     {
         lockedY = transform.position.y;
-    }
-
-    private void Awake()
-    {
         AssignPlayer();
     }
+
+    // private void Awake()
+    // {
+    //     AssignPlayer();
+    // }
 
     void AssignPlayer()
     {

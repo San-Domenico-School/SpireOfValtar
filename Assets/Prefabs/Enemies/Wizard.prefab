@@ -334,6 +334,7 @@ GameObject:
   - component: {fileID: 6671976472014832156}
   - component: {fileID: 436963044692907946}
   - component: {fileID: -1565761978949787313}
+  - component: {fileID: 7593781458239026}
   m_Layer: 0
   m_Name: Wizard
   m_TagString: Enemy
@@ -500,6 +501,36 @@ MonoBehaviour:
   projectileDamage: 10
   currentSpeedMultiplier: 1
   damage: 10
+  enemySound: {fileID: 0}
+--- !u!114 &7593781458239026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043927312112991726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed9b67e2493f2439a9ffe35d5c9ed843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySoundController
+  moveLoopClip: {fileID: 8300000, guid: e445b716814ab467cbdc5027d65d8f72, type: 3}
+  moveVolume: 0.7
+  moveSpeedThreshold: 0.15
+  scaleMovePitchWithSpeed: 0
+  movePitchRange: {x: 0.95, y: 1.1}
+  attackClips:
+  - {fileID: 8300000, guid: 130627d77f5bb42e5905c0f35a8c7577, type: 3}
+  attackVolume: 0.227
+  attackPitchRange: {x: 0.97, y: 1.03}
+  playIn3D: 1
+  minDistance: 2
+  maxDistance: 35
+  rolloffMode: 1
+  navAgent: {fileID: 0}
+  moveSource: {fileID: 0}
+  attackSource: {fileID: 0}
+  debugWarnings: 0
 --- !u!1 &6697825833002519335
 GameObject:
   m_ObjectHideFlags: 0

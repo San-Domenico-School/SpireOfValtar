@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UI.MouseFollow;
@@ -36,39 +37,78 @@ public class GameUIManager : MonoBehaviour
     private Dictionary<string, Button> pauseKeybindButtons = new Dictionary<string, Button>();
     private VisualElement pauseRebindPrompt;
     private InputActionRebindingExtensions.RebindingOperation pauseRebindOperation;
+    private bool isInitialized;
     
     void Start()
     {
+        if (!TryInitializeUI())
+        {
+            StartCoroutine(WaitForRootAndInitialize());
+        }
+    }
+
+    private IEnumerator WaitForRootAndInitialize()
+    {
+        while (!isInitialized)
+        {
+            if (TryInitializeUI())
+            {
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
+    private bool TryInitializeUI()
+    {
+        if (uiDocument == null || uiDocument.rootVisualElement == null)
+        {
+            uiDocument = FindDocumentWithElement("GameContentArea");
+        }
+
+        if (uiDocument == null || uiDocument.rootVisualElement == null)
+        {
+            return false;
+        }
+
         var rootVisualElement = uiDocument.rootVisualElement;
-        
-        // Use root element as gameUIContainer since Game_View.uxml doesn't have a GameUIContainer element
         gameUIContainer = rootVisualElement;
         menuButton = rootVisualElement.Q<Button>("MenuButton");
         mainMenuManager = FindObjectOfType<MainMenuManager>();
-        
+
         if (menuButton != null)
         {
+            menuButton.clicked -= OnMenuButtonClicked;
             menuButton.clicked += OnMenuButtonClicked;
         }
-        
+
         if (reticleController == null)
         {
             reticleController = FindObjectOfType<ReticleController>(true);
         }
 
         ApplyUIDocumentSorting();
-        HideGameUI();
+        bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
+        if (gameUIVisible)
+        {
+            StartGame();
+        }
+        else
+        {
+            HideGameUI();
+        }
         InitializePauseMenu();
         InitializeControlsMenu();
         InitializeControlsPauseMenu();
-        
-        // Find input actions if not assigned
+
         if (inputActions == null)
         {
             inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
         }
 
         KeybindUtils.ApplySavedKeybinds(inputActions);
+        isInitialized = true;
+        return true;
     }
     
     void Update()
@@ -136,21 +176,25 @@ public class GameUIManager : MonoBehaviour
             
             if (pauseResumeButton != null)
             {
+                pauseResumeButton.clicked -= OnPauseResumeClicked;
                 pauseResumeButton.clicked += OnPauseResumeClicked;
             }
             
             if (pauseControlsButton != null)
             {
+                pauseControlsButton.clicked -= OnPauseControlsClicked;
                 pauseControlsButton.clicked += OnPauseControlsClicked;
             }
             
             if (pauseMainMenuButton != null)
             {
+                pauseMainMenuButton.clicked -= OnPauseMainMenuClicked;
                 pauseMainMenuButton.clicked += OnPauseMainMenuClicked;
             }
             
             if (pauseExitButton != null)
             {
+                pauseExitButton.clicked -= OnPauseExitClicked;
                 pauseExitButton.clicked += OnPauseExitClicked;
             }
             
@@ -182,6 +226,20 @@ public class GameUIManager : MonoBehaviour
             // Initialize settings UI for pause controls
             InitializePauseControlsSettings();
         }
+    }
+
+    private UIDocument FindDocumentWithElement(string elementName)
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.rootVisualElement == null) continue;
+            if (document.rootVisualElement.Q<VisualElement>(elementName) != null)
+            {
+                return document;
+            }
+        }
+        return null;
     }
 
     private void ApplyUIDocumentSorting()
