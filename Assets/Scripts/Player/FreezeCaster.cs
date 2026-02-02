@@ -11,7 +11,7 @@ public class FreezeCaster : MonoBehaviour
     private bool isOnCooldown = false;
 
     public bool canCast => !isOnCooldown && Time.timeScale > 0f;
-
+    
     [Header("Audio (optional)")]
     [SerializeField] private SpellAudioController spellAudio;
 

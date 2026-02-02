@@ -520,7 +520,7 @@ MonoBehaviour:
   scaleMovePitchWithSpeed: 0
   movePitchRange: {x: 0.95, y: 1.1}
   attackClips:
-  - {fileID: 8300000, guid: 130627d77f5bb42e5905c0f35a8c7577, type: 3}
+  - {fileID: 8300000, guid: abcf4ffa7064b4d039a133e13f32cffa, type: 3}
   attackVolume: 0.227
   attackPitchRange: {x: 0.97, y: 1.03}
   playIn3D: 1
