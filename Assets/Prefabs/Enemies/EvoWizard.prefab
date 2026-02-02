@@ -503,7 +503,7 @@ MonoBehaviour:
   boltHeight: 6
   vfxLifetime: 2
   firePoint: {fileID: 0}
-  fireRate: 1
+  fireRate: 0.5
   projectileDamage: 12
   lightningCastDelay: 1
   lightningHitRadius: 1
@@ -515,7 +515,7 @@ MonoBehaviour:
   phase3SpeedMultiplier: 1.5
   phase3MeleeDamage: 20
   meleeDamageInterval: 1.25
-  dodgeCooldown: 1.2
+  dodgeCooldown: 3
   dodgeDistance: 3.5
   dodgeChanceVsProjectiles: 0.65
   wizardSpawner: {fileID: 3719747852568050387}
