@@ -215,7 +215,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Walking audio: play while moving on ground; stop on jump/airborne
         if (enableWalkLoopAudio)
-            UpdateWalkLoop(isMovingPlanar: isMovingPlanar, grounded: grounded, jumpPressedThisFrame: jumpPressed);
+        UpdateWalkLoop(isMovingPlanar: isMovingPlanar, grounded: grounded, jumpPressedThisFrame: jumpPressed);
     }
 
     void ApplyTurnFromInput()
