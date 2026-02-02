@@ -47,40 +47,53 @@ public class EnemyFleeing : MonoBehaviour
     }
 
     void Update()
+{
+    if (player == null) return;
+
+    float distance = Vector3.Distance(transform.position, player.position);
+
+    if (distance <= fleeDistance)
     {
-        float distance = Vector3.Distance(transform.position, player.position);
+        Vector3 fleeDir = (transform.position - player.position).normalized;
+        fleeDir = GetFleeDirectionWithSliding(fleeDir);
 
-        if (distance <= fleeDistance)
-        {
-            Vector3 fleeDirection = (transform.position - player.position).normalized;
-            if (!Physics.Raycast(transform.position, fleeDirection, wallCheckDistance, wallLayer))
-            {
-                transform.position += fleeDirection * moveSpeed * Time.deltaTime;
-            }
-            else
-            {
-                // Optional: slightly turn away if hitting a wall
-                fleeDirection = Quaternion.Euler(0, Random.Range(-90, 90), 0) * fleeDirection;
-            }
+        transform.position += fleeDir * moveSpeed * Time.deltaTime;
 
-            if (fleeDirection != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(fleeDirection);
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    targetRotation,
-                    rotationSpeed * Time.deltaTime
-                );
-
-            }
-        }
+        Quaternion targetRotation = Quaternion.LookRotation(fleeDir);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            rotationSpeed * Time.deltaTime
+        );
     }
+}
 
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, fleeDistance);
     }
+
+    Vector3 GetFleeDirectionWithSliding(Vector3 fleeDir)
+{
+    RaycastHit hit;
+
+    if (Physics.Raycast(transform.position, fleeDir, out hit, wallCheckDistance, wallLayer))
+    {
+        // Slide along the wall instead of stopping
+        Vector3 slideDir = Vector3.ProjectOnPlane(fleeDir, hit.normal).normalized;
+
+        // If sliding fails, force an escape
+        if (slideDir == Vector3.zero)
+        {
+            slideDir = Vector3.Cross(hit.normal, Vector3.up).normalized;
+        }
+
+        return slideDir;
+    }
+
+    return fleeDir;
+}
 
     void LateUpdate()
     {
