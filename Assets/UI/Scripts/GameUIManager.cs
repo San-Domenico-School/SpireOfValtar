@@ -1106,7 +1106,7 @@ public class GameUIManager : MonoBehaviour
         
         if (mainMenuManager != null)
         {
-            mainMenuManager.ForceShowMainMenu();
+            mainMenuManager.LoadMainMenuScene();
         }
         
         CleanupGame();
@@ -1199,7 +1199,7 @@ public class GameUIManager : MonoBehaviour
         
         if (mainMenuManager != null)
         {
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.LoadMainMenuScene();
         }
         
         CleanupGame();
