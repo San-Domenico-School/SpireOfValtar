@@ -10,6 +10,8 @@ using System.Collections.Generic;
  ************************************/
 public class SpellUI : MonoBehaviour
 {
+    private const string GameViewUxmlName = "Game_View";
+
     [Header("UI References")]
     [SerializeField] private UIDocument uiDocument;
     
@@ -20,24 +22,60 @@ public class SpellUI : MonoBehaviour
     private List<VisualElement> spellBoxes = new List<VisualElement>();
     private int currentSpellIndex = 0;
 
+    private void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        RefreshSpellUI();
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Start()
     {
-        if (uiDocument == null)
-        {
-            uiDocument = GetComponent<UIDocument>();
-        }
-
-        if (uiDocument == null)
-        {
-            return;
-        }
-
-        InitializeSpellUI();
+        RefreshSpellUI();
     }
 
     public void RefreshSpellUI()
     {
+        ResolveUIDocument();
         InitializeSpellUI();
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        RefreshSpellUI();
+    }
+
+    private void ResolveUIDocument()
+    {
+        if (uiDocument != null)
+        {
+            return;
+        }
+
+        uiDocument = GetComponent<UIDocument>();
+        if (uiDocument != null)
+        {
+            return;
+        }
+
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals(GameViewUxmlName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                uiDocument = document;
+                return;
+            }
+        }
     }
 
     private void InitializeSpellUI()
@@ -176,4 +214,3 @@ public class SpellUI : MonoBehaviour
         return spellBoxes.Count;
     }
 }
-

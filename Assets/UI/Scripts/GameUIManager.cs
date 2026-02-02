@@ -122,17 +122,13 @@ public class GameUIManager : MonoBehaviour
             StartCoroutine(WaitForRootAndInitialize());
         }
 
-        var spellUI = FindFirstObjectByType<SpellUI>(FindObjectsInactive.Include);
-        if (spellUI != null)
-        {
-            spellUI.RefreshSpellUI();
-        }
-
         var gameViewUI = FindFirstObjectByType<GameViewUI>(FindObjectsInactive.Include);
         if (gameViewUI != null)
         {
             gameViewUI.RefreshUI();
         }
+
+        EnsureSpellUI();
 
         var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
         if (playerHealth != null)
@@ -1106,7 +1102,7 @@ public class GameUIManager : MonoBehaviour
         
         if (mainMenuManager != null)
         {
-            mainMenuManager.ForceShowMainMenu();
+            mainMenuManager.LoadMainMenuScene();
         }
         
         CleanupGame();
@@ -1154,6 +1150,8 @@ public class GameUIManager : MonoBehaviour
             gameViewUI.RefreshUI();
         }
 
+        EnsureSpellUI();
+
         var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
         if (playerHealth != null)
         {
@@ -1199,7 +1197,7 @@ public class GameUIManager : MonoBehaviour
         
         if (mainMenuManager != null)
         {
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.LoadMainMenuScene();
         }
         
         CleanupGame();
@@ -1228,5 +1226,17 @@ public class GameUIManager : MonoBehaviour
         {
             reticleController.reticle.gameObject.SetActive(isVisible);
         }
+    }
+
+    private void EnsureSpellUI()
+    {
+        var spellUI = FindFirstObjectByType<SpellUI>(FindObjectsInactive.Include);
+        if (spellUI == null)
+        {
+            var spellUiObject = new GameObject("SpellUI");
+            spellUI = spellUiObject.AddComponent<SpellUI>();
+        }
+
+        spellUI.RefreshSpellUI();
     }
 }
