@@ -56,6 +56,8 @@ public class LightningSpell : MonoBehaviour
             if (hit.collider.CompareTag("Enemy"))
             {
                 if (spellAudio != null) spellAudio.PlayHit(SpellSfxId.Lightning, hit.point);
+                
+                // Try to get EnemyHealth directly, or via EnemyHitbox proxy, or from parent
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
                 if (enemyHealth != null)
                 {
@@ -63,7 +65,25 @@ public class LightningSpell : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("Enemy hit but no EnemyHealth component found!");
+                    // Check for EnemyHitbox proxy (for child hitboxes)
+                    EnemyHitbox hitbox = hit.collider.GetComponent<EnemyHitbox>();
+                    if (hitbox != null)
+                    {
+                        hitbox.TakeDamage(damage);
+                    }
+                    else
+                    {
+                        // Fallback: check parent for EnemyHealth
+                        enemyHealth = hit.collider.GetComponentInParent<EnemyHealth>();
+                        if (enemyHealth != null)
+                        {
+                            enemyHealth.TakeDamage(damage);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Enemy hit but no EnemyHealth component found!");
+                        }
+                    }
                 }
             }
         }
