@@ -204,7 +204,7 @@ public class MainMenuManager : MonoBehaviour
     {
         if (!ShouldShowMainMenuForScene())
         {
-            ForceShowMainMenu();
+            LoadMainMenuScene();
             return;
         }
 
@@ -235,29 +235,23 @@ public class MainMenuManager : MonoBehaviour
 
     public void ForceShowMainMenu()
     {
-        Time.timeScale = 0f;
+        if (!ShouldShowMainMenuForScene())
+        {
+            LoadMainMenuScene();
+            return;
+        }
+
+        ShowMainMenu();
+    }
+
+    public void LoadMainMenuScene()
+    {
+        pendingStartFromMenu = false;
+        Time.timeScale = 1f;
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
 
-        BindUI();
-        SetMainMenuDocumentActive(true);
-        StartCoroutine(RebindMainMenuNextFrame());
-        DisableDeathUIDocument();
-        HideGameUIDocuments();
-        if (gameUIManager == null)
-        {
-            gameUIManager = FindObjectOfType<GameUIManager>();
-        }
-        if (gameUIManager != null)
-        {
-            gameUIManager.ResetForMainMenu();
-        }
-        if (mainMenuContainer != null)
-        {
-            mainMenuContainer.style.display = DisplayStyle.Flex;
-        }
-
-        HideSecondaryUI();
+        UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuSceneIndex);
     }
     
     public void HideMainMenu()
@@ -479,6 +473,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         HideControlsUI();
+        EnsurePlayerInputEnabled();
     }
 
     private void StartGameplayFromMenuScene()
@@ -500,6 +495,7 @@ public class MainMenuManager : MonoBehaviour
             gameUIManager.StartGame();
         }
 
+        EnsurePlayerInputEnabled();
         ResetPlayerToSpawnPoint();
         StartCoroutine(ShowGameUIAfterStart());
     }
@@ -551,6 +547,29 @@ public class MainMenuManager : MonoBehaviour
         {
             gameUIManager.RebindGameUI();
             gameUIManager.StartGame();
+        }
+
+        EnsurePlayerInputEnabled();
+    }
+
+    private void EnsurePlayerInputEnabled()
+    {
+        var playerInput = FindFirstObjectByType<PlayerInput>(FindObjectsInactive.Include);
+        if (playerInput == null)
+        {
+            return;
+        }
+
+        playerInput.enabled = true;
+        if (playerInput.actions != null)
+        {
+            var playerMap = playerInput.actions.FindActionMap("Player");
+            if (playerMap != null)
+            {
+                playerInput.SwitchCurrentActionMap("Player");
+                playerMap.Enable();
+            }
+            playerInput.actions.Enable();
         }
     }
 

@@ -473,7 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9104987de88b44d74a5d430f1471c026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 100
+  maxHealth: 500
   currentHealth: 0
   healthBar: {fileID: 4015550118316039084}
   deathParticle: {fileID: 2018934290385573034, guid: 1ee9a7fc20f3543bb80048eda473aa88, type: 3}
@@ -503,8 +503,11 @@ MonoBehaviour:
   boltHeight: 6
   vfxLifetime: 2
   firePoint: {fileID: 0}
-  fireRate: 1
+  fireRate: 0.5
   projectileDamage: 12
+  lightningCastDelay: 1
+  lightningHitRadius: 1
+  lightningCooldown: 2
   phase2At: 0.7
   phase3At: 0.4
   phase1FireMultiplier: 0.5
@@ -512,7 +515,7 @@ MonoBehaviour:
   phase3SpeedMultiplier: 1.5
   phase3MeleeDamage: 20
   meleeDamageInterval: 1.25
-  dodgeCooldown: 1.2
+  dodgeCooldown: 3
   dodgeDistance: 3.5
   dodgeChanceVsProjectiles: 0.65
   wizardSpawner: {fileID: 3719747852568050387}
