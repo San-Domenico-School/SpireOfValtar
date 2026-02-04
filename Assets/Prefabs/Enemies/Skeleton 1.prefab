@@ -72,7 +72,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 2.054}
+  m_AnchoredPosition: {x: 0, y: 1.24}
   m_SizeDelta: {x: 991, y: 560}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2576899636860401644
@@ -403,9 +403,9 @@ GameObject:
   - component: {fileID: 1392647373577618834}
   - component: {fileID: 6749255406096113780}
   - component: {fileID: 7784676080669877408}
-  - component: {fileID: 8324988837237632760}
   - component: {fileID: 5460736060380903614}
   - component: {fileID: 8249227013478094618}
+  - component: {fileID: 8863538316253564715}
   m_Layer: 0
   m_Name: Skeleton 1
   m_TagString: Enemy
@@ -422,7 +422,7 @@ Transform:
   m_GameObject: {fileID: 7804108713572848693}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.31, y: 0, z: 1.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -470,27 +470,6 @@ MonoBehaviour:
   deathParticle: {fileID: 0}
   enemyKillsNeeded: 1
   enemiesKilled: 0
---- !u!135 &8324988837237632760
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7804108713572848693}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: -0.8682269, z: 0.0028910637}
 --- !u!114 &5460736060380903614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -543,6 +522,29 @@ MonoBehaviour:
   moveSource: {fileID: 0}
   attackSource: {fileID: 0}
   debugWarnings: 0
+--- !u!136 &8863538316253564715
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7804108713572848693}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.42085987
+  m_Height: 1.9796286
+  m_Direction: 1
+  m_Center: {x: 0.096070334, y: -0.16496944, z: 0.07123071}
 --- !u!1001 &262702899257072690
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -569,7 +571,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e884f268a88e72843a626b29fed96b52, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.05
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e884f268a88e72843a626b29fed96b52, type: 3}
       propertyPath: m_LocalPosition.z
