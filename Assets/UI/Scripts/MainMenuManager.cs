@@ -11,9 +11,12 @@ using System.Collections;
  ************************************/
 public class MainMenuManager : MonoBehaviour
 {
+    private const string MainMenuUxmlName = "MainMenu";
+    private const string GameViewUxmlName = "Game_View";
     [SerializeField] private UIDocument uiDocument;
     [SerializeField] private UIDocument controlsUIDocument;
     [SerializeField] private UIDocument gameUIDocument;
+    [SerializeField] private int mainMenuSceneIndex = 0;
     
     private VisualElement mainMenuContainer;
     private Button startButton;
@@ -22,27 +25,25 @@ public class MainMenuManager : MonoBehaviour
     
     private ControlsManager controlsManager;
     private GameUIManager gameUIManager;
+    private bool pendingStartFromMenu;
     
     void Awake()
     {
-        Time.timeScale = 0f;
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
+    }
 
-        DontDestroyOnLoad(gameObject);
+    void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     
     void Start()
     {
-        var rootVisualElement = uiDocument.rootVisualElement;
-        
-        mainMenuContainer = rootVisualElement.Q<VisualElement>("MainMenuContainer");
-        startButton = rootVisualElement.Q<Button>("Start");
-        controlsButton = rootVisualElement.Q<Button>("Controls");
-        exitButton = rootVisualElement.Q<Button>("Exit");
-        
-        controlsManager = FindObjectOfType<ControlsManager>();
-        gameUIManager = FindObjectOfType<GameUIManager>();
+        BindUI();
         
         if (controlsManager == null)
         {
@@ -55,28 +56,13 @@ public class MainMenuManager : MonoBehaviour
             StartCoroutine(InitializeControlsManagerDelayed());
         }
         
-        if (startButton != null)
+        if (ShouldShowMainMenuForScene())
         {
-            startButton.clicked += OnStartButtonClicked;
+            ShowMainMenu();
         }
-        
-        if (controlsButton != null)
+        else
         {
-            controlsButton.clicked += OnControlsButtonClicked;
-        }
-        
-        if (exitButton != null)
-        {
-            exitButton.clicked += OnExitButtonClicked;
-        }
-        
-        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
-        {
-            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
-        }
-        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
-        {
-            gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+            StartGameplayUI();
         }
     }
     
@@ -130,21 +116,18 @@ public class MainMenuManager : MonoBehaviour
     
     private void OnStartButtonClicked()
     {
+        pendingStartFromMenu = true;
         Time.timeScale = 1f;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         UnityEngine.Cursor.visible = false;
-        
-        HideMainMenu();
-        
-        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
+
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != mainMenuSceneIndex)
         {
-            gameUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuSceneIndex);
+            return;
         }
-        
-        if (gameUIManager != null)
-        {
-            gameUIManager.StartGame();
-        }
+
+        StartGameplayFromMenuScene();
     }
     
     private void OnControlsButtonClicked()
@@ -155,10 +138,10 @@ public class MainMenuManager : MonoBehaviour
         UnityEngine.Cursor.visible = true;
         
         HideMainMenu();
-        
+
+        EnsureControlsUI();
         if (controlsUIDocument == null)
         {
-            Debug.LogWarning("MainMenuManager: controlsUIDocument is null!");
             return;
         }
         
@@ -178,7 +161,6 @@ public class MainMenuManager : MonoBehaviour
         
         if (controlsManager == null)
         {
-            Debug.LogWarning("MainMenuManager: controlsManager is null!");
             return;
         }
         
@@ -220,23 +202,56 @@ public class MainMenuManager : MonoBehaviour
     
     public void ShowMainMenu()
     {
+        if (!ShouldShowMainMenuForScene())
+        {
+            LoadMainMenuScene();
+            return;
+        }
+
         Time.timeScale = 0f;
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-        
+
+        BindUI();
+        SetMainMenuDocumentActive(true);
+        StartCoroutine(RebindMainMenuNextFrame());
+        DisableDeathUIDocument();
+        HideGameUIDocuments();
+        if (gameUIManager == null)
+        {
+            gameUIManager = FindObjectOfType<GameUIManager>();
+        }
+        if (gameUIManager != null)
+        {
+            gameUIManager.ResetForMainMenu();
+        }
         if (mainMenuContainer != null)
         {
             mainMenuContainer.style.display = DisplayStyle.Flex;
         }
         
-        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
+        HideSecondaryUI();
+    }
+
+    public void ForceShowMainMenu()
+    {
+        if (!ShouldShowMainMenuForScene())
         {
-            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+            LoadMainMenuScene();
+            return;
         }
-        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
-        {
-            gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
-        }
+
+        ShowMainMenu();
+    }
+
+    public void LoadMainMenuScene()
+    {
+        pendingStartFromMenu = false;
+        Time.timeScale = 1f;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuSceneIndex);
     }
     
     public void HideMainMenu()
@@ -254,6 +269,391 @@ public class MainMenuManager : MonoBehaviour
         if (controlsManager != null && controlsUIDocument != null)
         {
             controlsManager.InitializeFromUIDocument(controlsUIDocument);
+        }
+    }
+
+    private System.Collections.IEnumerator RebindMainMenuNextFrame()
+    {
+        yield return null;
+        BindUI();
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        BindUI();
+        UpdateMainMenuVisibility();
+
+        if (pendingStartFromMenu && scene.buildIndex == mainMenuSceneIndex)
+        {
+            StartGameplayFromMenuScene();
+        }
+    }
+
+    private void BindUI()
+    {
+        EnsureMainMenuDocument();
+
+        if (uiDocument != null)
+        {
+            var rootVisualElement = uiDocument.rootVisualElement;
+            if (rootVisualElement != null)
+            {
+                mainMenuContainer = rootVisualElement.Q<VisualElement>("MainMenuContainer");
+                startButton = rootVisualElement.Q<Button>("Start");
+                controlsButton = rootVisualElement.Q<Button>("Controls");
+                exitButton = rootVisualElement.Q<Button>("Exit");
+            }
+        }
+
+        if (startButton != null)
+        {
+            startButton.clicked -= OnStartButtonClicked;
+            startButton.clicked += OnStartButtonClicked;
+        }
+
+        if (controlsButton != null)
+        {
+            controlsButton.clicked -= OnControlsButtonClicked;
+            controlsButton.clicked += OnControlsButtonClicked;
+        }
+
+        if (exitButton != null)
+        {
+            exitButton.clicked -= OnExitButtonClicked;
+            exitButton.clicked += OnExitButtonClicked;
+        }
+
+        controlsManager = FindObjectOfType<ControlsManager>();
+        gameUIManager = FindObjectOfType<GameUIManager>();
+
+        if (controlsManager == null)
+        {
+            GameObject controlsManagerObject = new GameObject("ControlsManager");
+            controlsManager = controlsManagerObject.AddComponent<ControlsManager>();
+        }
+
+        EnsureControlsUI();
+        EnsureGameUI();
+    }
+
+    private void DisableDeathUIDocument()
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals("DeathScreen", System.StringComparison.OrdinalIgnoreCase))
+            {
+                document.enabled = false;
+            }
+        }
+    }
+
+    private void EnsureControlsUI()
+    {
+        if (controlsUIDocument == null || controlsUIDocument.rootVisualElement == null)
+        {
+            controlsUIDocument = FindDocumentWithElement("ControlsContainer");
+        }
+    }
+
+    private void EnsureGameUI()
+    {
+        if (gameUIDocument == null || gameUIDocument.rootVisualElement == null)
+        {
+            gameUIDocument = FindDocumentWithElement("GameContentArea");
+        }
+    }
+
+    private void EnsureGameUIDocument()
+    {
+        if (gameUIDocument != null)
+        {
+            return;
+        }
+
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals(GameViewUxmlName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                gameUIDocument = document;
+                return;
+            }
+        }
+    }
+
+    private void HideSecondaryUI()
+    {
+        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
+        {
+            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        if (gameUIDocument != null && gameUIDocument.rootVisualElement != null)
+        {
+            gameUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
+
+    private void HideControlsUI()
+    {
+        if (controlsUIDocument != null && controlsUIDocument.rootVisualElement != null)
+        {
+            controlsUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
+
+    private void SetMainMenuDocumentActive(bool active)
+    {
+        EnsureMainMenuDocument();
+        if (uiDocument != null)
+        {
+            uiDocument.enabled = active;
+            if (uiDocument.rootVisualElement != null)
+            {
+                uiDocument.rootVisualElement.style.display = active ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+        }
+
+        if (!active)
+        {
+            HideMainMenu();
+        }
+    }
+
+    private void HideGameUIDocuments()
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals("Game_View", System.StringComparison.OrdinalIgnoreCase))
+            {
+                document.enabled = false;
+                if (document.rootVisualElement != null)
+                {
+                    document.rootVisualElement.style.display = DisplayStyle.None;
+                }
+            }
+        }
+    }
+
+    private void StartGameplayUI()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
+
+        SetMainMenuDocumentActive(false);
+        EnableAllGameViewDocuments();
+
+        var spawner = FindFirstObjectByType<PlayerSpawner>(FindObjectsInactive.Include);
+        if (spawner != null)
+        {
+            spawner.StartGame();
+        }
+
+        if (gameUIManager != null)
+        {
+            gameUIManager.RebindGameUI();
+            gameUIManager.StartGame();
+        }
+
+        HideControlsUI();
+        EnsurePlayerInputEnabled();
+    }
+
+    private void StartGameplayFromMenuScene()
+    {
+        pendingStartFromMenu = false;
+        HideMainMenu();
+        StartGameplayUI();
+        EnableAllGameViewDocuments();
+
+        var spawner = FindFirstObjectByType<PlayerSpawner>(FindObjectsInactive.Include);
+        if (spawner != null)
+        {
+            spawner.StartGame();
+        }
+
+        if (gameUIManager != null)
+        {
+            gameUIManager.RebindGameUI();
+            gameUIManager.StartGame();
+        }
+
+        EnsurePlayerInputEnabled();
+        ResetPlayerToSpawnPoint();
+        StartCoroutine(ShowGameUIAfterStart());
+    }
+
+    private void ResetPlayerToSpawnPoint()
+    {
+        var player = FindFirstObjectByType<Player>(FindObjectsInactive.Include);
+        if (player == null)
+        {
+            return;
+        }
+
+        var spawnPoint = FindFirstObjectByType<PlayerSpawnPoint>(FindObjectsInactive.Include);
+        if (spawnPoint != null)
+        {
+            var controller = player.GetComponent<CharacterController>();
+            if (controller != null) controller.enabled = false;
+            player.transform.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
+            if (controller != null) controller.enabled = true;
+        }
+
+        var health = player.GetComponent<PlayerHealth>();
+        if (health != null)
+        {
+            health.ResetForRespawn();
+        }
+    }
+
+    private void EnableGameViewDocument()
+    {
+        EnsureGameUIDocument();
+        EnsureGameUI();
+        if (gameUIDocument != null)
+        {
+            gameUIDocument.enabled = true;
+            if (gameUIDocument.rootVisualElement != null)
+            {
+                gameUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+            }
+        }
+    }
+
+    private IEnumerator ShowGameUIAfterStart()
+    {
+        yield return null;
+        EnableAllGameViewDocuments();
+
+        if (gameUIManager != null)
+        {
+            gameUIManager.RebindGameUI();
+            gameUIManager.StartGame();
+        }
+
+        EnsurePlayerInputEnabled();
+    }
+
+    private void EnsurePlayerInputEnabled()
+    {
+        var playerInput = FindFirstObjectByType<PlayerInput>(FindObjectsInactive.Include);
+        if (playerInput == null)
+        {
+            return;
+        }
+
+        playerInput.enabled = true;
+        if (playerInput.actions != null)
+        {
+            var playerMap = playerInput.actions.FindActionMap("Player");
+            if (playerMap != null)
+            {
+                playerInput.SwitchCurrentActionMap("Player");
+                playerMap.Enable();
+            }
+            playerInput.actions.Enable();
+        }
+    }
+
+    private void EnableAllGameViewDocuments()
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals(GameViewUxmlName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                document.enabled = true;
+                if (document.rootVisualElement != null)
+                {
+                    document.rootVisualElement.style.display = DisplayStyle.Flex;
+                }
+            }
+        }
+
+        EnableGameViewDocument();
+    }
+
+    private void UpdateMainMenuVisibility()
+    {
+        if (ShouldShowMainMenuForScene())
+        {
+            ShowMainMenu();
+        }
+        else
+        {
+            StartGameplayUI();
+        }
+    }
+
+    private bool ShouldShowMainMenuForScene()
+    {
+        int sceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        return sceneIndex == mainMenuSceneIndex;
+    }
+
+    private UIDocument FindDocumentWithElement(string elementName)
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.rootVisualElement == null) continue;
+            if (document.rootVisualElement.Q<VisualElement>(elementName) != null)
+            {
+                return document;
+            }
+        }
+        return null;
+    }
+
+    private void EnsureMainMenuDocument()
+    {
+        if (uiDocument != null && uiDocument.rootVisualElement != null)
+        {
+            return;
+        }
+
+        uiDocument = FindDocumentWithElement("MainMenuContainer");
+        if (uiDocument != null && uiDocument.rootVisualElement != null)
+        {
+            return;
+        }
+
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals(MainMenuUxmlName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                uiDocument = document;
+                return;
+            }
         }
     }
 }

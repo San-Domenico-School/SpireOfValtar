@@ -30,10 +30,20 @@
                             <ui:Label text="Jump" style="color: rgb(236, 165, 41); font-size: 16px; flex-grow: 1; margin-right: 20px;" />
                             <ui:Button text="Space" name="Keybind_Jump" style="min-width: 100px; height: 40px; font-size: 16px; -unity-font-style: bold; background-color: rgb(60, 60, 60); color: rgb(236, 165, 41); border-left-color: rgb(255, 220, 120); border-right-color: rgb(255, 220, 120); border-top-color: rgb(255, 220, 120); border-bottom-color: rgb(255, 220, 120); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-radius: 6px;" />
                         </ui:VisualElement>
+
+                        <ui:VisualElement style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                            <ui:Label text="Dash" style="color: rgb(236, 165, 41); font-size: 16px; flex-grow: 1; margin-right: 20px;" />
+                            <ui:Button text="C" name="Keybind_Dash" style="min-width: 100px; height: 40px; font-size: 16px; -unity-font-style: bold; background-color: rgb(60, 60, 60); color: rgb(236, 165, 41); border-left-color: rgb(255, 220, 120); border-right-color: rgb(255, 220, 120); border-top-color: rgb(255, 220, 120); border-bottom-color: rgb(255, 220, 120); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-radius: 6px;" />
+                        </ui:VisualElement>
                         
                         <ui:VisualElement style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                             <ui:Label text="Cast Spell" style="color: rgb(236, 165, 41); font-size: 16px; flex-grow: 1; margin-right: 20px;" />
                             <ui:Button text="Left Mouse" name="Keybind_CastSpell" style="min-width: 100px; height: 40px; font-size: 16px; -unity-font-style: bold; background-color: rgb(60, 60, 60); color: rgb(236, 165, 41); border-left-color: rgb(255, 220, 120); border-right-color: rgb(255, 220, 120); border-top-color: rgb(255, 220, 120); border-bottom-color: rgb(255, 220, 120); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-radius: 6px;" />
+                        </ui:VisualElement>
+                        
+                        <ui:VisualElement style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                            <ui:Label text="Melee Attack" style="color: rgb(236, 165, 41); font-size: 16px; flex-grow: 1; margin-right: 20px;" />
+                            <ui:Button text="F" name="Keybind_MeleeAttack" style="min-width: 100px; height: 40px; font-size: 16px; -unity-font-style: bold; background-color: rgb(60, 60, 60); color: rgb(236, 165, 41); border-left-color: rgb(255, 220, 120); border-right-color: rgb(255, 220, 120); border-top-color: rgb(255, 220, 120); border-bottom-color: rgb(255, 220, 120); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-radius: 6px;" />
                         </ui:VisualElement>
                         
                         <ui:VisualElement style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
@@ -59,6 +69,12 @@
                             <ui:Slider name="VolumeSlider" low-value="0" high-value="1" value="1.0" style="width: 100%;" />
                             <ui:Label text="100%" name="VolumeValueLabel" style="font-size: 12px; color: rgb(236, 165, 41); -unity-text-align: middle-center;" />
                         </ui:VisualElement>
+
+                    <ui:VisualElement style="display: flex; flex-direction: column; gap: 5px;">
+                        <ui:Label text="UI Scale" name="UIScaleLabel" style="font-size: 16px; color: rgb(236, 165, 41); -unity-font-style: bold;" />
+                        <ui:Slider name="UIScaleSlider" low-value="0.5" high-value="2.0" value="1.0" style="width: 100%;" />
+                        <ui:Label text="100%" name="UIScaleValueLabel" style="font-size: 12px; color: rgb(236, 165, 41); -unity-text-align: middle-center;" />
+                    </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:ScrollView>

@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 3009785914778040112}
   - component: {fileID: 4380578801919735770}
   - component: {fileID: 648765997522169627}
-  - component: {fileID: 1900900126447633119}
+  - component: {fileID: 8058498361456050140}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -280,12 +280,15 @@ MonoBehaviour:
   spell1: {fileID: 1311476162909644520}
   spell2: {fileID: 4850373086718553156}
   spell3: {fileID: 3865945351040155882}
+  spellAudio: {fileID: 0}
+  playerSound: {fileID: 0}
   nextAction: {fileID: 7476244043514120974, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   previousAction: {fileID: 2411907206095950430, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   attackAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   maxStamina: 100
   regenRate: 10
   uiDocument: {fileID: 0}
+  spellUI: {fileID: 0}
 --- !u!114 &1311476162909644520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,10 +303,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   range: 30
   cooldown: 0
-  damage: 75
+  damage: 25
   lightningVFXPrefab: {fileID: 4159723444550947670, guid: 18eccc8d944514aebb6f083126b3214d, type: 3}
   boltHeight: 6
   vfxLifetime: 2
+  spellAudio: {fileID: 0}
 --- !u!114 &4850373086718553156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,6 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FireballCaster
   fireballPrefab: {fileID: 2081132082438070434, guid: de2d963b15f744a0aa0e4627569839f2, type: 3}
   cooldown: 0
+  spellAudio: {fileID: 0}
 --- !u!114 &3865945351040155882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,6 +338,7 @@ MonoBehaviour:
   freezePrefab: {fileID: 8449232247961012594, guid: a91892bb7d41943859a21f7960bf6b7d, type: 3}
   cooldown: 0
   spawnDistance: 1
+  spellAudio: {fileID: 0}
 --- !u!114 &6144566078965563371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -482,6 +488,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    m_ActionName: 'Player/MeleeAttack[/Keyboard/f]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: 
@@ -500,9 +510,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 5
-  runMultiplier: 1.6
+  runMultiplier: 1
   jumpHeight: 1.5
   gravity: -20
+  enableWalkLoopAudio: 1
+  walkLoopSource: {fileID: 0}
+  walkLoopClip: {fileID: 0}
+  walkLoopVolume: 0.8
+  walkMinMoveSqrMagnitude: 0.01
   maxStamina: 100
   sprintStaminaCostPerSecond: 25
   staminaRecoveryPerSecond: 15
@@ -610,9 +625,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   health: 0
   maxHealth: 100
-  restartManager: {fileID: 0}
   healthUIDocument: {fileID: 0}
---- !u!114 &1900900126447633119
+--- !u!114 &8058498361456050140
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -623,7 +637,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c826ef8031a30440b87950d22f92a626, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DontDestroyPlayer
+  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0

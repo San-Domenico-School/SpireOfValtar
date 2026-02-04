@@ -12,6 +12,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float gravity = -20f; // negative accel (m/s^2)
 
+    // Audio (footsteps / walk loop)
+    [Header("Audio")]
+    [Tooltip("Enable/disable the built-in walk loop audio on this script. Disable this if you use PlayerSoundController for footsteps.")]
+    [SerializeField] private bool enableWalkLoopAudio = true;
+    [Tooltip("Looping audio source used while walking. If left empty, one will be created at runtime.")]
+    [SerializeField] private AudioSource walkLoopSource;
+    [Tooltip("Audio clip that loops while walking (e.g. Assets/Art/Sound/walk-1-25588.mp3).")]
+    [SerializeField] private AudioClip walkLoopClip;
+    [SerializeField, Range(0f, 1f)] private float walkLoopVolume = 0.8f;
+    [Tooltip("Minimum planar input magnitude squared required to play the walk loop.")]
+    [SerializeField] private float walkMinMoveSqrMagnitude = 0.01f;
+
     // Sprint / Stamina
     [SerializeField] private float maxStamina = 100f;
     [SerializeField] private float sprintStaminaCostPerSecond = 25f;
@@ -74,17 +86,59 @@ public class PlayerMovement : MonoBehaviour
 
         currentStamina = maxStamina;
         // Cursor state managed by UI managers
+
+        // Walk loop audio setup
+        if (!enableWalkLoopAudio) return;
+        if (walkLoopSource == null)
+        {
+            // Create a dedicated AudioSource so we don't interfere with other audio sources on the player.
+            walkLoopSource = gameObject.AddComponent<AudioSource>();
+        }
+        walkLoopSource.playOnAwake = false;
+        walkLoopSource.loop = true;
+        walkLoopSource.volume = walkLoopVolume;
+        if (walkLoopClip != null) walkLoopSource.clip = walkLoopClip;
+    }
+
+    public void ResetMovementState(bool resetCameraPitch = true)
+    {
+        isDodging = false;
+        isLunging = false;
+        lastDodgeTime = -999f;
+        lastSprintTime = -999f;
+        currentStamina = maxStamina;
+        velocity = Vector3.zero;
+
+        moveInput = Vector2.zero;
+        turnInput = Vector2.zero;
+        jumpPressedFrame = false;
+        attackPressedFrame = false;
+        crouchPressedFrame = false;
+
+        if (resetCameraPitch)
+        {
+            cameraPitchDegrees = 0f;
+            if (cameraPivot != null)
+            {
+                cameraPivot.localRotation = Quaternion.identity;
+            }
+        }
     }
 
     void Update()
     {
         // Don't process input when game is paused (Time.timeScale == 0)
-        if (Time.timeScale == 0f) return;
+        if (Time.timeScale == 0f)
+        {
+            if (enableWalkLoopAudio) StopWalkLoop();
+            return;
+        }
         
         ApplyTurnFromInput();
         // Lock movement while dodging/lunging (movement is driven by coroutine)
         if (isDodging || isLunging)
         {
+            if (enableWalkLoopAudio) StopWalkLoop();
             ApplyGravityAndMove(Vector3.zero, runHeld: false);
             return;
         }
@@ -158,6 +212,10 @@ public class PlayerMovement : MonoBehaviour
 
         // Regular locomotion
         ApplyGravityAndMove(move, runHeld);
+
+        // Walking audio: play while moving on ground; stop on jump/airborne
+        if (enableWalkLoopAudio)
+        UpdateWalkLoop(isMovingPlanar: isMovingPlanar, grounded: grounded, jumpPressedThisFrame: jumpPressed);
     }
 
     void ApplyTurnFromInput()
@@ -195,6 +253,39 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
+    }
+
+    void UpdateWalkLoop(bool isMovingPlanar, bool grounded, bool jumpPressedThisFrame)
+    {
+        if (walkLoopSource == null) return;
+
+        // If we jumped or we're airborne, ensure walking audio is off.
+        if (jumpPressedThisFrame || !grounded)
+        {
+            StopWalkLoop();
+            return;
+        }
+
+        // Start/stop based on planar movement
+        bool shouldPlay = isMovingPlanar && moveInput.sqrMagnitude >= walkMinMoveSqrMagnitude;
+        if (shouldPlay)
+        {
+            if (walkLoopClip != null && walkLoopSource.clip != walkLoopClip)
+                walkLoopSource.clip = walkLoopClip;
+            walkLoopSource.volume = walkLoopVolume;
+            if (!walkLoopSource.isPlaying && walkLoopSource.clip != null)
+                walkLoopSource.Play();
+        }
+        else
+        {
+            StopWalkLoop();
+        }
+    }
+
+    void StopWalkLoop()
+    {
+        if (walkLoopSource != null && walkLoopSource.isPlaying)
+            walkLoopSource.Stop();
     }
     
 	// These are invoked by a PlayerInput component of unity event
@@ -236,6 +327,8 @@ public class PlayerMovement : MonoBehaviour
     IEnumerator DashRoutine(Vector3 dir, float distance, float duration, bool isDodge)
     {
         if (isDodge) isDodging = true; else isLunging = true;
+
+        if (enableWalkLoopAudio) StopWalkLoop();
 
         float elapsed = 0f;
         float speed = distance / Mathf.Max(0.0001f, duration);

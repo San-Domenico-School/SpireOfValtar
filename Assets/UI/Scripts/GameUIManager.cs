@@ -1,12 +1,17 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UI.MouseFollow;
 
 /************************************
  * Handles game UI, pause menu, and ESC key controls.
  * Manages pause/unpause, controls menu navigation, and menu button functionality.
+ * Dont look into this script too much, it's a mess.
+ * I'm not proud of it.
+ * Even I don't understand it myself.
  * Gleb 01/09/26
  * Version 1.0
  ************************************/
@@ -16,6 +21,10 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private UIDocument pauseMenuDocument;
     [SerializeField] private UIDocument controlsDocument;
     [SerializeField] private UIDocument controlsPauseDocument;
+    [SerializeField] private ReticleController reticleController;
+    [SerializeField] private int gameUISortOrder = 0;
+    [SerializeField] private int pauseMenuSortOrder = 10;
+    [SerializeField] private int controlsMenuSortOrder = 20;
     
     private VisualElement gameUIContainer;
     private Button menuButton;
@@ -31,61 +40,122 @@ public class GameUIManager : MonoBehaviour
     private Dictionary<string, Button> pauseKeybindButtons = new Dictionary<string, Button>();
     private VisualElement pauseRebindPrompt;
     private InputActionRebindingExtensions.RebindingOperation pauseRebindOperation;
+    private bool isInitialized;
     
     void Start()
     {
+        if (!TryInitializeUI())
+        {
+            StartCoroutine(WaitForRootAndInitialize());
+        }
+    }
+
+    private IEnumerator WaitForRootAndInitialize()
+    {
+        while (!isInitialized)
+        {
+            if (TryInitializeUI())
+            {
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
+    private bool TryInitializeUI()
+    {
+        if (uiDocument == null || uiDocument.rootVisualElement == null)
+        {
+            uiDocument = FindDocumentWithElement("GameContentArea");
+        }
+
+        if (uiDocument == null || uiDocument.rootVisualElement == null)
+        {
+            return false;
+        }
+
         var rootVisualElement = uiDocument.rootVisualElement;
-        
-        // Use root element as gameUIContainer since Game_View.uxml doesn't have a GameUIContainer element
         gameUIContainer = rootVisualElement;
         menuButton = rootVisualElement.Q<Button>("MenuButton");
         mainMenuManager = FindObjectOfType<MainMenuManager>();
-        
+
         if (menuButton != null)
         {
+            menuButton.clicked -= OnMenuButtonClicked;
             menuButton.clicked += OnMenuButtonClicked;
         }
-        
-        HideGameUI();
+
+        if (reticleController == null)
+        {
+            reticleController = FindObjectOfType<ReticleController>(true);
+        }
+
+        ApplyUIDocumentSorting();
+        bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
+        if (gameUIVisible)
+        {
+            StartGame();
+        }
+        else
+        {
+            HideGameUI();
+        }
         InitializePauseMenu();
         InitializeControlsMenu();
         InitializeControlsPauseMenu();
-        
-        // Find input actions if not assigned
+
         if (inputActions == null)
         {
             inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
         }
-        
-        Debug.Log($"GameUIManager: Start complete. pauseMenuDocument: {(pauseMenuDocument != null ? "assigned" : "NULL - ASSIGN IN INSPECTOR!")}, gameUIContainer: {(gameUIContainer != null ? "found" : "not found")}, uiDocument: {(uiDocument != null ? "exists" : "null")}");
+
+        KeybindUtils.ApplySavedKeybinds(inputActions);
+        isInitialized = true;
+        return true;
+    }
+
+    public void RebindGameUI()
+    {
+        isInitialized = false;
+        if (!TryInitializeUI())
+        {
+            StartCoroutine(WaitForRootAndInitialize());
+        }
+
+        var gameViewUI = FindFirstObjectByType<GameViewUI>(FindObjectsInactive.Include);
+        if (gameViewUI != null)
+        {
+            gameViewUI.RefreshUI();
+        }
+
+        EnsureSpellUI();
+
+        var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null)
+        {
+            playerHealth.RefreshHealthUI();
+        }
+
+        var abilityController = FindFirstObjectByType<PlayerAbilityController>(FindObjectsInactive.Include);
+        if (abilityController != null)
+        {
+            abilityController.RefreshStaminaUI();
+        }
     }
     
     void Update()
     {
-        // Only handle ESC if game UI is visible (game is actually running)
-        bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
-        
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            Debug.Log($"GameUIManager: ESC pressed. gameUIVisible: {gameUIVisible}, isPaused: {isPaused}, gameUIContainer: {(gameUIContainer != null ? "exists" : "null")}");
-            
-            if (!gameUIVisible)
-            {
-                Debug.Log("GameUIManager: Game UI not visible, ignoring ESC");
-                return;
-            }
-            
             // Check for ESC key press during rebinding to cancel it
             if (pauseRebindOperation != null)
             {
-                Debug.Log("GameUIManager: Canceling rebind operation");
                 pauseRebindOperation.Cancel();
                 return;
             }
             
             if (isPaused)
             {
-                Debug.Log("GameUIManager: Game is paused, handling ESC for navigation between menus");
                 // ESC can navigate between pause menu and settings, but cannot close pause menu
                 if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null && 
                     controlsPauseDocument.rootVisualElement.style.display == DisplayStyle.Flex)
@@ -106,7 +176,6 @@ public class GameUIManager : MonoBehaviour
             else
             {
                 // Pause the game - ESC can only open pause menu
-                Debug.Log("GameUIManager: Pausing game");
                 PauseGame();
             }
         }
@@ -121,7 +190,6 @@ public class GameUIManager : MonoBehaviour
             
             if (pauseRoot == null)
             {
-                Debug.LogWarning("GameUIManager: pauseMenuDocument.rootVisualElement is null during initialization!");
                 return;
             }
             
@@ -132,30 +200,30 @@ public class GameUIManager : MonoBehaviour
             
             if (pauseResumeButton != null)
             {
+                pauseResumeButton.clicked -= OnPauseResumeClicked;
                 pauseResumeButton.clicked += OnPauseResumeClicked;
             }
             
             if (pauseControlsButton != null)
             {
+                pauseControlsButton.clicked -= OnPauseControlsClicked;
                 pauseControlsButton.clicked += OnPauseControlsClicked;
             }
             
             if (pauseMainMenuButton != null)
             {
+                pauseMainMenuButton.clicked -= OnPauseMainMenuClicked;
                 pauseMainMenuButton.clicked += OnPauseMainMenuClicked;
             }
             
             if (pauseExitButton != null)
             {
+                pauseExitButton.clicked -= OnPauseExitClicked;
                 pauseExitButton.clicked += OnPauseExitClicked;
             }
             
             // Hide pause menu initially
             pauseRoot.style.display = DisplayStyle.None;
-        }
-        else
-            {
-            Debug.LogWarning("GameUIManager: pauseMenuDocument is null!");
         }
     }
     
@@ -183,6 +251,43 @@ public class GameUIManager : MonoBehaviour
             InitializePauseControlsSettings();
         }
     }
+
+    private UIDocument FindDocumentWithElement(string elementName)
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.rootVisualElement == null) continue;
+            if (document.rootVisualElement.Q<VisualElement>(elementName) != null)
+            {
+                return document;
+            }
+        }
+        return null;
+    }
+
+    private void ApplyUIDocumentSorting()
+    {
+        if (uiDocument != null)
+        {
+            uiDocument.sortingOrder = gameUISortOrder;
+        }
+
+        if (pauseMenuDocument != null)
+        {
+            pauseMenuDocument.sortingOrder = pauseMenuSortOrder;
+        }
+
+        if (controlsDocument != null)
+        {
+            controlsDocument.sortingOrder = controlsMenuSortOrder;
+        }
+
+        if (controlsPauseDocument != null)
+        {
+            controlsPauseDocument.sortingOrder = controlsMenuSortOrder;
+        }
+    }
     
     private void InitializePauseControlsSettings()
     {
@@ -198,6 +303,8 @@ public class GameUIManager : MonoBehaviour
         Slider volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
         Label sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
         Label volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        Slider uiScaleSlider = rootVisualElement.Q<Slider>("UIScaleSlider");
+        Label uiScaleValueLabel = rootVisualElement.Q<Label>("UIScaleValueLabel");
         
         if (sensitivitySlider != null)
         {
@@ -212,6 +319,14 @@ public class GameUIManager : MonoBehaviour
             volumeSlider.value = settingsManager.GetMasterVolume();
             volumeSlider.RegisterValueChangedCallback(evt => {
                 settingsManager.SetMasterVolume(evt.newValue);
+            });
+        }
+
+        if (uiScaleSlider != null)
+        {
+            uiScaleSlider.value = settingsManager.GetUIScale();
+            uiScaleSlider.RegisterValueChangedCallback(evt => {
+                settingsManager.SetUIScale(evt.newValue);
             });
         }
         
@@ -229,6 +344,13 @@ public class GameUIManager : MonoBehaviour
                 volumeValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
             }
         };
+
+        settingsManager.OnUIScaleChanged += (value) => {
+            if (uiScaleValueLabel != null)
+            {
+                uiScaleValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
+            }
+        };
         
         // Initialize labels
         if (sensitivityValueLabel != null)
@@ -240,6 +362,11 @@ public class GameUIManager : MonoBehaviour
         {
             volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
         }
+
+        if (uiScaleValueLabel != null)
+        {
+            uiScaleValueLabel.text = Mathf.RoundToInt(settingsManager.GetUIScale() * 100f).ToString() + "%";
+        }
         
         // Initialize keybinds for pause menu
         InitializePauseKeybinds(rootVisualElement);
@@ -249,7 +376,6 @@ public class GameUIManager : MonoBehaviour
     {
         if (inputActions == null)
         {
-            Debug.LogWarning("GameUIManager: inputActions is null, cannot initialize pause keybinds");
             return;
         }
         
@@ -260,7 +386,9 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
+            { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
             { "Keybind_PreviousSpell", ("Previous", null) }
         };
@@ -268,7 +396,6 @@ public class GameUIManager : MonoBehaviour
         var playerMap = inputActions.FindActionMap("Player");
         if (playerMap == null)
         {
-            Debug.LogWarning("GameUIManager: Player action map not found");
             return;
         }
         
@@ -296,17 +423,9 @@ public class GameUIManager : MonoBehaviour
                 string keyName = GetCurrentKeyName(playerMap, kvp.Value.actionName, kvp.Value.partName);
                 button.text = keyName;
             }
-            else
-            {
-                Debug.LogWarning($"GameUIManager: Could not find button {kvp.Key} in pause controls menu");
-            }
         }
         
         pauseRebindPrompt = root.Q<VisualElement>("RebindPrompt");
-        if (pauseRebindPrompt == null)
-        {
-            Debug.LogWarning("GameUIManager: Could not find RebindPrompt in pause controls menu");
-        }
         
         // Style the scrollbar to match the design
         StylePauseScrollbar(root);
@@ -325,7 +444,9 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
+            { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
             { "Keybind_PreviousSpell", ("Previous", null) }
         };
@@ -484,11 +605,24 @@ public class GameUIManager : MonoBehaviour
         }
         else
         {
+            // Prefer Keyboard&Mouse bindings
             foreach (var binding in action.bindings)
             {
                 if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    // Use overridePath if available, otherwise use path
+                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
+                    {
+                        string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
+                        return FormatKeyName(bindingPath);
+                    }
+                }
+            }
+
+            // Fallback to first non-composite binding
+            foreach (var binding in action.bindings)
+            {
+                if (!binding.isComposite && !binding.isPartOfComposite)
+                {
                     string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
                     return FormatKeyName(bindingPath);
                 }
@@ -496,6 +630,57 @@ public class GameUIManager : MonoBehaviour
         }
         
         return "?";
+    }
+    
+    private string FormatMouseButtonName(string button)
+    {
+        if (string.IsNullOrEmpty(button)) return "?";
+        
+        // Remove leading slash if present
+        if (button.StartsWith("/")) button = button.Substring(1);
+        
+        // Normalize to lowercase for comparison
+        string buttonLower = button.ToLower();
+        
+        // Handle standard button names
+        if (buttonLower == "leftbutton" || buttonLower == "button" || buttonLower == "button<0>" || buttonLower == "button0") 
+            return "Left Mouse";
+        if (buttonLower == "rightbutton" || buttonLower == "button<1>" || buttonLower == "button1") 
+            return "Right Mouse";
+        if (buttonLower == "middlebutton" || buttonLower == "button<2>" || buttonLower == "button2") 
+            return "Middle Mouse";
+        
+        // Handle directional button names (buttonWest, button west, button<west>, etc.)
+        // Check for west, east, north, south in any format (case-insensitive)
+        if (buttonLower.Contains("west"))
+            return "Mouse Button 4";
+        if (buttonLower.Contains("east"))
+            return "Mouse Button 5";
+        if (buttonLower.Contains("north"))
+            return "Mouse Button 6";
+        if (buttonLower.Contains("south"))
+            return "Mouse Button 7";
+        
+        // Try to extract button number if it's in format "button<X>" or "buttonX"
+        if (buttonLower.StartsWith("button"))
+        {
+            // Remove "button" prefix and angle brackets
+            string numberPart = buttonLower.Replace("button<", "").Replace(">", "").Replace("button", "");
+            
+            // Try to parse as number
+            if (int.TryParse(numberPart, out int buttonNum))
+            {
+                switch (buttonNum)
+                {
+                    case 0: return "Left Mouse";
+                    case 1: return "Right Mouse";
+                    case 2: return "Middle Mouse";
+                    default: return $"Mouse Button {buttonNum + 1}";
+                }
+            }
+        }
+        
+        return "Mouse " + button;
     }
     
     private string FormatKeyName(string path)
@@ -538,10 +723,14 @@ public class GameUIManager : MonoBehaviour
             // Remove leading slash if present
             if (button.StartsWith("/")) button = button.Substring(1);
             
-            if (button == "leftButton") return "Left Mouse";
-            if (button == "rightButton") return "Right Mouse";
-            if (button == "middleButton") return "Middle Mouse";
-            return "Mouse " + button;
+            return FormatMouseButtonName(button);
+        }
+        
+        // Check if it's a mouse button path without Mouse prefix (e.g., just "buttonWest")
+        string pathLower = path.ToLower();
+        if (pathLower.StartsWith("button") || pathLower.Contains("button"))
+        {
+            return FormatMouseButtonName(path);
         }
         
         // If path doesn't match expected formats, try to extract just the key name
@@ -551,6 +740,12 @@ public class GameUIManager : MonoBehaviour
             if (parts.Length > 0)
             {
                 string lastPart = parts[parts.Length - 1];
+                // Check if last part is a mouse button
+                string lastPartLower = lastPart.ToLower();
+                if (lastPartLower.StartsWith("button") || lastPartLower.Contains("button"))
+                {
+                    return FormatMouseButtonName(lastPart);
+                }
                 if (lastPart.Length == 1) return lastPart.ToUpper();
                 return lastPart;
             }
@@ -573,6 +768,7 @@ public class GameUIManager : MonoBehaviour
         int bindingIndex = -1;
         if (partName != null)
         {
+            // For composite actions (like Move), find the specific part
             for (int i = 0; i < action.bindings.Count; i++)
             {
                 if (action.bindings[i].isPartOfComposite && action.bindings[i].name == partName)
@@ -584,42 +780,83 @@ public class GameUIManager : MonoBehaviour
         }
         else
         {
+            // For non-composite actions, prefer Keyboard&Mouse bindings
+            // First pass: look for Keyboard&Mouse group
             for (int i = 0; i < action.bindings.Count; i++)
             {
-                if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
+                var binding = action.bindings[i];
+                if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    bindingIndex = i;
-                    break;
+                    // Check if this binding is for Keyboard&Mouse
+                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
+                    {
+                        bindingIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            // Second pass: if no Keyboard&Mouse binding found, use first non-composite binding
+            if (bindingIndex == -1)
+            {
+                for (int i = 0; i < action.bindings.Count; i++)
+                {
+                    if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
+                    {
+                        bindingIndex = i;
+                        break;
+                    }
                 }
             }
         }
         
-        if (bindingIndex == -1) return;
+        if (bindingIndex == -1)
+        {
+            return;
+        }
         
         if (pauseRebindPrompt != null)
         {
             pauseRebindPrompt.style.display = DisplayStyle.Flex;
         }
         
+        // Ensure the action map is enabled for rebinding to work
+        if (!playerMap.enabled)
+        {
+            playerMap.Enable();
+        }
+        
+        // Disable the action for rebinding (but keep the map enabled)
         action.Disable();
         
+        // Start rebinding operation
         pauseRebindOperation = action.PerformInteractiveRebinding(bindingIndex)
             .WithControlsExcluding("<Mouse>/position")
             .WithControlsExcluding("<Mouse>/delta")
+            .WithCancelingThrough("<Keyboard>/escape")
             .OnMatchWaitForAnother(0.1f)
             .OnComplete(operation =>
             {
+                // Apply the binding override to the action
+                action.ApplyBindingOverride(bindingIndex, operation.selectedControl.path);
+                
+                // Update button text with formatted key name
                 string newKey = FormatKeyName(operation.selectedControl.path);
                 button.text = newKey;
                 
+                // Save binding to PlayerPrefs
                 string key = $"Keybind_{buttonName}_{actionName}_{partName}";
                 PlayerPrefs.SetString(key, operation.selectedControl.path);
                 PlayerPrefs.Save();
                 
+                // Cleanup
                 operation.Dispose();
                 pauseRebindOperation = null;
+                
+                // Re-enable the action
                 action.Enable();
                 
+                // Hide prompt
                 if (pauseRebindPrompt != null)
                 {
                     pauseRebindPrompt.style.display = DisplayStyle.None;
@@ -627,16 +864,21 @@ public class GameUIManager : MonoBehaviour
             })
             .OnCancel(operation =>
             {
+                // Cleanup on cancel
                 operation.Dispose();
                 pauseRebindOperation = null;
+                
+                // Re-enable the action
                 action.Enable();
                 
+                // Hide prompt
                 if (pauseRebindPrompt != null)
                 {
                     pauseRebindPrompt.style.display = DisplayStyle.None;
                 }
             });
         
+        // Start the rebinding operation
         pauseRebindOperation.Start();
     }
     
@@ -644,32 +886,24 @@ public class GameUIManager : MonoBehaviour
     {
         if (isPaused)
         {
-            Debug.Log("GameUIManager: Already paused, skipping");
             return;
         }
-        
-        Debug.Log($"GameUIManager: PauseGame called. pauseMenuDocument: {(pauseMenuDocument != null ? "exists" : "NULL")}");
         
         isPaused = true;
         Time.timeScale = 0f;
         UnlockCursor();
+        HideGameUI();
+        DisableMainMenuDocument();
         
         if (pauseMenuDocument != null)
         {
             pauseMenuDocument.enabled = true;
             if (pauseMenuDocument.rootVisualElement != null)
-        {
-            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
-                Debug.Log("GameUIManager: Pause menu should now be visible");
-            }
-            else
             {
-                Debug.LogError("GameUIManager: pauseMenuDocument.rootVisualElement is null! Document enabled: " + pauseMenuDocument.enabled);
+                // Re-bind buttons in case the root was rebuilt.
+                InitializePauseMenu();
+                pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
             }
-        }
-        else
-        {
-            Debug.LogError("GameUIManager: pauseMenuDocument is null! Make sure it's assigned in the inspector!");
         }
     }
     
@@ -709,9 +943,36 @@ public class GameUIManager : MonoBehaviour
         {
             controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+
+        if (gameUIContainer != null)
+        {
+            gameUIContainer.style.display = DisplayStyle.Flex;
+        }
+        SetReticleVisible(true);
         
         // Lock cursor using the button-triggered method
         LockCursor();
+    }
+
+    private void DisableMainMenuDocument()
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals("MainMenu", System.StringComparison.OrdinalIgnoreCase))
+            {
+                document.enabled = false;
+                if (document.rootVisualElement != null)
+                {
+                    document.rootVisualElement.style.display = DisplayStyle.None;
+                }
+            }
+        }
     }
     
     // Called when Resume button is clicked - this ensures cursor locks from button click
@@ -795,6 +1056,8 @@ public class GameUIManager : MonoBehaviour
         Slider volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
         Label sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
         Label volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        Slider uiScaleSlider = rootVisualElement.Q<Slider>("UIScaleSlider");
+        Label uiScaleValueLabel = rootVisualElement.Q<Label>("UIScaleValueLabel");
         
         if (sensitivitySlider != null)
         {
@@ -805,6 +1068,11 @@ public class GameUIManager : MonoBehaviour
         {
             volumeSlider.value = settingsManager.GetMasterVolume();
         }
+
+        if (uiScaleSlider != null)
+        {
+            uiScaleSlider.value = settingsManager.GetUIScale();
+        }
         
         if (sensitivityValueLabel != null)
         {
@@ -814,6 +1082,11 @@ public class GameUIManager : MonoBehaviour
         if (volumeValueLabel != null)
         {
             volumeValueLabel.text = Mathf.RoundToInt(settingsManager.GetMasterVolume() * 100f).ToString() + "%";
+        }
+
+        if (uiScaleValueLabel != null)
+        {
+            uiScaleValueLabel.text = Mathf.RoundToInt(settingsManager.GetUIScale() * 100f).ToString() + "%";
         }
     }
     
@@ -829,7 +1102,7 @@ public class GameUIManager : MonoBehaviour
         
         if (mainMenuManager != null)
         {
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.LoadMainMenuScene();
         }
         
         CleanupGame();
@@ -850,6 +1123,16 @@ public class GameUIManager : MonoBehaviour
         {
             gameUIContainer.style.display = DisplayStyle.Flex;
         }
+        SetReticleVisible(true);
+
+        // Ensure no pause/settings panels remain visible after restart/start.
+        isPaused = false;
+        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+        HideControlsMenu();
+        HideControlsPauseMenu();
         
         if (controlsDocument != null && controlsDocument.rootVisualElement != null)
         {
@@ -860,6 +1143,20 @@ public class GameUIManager : MonoBehaviour
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+
+        var gameViewUI = FindFirstObjectByType<GameViewUI>(FindObjectsInactive.Include);
+        if (gameViewUI != null)
+        {
+            gameViewUI.RefreshUI();
+        }
+
+        EnsureSpellUI();
+
+        var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null)
+        {
+            playerHealth.RefreshHealthUI();
+        }
     }
     
     public void HideGameUI()
@@ -867,6 +1164,30 @@ public class GameUIManager : MonoBehaviour
         if (gameUIContainer != null)
         {
             gameUIContainer.style.display = DisplayStyle.None;
+        }
+        SetReticleVisible(false);
+    }
+
+    public void ResetForMainMenu()
+    {
+        isPaused = false;
+        HideGameUI();
+        HideControlsMenu();
+        HideControlsPauseMenu();
+
+        if (controlsDocument != null && controlsDocument.rootVisualElement != null)
+        {
+            controlsDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null)
+        {
+            controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
     }
     
@@ -876,7 +1197,7 @@ public class GameUIManager : MonoBehaviour
         
         if (mainMenuManager != null)
         {
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.LoadMainMenuScene();
         }
         
         CleanupGame();
@@ -891,5 +1212,31 @@ public class GameUIManager : MonoBehaviour
             pauseRebindOperation.Cancel();
             pauseRebindOperation = null;
         }
+    }
+
+    private void SetReticleVisible(bool isVisible)
+    {
+        if (reticleController == null)
+        {
+            return;
+        }
+
+        reticleController.enabled = isVisible;
+        if (reticleController.reticle != null)
+        {
+            reticleController.reticle.gameObject.SetActive(isVisible);
+        }
+    }
+
+    private void EnsureSpellUI()
+    {
+        var spellUI = FindFirstObjectByType<SpellUI>(FindObjectsInactive.Include);
+        if (spellUI == null)
+        {
+            var spellUiObject = new GameObject("SpellUI");
+            spellUI = spellUiObject.AddComponent<SpellUI>();
+        }
+
+        spellUI.RefreshSpellUI();
     }
 }

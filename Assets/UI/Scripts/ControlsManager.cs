@@ -26,6 +26,8 @@ public class ControlsManager : MonoBehaviour
     private Slider volumeSlider;
     private Label sensitivityValueLabel;
     private Label volumeValueLabel;
+    private Slider uiScaleSlider;
+    private Label uiScaleValueLabel;
     private SettingsManager settingsManager;
     
     // Keybinding
@@ -50,6 +52,8 @@ public class ControlsManager : MonoBehaviour
         {
             inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
         }
+
+        KeybindUtils.ApplySavedKeybinds(inputActions);
         
         HideControls();
     }
@@ -115,15 +119,9 @@ public class ControlsManager : MonoBehaviour
                 if (elem.name == "ControlsContainer")
                 {
                     controlsContainer = elem;
-                    Debug.Log("ControlsManager: Found ControlsContainer via full descendant search!");
                     break;
                 }
             }
-        }
-        
-        if (controlsContainer == null)
-        {
-            Debug.LogWarning("ControlsManager: ControlsContainer not found in InitializeFromUIDocument. Root: " + rootVisualElement.name + ", children: " + rootVisualElement.childCount);
         }
         
         var allVisualElements = rootVisualElement.Query<VisualElement>().ToList();
@@ -141,6 +139,8 @@ public class ControlsManager : MonoBehaviour
         volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
         sensitivityValueLabel = rootVisualElement.Q<Label>("SensitivityValueLabel");
         volumeValueLabel = rootVisualElement.Q<Label>("VolumeValueLabel");
+        uiScaleSlider = rootVisualElement.Q<Slider>("UIScaleSlider");
+        uiScaleValueLabel = rootVisualElement.Q<Label>("UIScaleValueLabel");
         
         if (settingsManager != null)
         {
@@ -156,14 +156,22 @@ public class ControlsManager : MonoBehaviour
                 volumeSlider.value = settingsManager.GetMasterVolume();
                 volumeSlider.RegisterValueChangedCallback(OnVolumeChanged);
             }
+
+            if (uiScaleSlider != null)
+            {
+                uiScaleSlider.value = settingsManager.GetUIScale();
+                uiScaleSlider.RegisterValueChangedCallback(OnUIScaleChanged);
+            }
             
             // Subscribe to settings changes to update labels
             settingsManager.OnSensitivityChanged += UpdateSensitivityLabel;
             settingsManager.OnVolumeChanged += UpdateVolumeLabel;
+            settingsManager.OnUIScaleChanged += UpdateUIScaleLabel;
             
             // Initialize labels
             UpdateSensitivityLabel(settingsManager.GetMouseSensitivity());
             UpdateVolumeLabel(settingsManager.GetMasterVolume());
+            UpdateUIScaleLabel(settingsManager.GetUIScale());
         }
         
         // Initialize keybinds
@@ -182,7 +190,9 @@ public class ControlsManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
+            { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
             { "Keybind_PreviousSpell", ("Previous", null) }
         };
@@ -368,12 +378,24 @@ public class ControlsManager : MonoBehaviour
         }
         else
         {
-            // For regular actions
+            // For regular actions, prefer Keyboard&Mouse bindings
             foreach (var binding in action.bindings)
             {
                 if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    // Use overridePath if available, otherwise use path
+                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
+                    {
+                        string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
+                        return FormatKeyName(bindingPath);
+                    }
+                }
+            }
+
+            // Fallback to first non-composite binding
+            foreach (var binding in action.bindings)
+            {
+                if (!binding.isComposite && !binding.isPartOfComposite)
+                {
                     string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
                     return FormatKeyName(bindingPath);
                 }
@@ -381,6 +403,57 @@ public class ControlsManager : MonoBehaviour
         }
         
         return "?";
+    }
+    
+    private string FormatMouseButtonName(string button)
+    {
+        if (string.IsNullOrEmpty(button)) return "?";
+        
+        // Remove leading slash if present
+        if (button.StartsWith("/")) button = button.Substring(1);
+        
+        // Normalize to lowercase for comparison
+        string buttonLower = button.ToLower();
+        
+        // Handle standard button names
+        if (buttonLower == "leftbutton" || buttonLower == "button" || buttonLower == "button<0>" || buttonLower == "button0") 
+            return "Left Mouse";
+        if (buttonLower == "rightbutton" || buttonLower == "button<1>" || buttonLower == "button1") 
+            return "Right Mouse";
+        if (buttonLower == "middlebutton" || buttonLower == "button<2>" || buttonLower == "button2") 
+            return "Middle Mouse";
+        
+        // Handle directional button names (buttonWest, button west, button<west>, etc.)
+        // Check for west, east, north, south in any format (case-insensitive)
+        if (buttonLower.Contains("west"))
+            return "Mouse Button 4";
+        if (buttonLower.Contains("east"))
+            return "Mouse Button 5";
+        if (buttonLower.Contains("north"))
+            return "Mouse Button 6";
+        if (buttonLower.Contains("south"))
+            return "Mouse Button 7";
+        
+        // Try to extract button number if it's in format "button<X>" or "buttonX"
+        if (buttonLower.StartsWith("button"))
+        {
+            // Remove "button" prefix and angle brackets
+            string numberPart = buttonLower.Replace("button<", "").Replace(">", "").Replace("button", "");
+            
+            // Try to parse as number
+            if (int.TryParse(numberPart, out int buttonNum))
+            {
+                switch (buttonNum)
+                {
+                    case 0: return "Left Mouse";
+                    case 1: return "Right Mouse";
+                    case 2: return "Middle Mouse";
+                    default: return $"Mouse Button {buttonNum + 1}";
+                }
+            }
+        }
+        
+        return "Mouse " + button;
     }
     
     private string FormatKeyName(string path)
@@ -423,10 +496,14 @@ public class ControlsManager : MonoBehaviour
             // Remove leading slash if present
             if (button.StartsWith("/")) button = button.Substring(1);
             
-            if (button == "leftButton") return "Left Mouse";
-            if (button == "rightButton") return "Right Mouse";
-            if (button == "middleButton") return "Middle Mouse";
-            return "Mouse " + button;
+            return FormatMouseButtonName(button);
+        }
+        
+        // Check if it's a mouse button path without Mouse prefix (e.g., just "buttonWest")
+        string pathLower = path.ToLower();
+        if (pathLower.StartsWith("button") || pathLower.Contains("button"))
+        {
+            return FormatMouseButtonName(path);
         }
         
         // If path doesn't match expected formats, try to extract just the key name
@@ -436,6 +513,12 @@ public class ControlsManager : MonoBehaviour
             if (parts.Length > 0)
             {
                 string lastPart = parts[parts.Length - 1];
+                // Check if last part is a mouse button
+                string lastPartLower = lastPart.ToLower();
+                if (lastPartLower.StartsWith("button") || lastPartLower.Contains("button"))
+                {
+                    return FormatMouseButtonName(lastPart);
+                }
                 if (lastPart.Length == 1) return lastPart.ToUpper();
                 return lastPart;
             }
@@ -461,6 +544,7 @@ public class ControlsManager : MonoBehaviour
         int bindingIndex = -1;
         if (partName != null)
         {
+            // For composite actions (like Move), find the specific part
             for (int i = 0; i < action.bindings.Count; i++)
             {
                 if (action.bindings[i].isPartOfComposite && action.bindings[i].name == partName)
@@ -472,17 +556,40 @@ public class ControlsManager : MonoBehaviour
         }
         else
         {
+            // For non-composite actions, prefer Keyboard&Mouse bindings
+            // First pass: look for Keyboard&Mouse group
             for (int i = 0; i < action.bindings.Count; i++)
             {
-                if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
+                var binding = action.bindings[i];
+                if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    bindingIndex = i;
-                    break;
+                    // Check if this binding is for Keyboard&Mouse
+                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
+                    {
+                        bindingIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            // Second pass: if no Keyboard&Mouse binding found, use first non-composite binding
+            if (bindingIndex == -1)
+            {
+                for (int i = 0; i < action.bindings.Count; i++)
+                {
+                    if (!action.bindings[i].isComposite && !action.bindings[i].isPartOfComposite)
+                    {
+                        bindingIndex = i;
+                        break;
+                    }
                 }
             }
         }
         
-        if (bindingIndex == -1) return;
+        if (bindingIndex == -1)
+        {
+            return;
+        }
         
         // Show prompt
         if (rebindPrompt != null)
@@ -490,28 +597,44 @@ public class ControlsManager : MonoBehaviour
             rebindPrompt.style.display = DisplayStyle.Flex;
         }
         
+        // Ensure the action map is enabled for rebinding to work
+        if (!playerMap.enabled)
+        {
+            playerMap.Enable();
+        }
+        
+        // Disable the action for rebinding (but keep the map enabled)
         action.Disable();
         
-        // Start rebinding
+        // Start rebinding operation
         rebindOperation = action.PerformInteractiveRebinding(bindingIndex)
             .WithControlsExcluding("<Mouse>/position")
             .WithControlsExcluding("<Mouse>/delta")
+            .WithCancelingThrough("<Keyboard>/escape")
             .OnMatchWaitForAnother(0.1f)
             .OnComplete(operation =>
             {
+                // Apply the binding override to the action
+                action.ApplyBindingOverride(bindingIndex, operation.selectedControl.path);
+                
+                // Update button text with formatted key name
                 string newKey = FormatKeyName(operation.selectedControl.path);
                 button.text = newKey;
                 
-                // Save binding
+                // Save binding to PlayerPrefs
                 string key = $"Keybind_{buttonName}_{actionName}_{partName}";
                 PlayerPrefs.SetString(key, operation.selectedControl.path);
                 PlayerPrefs.Save();
                 
+                // Cleanup
                 operation.Dispose();
                 rebindOperation = null;
                 currentRebindingAction = null;
+                
+                // Re-enable the action
                 action.Enable();
                 
+                // Hide prompt
                 if (rebindPrompt != null)
                 {
                     rebindPrompt.style.display = DisplayStyle.None;
@@ -519,17 +642,22 @@ public class ControlsManager : MonoBehaviour
             })
             .OnCancel(operation =>
             {
+                // Cleanup on cancel
                 operation.Dispose();
                 rebindOperation = null;
                 currentRebindingAction = null;
+                
+                // Re-enable the action
                 action.Enable();
                 
+                // Hide prompt
                 if (rebindPrompt != null)
                 {
                     rebindPrompt.style.display = DisplayStyle.None;
                 }
             });
         
+        // Start the rebinding operation
         rebindOperation.Start();
     }
     
@@ -538,7 +666,6 @@ public class ControlsManager : MonoBehaviour
         // If no document is set, we can't show controls
         if (controlledUIDocument == null)
         {
-            Debug.LogWarning("ControlsManager: No UIDocument set! Make sure InitializeFromUIDocument is called first.");
             return;
         }
         
@@ -548,7 +675,6 @@ public class ControlsManager : MonoBehaviour
         // Wait a frame to ensure rootVisualElement is created
         if (controlledUIDocument.rootVisualElement == null)
         {
-            Debug.LogWarning("ControlsManager: rootVisualElement is null! UIDocument may not be ready.");
             return;
         }
         
@@ -591,7 +717,6 @@ public class ControlsManager : MonoBehaviour
                     if (elem.name == "ControlsContainer")
                     {
                         controlsContainer = elem;
-                        Debug.Log("ControlsManager: Found ControlsContainer via full search!");
                         break;
                     }
                 }
@@ -602,15 +727,6 @@ public class ControlsManager : MonoBehaviour
         if (controlsContainer != null)
         {
             controlsContainer.style.display = DisplayStyle.Flex;
-        }
-        else
-        {
-            Debug.LogError("ControlsManager: ControlsContainer not found! Root name: " + controlledUIDocument.rootVisualElement.name + ", children: " + controlledUIDocument.rootVisualElement.childCount);
-            // List all children for debugging
-            foreach (var child in controlledUIDocument.rootVisualElement.Children())
-            {
-                Debug.Log("ControlsManager: Found child: " + child.name);
-            }
         }
         
         // Ensure root is still visible (in case something hid it)
@@ -623,8 +739,6 @@ public class ControlsManager : MonoBehaviour
         
         // Refresh keybind displays
         RefreshKeybindDisplays();
-        
-        Debug.Log("ControlsManager: ShowControls completed. Root display: " + controlledUIDocument.rootVisualElement.style.display);
     }
     
     private void RefreshKeybindDisplays()
@@ -640,7 +754,9 @@ public class ControlsManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
+            { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
             { "Keybind_PreviousSpell", ("Previous", null) }
         };
@@ -716,6 +832,22 @@ public class ControlsManager : MonoBehaviour
             volumeValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
         }
     }
+
+    private void OnUIScaleChanged(ChangeEvent<float> evt)
+    {
+        if (settingsManager != null)
+        {
+            settingsManager.SetUIScale(evt.newValue);
+        }
+    }
+
+    private void UpdateUIScaleLabel(float value)
+    {
+        if (uiScaleValueLabel != null)
+        {
+            uiScaleValueLabel.text = Mathf.RoundToInt(value * 100f).ToString() + "%";
+        }
+    }
     
     private void OnDestroy()
     {
@@ -723,6 +855,7 @@ public class ControlsManager : MonoBehaviour
         {
             settingsManager.OnSensitivityChanged -= UpdateSensitivityLabel;
             settingsManager.OnVolumeChanged -= UpdateVolumeLabel;
+            settingsManager.OnUIScaleChanged -= UpdateUIScaleLabel;
         }
         
         // Cancel any ongoing rebinding

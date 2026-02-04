@@ -12,8 +12,20 @@ EditorBuildSettings:
     path: Assets/Scenes/Testing/Switch Scene Test.unity
     guid: 8445f76818b944689a88ed0fad6d42f1
   - enabled: 1
-    path: Assets/Scenes/Testing/1st Prototype Build Teddy NEW.unity
+    path: Assets/Scenes/Testing/TeddyScenes/1st Prototype Build Teddy NEW.unity
     guid: 76bae62a7cac84412a7cb8ee94d946a5
+  - enabled: 1
+    path: Assets/Scenes/Testing/TeddyScenes/ChasingLevelTeddy.unity
+    guid: c07995536051f427dbf6a2777d357ca4
+  - enabled: 1
+    path: Assets/Scenes/Testing/TeddyScenes/TeddyFinalBossArenaPrototype.unity
+    guid: 732da77cf56484683970315777a5e9ec
+  - enabled: 0
+    path: Assets/Scenes/Testing/Switch Scene Test.unity
+    guid: 8445f76818b944689a88ed0fad6d42f1
+  - enabled: 0
+    path: Assets/Scenes/Testing/Sebastian Library Testing Scene.unity
+    guid: c505580cf9cb24bbfad147a2d441fcec
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

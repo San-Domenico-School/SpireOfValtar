@@ -12,6 +12,15 @@ public class FireballProjectile : MonoBehaviour
 
     [SerializeField] private float damage = 25f; // Balanced for souls-like: AOE damage
 
+    private SpellAudioController spellAudio;
+    private SpellSfxId spellId = SpellSfxId.Fireball;
+
+    public void Init(SpellAudioController audio, SpellSfxId id)
+    {
+        spellAudio = audio;
+        spellId = id;
+    }
+
     public IEnumerator MoveRoutine(Vector3 direction)
     {
         Vector3 startPos = transform.position;
@@ -30,6 +39,7 @@ public class FireballProjectile : MonoBehaviour
                 if (hit.collider.CompareTag("Enemy"))
                 {
                     Debug.Log("Fireball hit an enemy! Applying AOE damage...");
+                    if (spellAudio != null) spellAudio.PlayHit(spellId, hit.point);
 
                     // AOE Damage - damage all enemies within radius
                     Collider[] hitColliders = Physics.OverlapSphere(hit.point, fireballRadius);
