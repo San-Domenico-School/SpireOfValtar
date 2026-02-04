@@ -141,6 +141,8 @@ public class PlayerAbilityController : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         BindStaminaUI();
+        ResolveSpellUI();
+        UpdateSpellUI();
     }
 
     private void BindStaminaUI()
@@ -270,9 +272,28 @@ public class PlayerAbilityController : MonoBehaviour
 
     private void UpdateSpellUI()
     {
+        if (spellUI == null)
+        {
+            ResolveSpellUI();
+        }
+
         if (spellUI != null)
         {
             spellUI.SetCurrentSpell(currentIndex);
+        }
+    }
+
+    private void ResolveSpellUI()
+    {
+        if (spellUI != null)
+        {
+            return;
+        }
+
+        spellUI = FindFirstObjectByType<SpellUI>(FindObjectsInactive.Include);
+        if (spellUI == null)
+        {
+            spellUI = FindFirstObjectByType<SpellUI>();
         }
     }
 
