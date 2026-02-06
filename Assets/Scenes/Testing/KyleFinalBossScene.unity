@@ -518,7 +518,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6019195495182123421, guid: ffff7901f36514343b5cb8ae260b1c9a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.09
+      value: -0.31
       objectReference: {fileID: 0}
     - target: {fileID: 6019195495182123421, guid: ffff7901f36514343b5cb8ae260b1c9a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -702,6 +702,11 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
+--- !u!1 &1028796796 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b43f3597909e5425281215cdd0f558bb, type: 3}
+  m_PrefabInstance: {fileID: 1164759228}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1164759228
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1083,11 +1088,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -2228417370725966487, guid: b43f3597909e5425281215cdd0f558bb, type: 3}
---- !u!1 &1407436752 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b43f3597909e5425281215cdd0f558bb, type: 3}
-  m_PrefabInstance: {fileID: 1164759228}
-  m_PrefabAsset: {fileID: 0}
 --- !u!64 &1476729644
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1214,7 +1214,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1407436752}
+  m_GameObject: {fileID: 1028796796}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
@@ -1238,7 +1238,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: c882623964c9140319408ebb2dcb3280, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: c86b831eb41644048a1fe50a82f570d8, type: 2}
   m_BuildHeightMesh: 0
 --- !u!64 &1778456951
 MeshCollider:
