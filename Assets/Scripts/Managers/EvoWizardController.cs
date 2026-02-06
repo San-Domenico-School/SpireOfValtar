@@ -56,6 +56,13 @@ public class EvoWizardController : MonoBehaviour
   [SerializeField] private float summonInterval = 6f;
   [SerializeField] private int maxSummonAliveFromThisBoss = 6;
 
+  [Header("Phase Visuals")]
+  private Renderer[] phaseRenderers;
+
+  [SerializeField] private string colorProperty = "_BaseColor"; // URP Lit uses _BaseColor; Standard uses _Color
+  private MaterialPropertyBlock mpb;
+
+
   // Components
   private NavMeshAgent navAgent;
   private Transform player;
@@ -186,7 +193,7 @@ public class EvoWizardController : MonoBehaviour
   void EnterPhase(Phase newPhase)
   {
     currentPhase = newPhase;
-
+    ApplyPhaseVisuals(newPhase);
     // clean up old behaviors
     StopAllCombatRoutines();
 
@@ -418,6 +425,31 @@ public class EvoWizardController : MonoBehaviour
     if (freezeTimer != null) StopCoroutine(freezeTimer);
     SetSpeedMultiplier(1f - slowAmount);
     freezeTimer = StartCoroutine(FreezeTimer(duration));
+  }
+
+  private void ApplyPhaseVisuals(Phase phase)
+  {
+    if (phaseRenderers == null || phaseRenderers.Length == 0)
+      phaseRenderers = GetComponentsInChildren<Renderer>(true);
+
+    if (mpb == null) mpb = new MaterialPropertyBlock();
+
+    Color c = new Color(1f, 0.4f, 0.2f);
+    switch (phase)
+    {
+      case Phase.Phase1_Fire: c = new Color(1f, 0.4f, 0.2f); break;
+      case Phase.Phase2_Lightning: c = new Color(0.7f, 0.8f, 1f); break;
+      case Phase.Phase3_MeleeSummon: c = new Color(0.6f, 1f, 0.6f); break;
+    }
+
+    foreach (var r in phaseRenderers)
+    {
+      if (r == null) continue;
+
+      r.GetPropertyBlock(mpb);
+      mpb.SetColor(colorProperty, c);
+      r.SetPropertyBlock(mpb);
+    }
   }
 
   IEnumerator FreezeTimer(float duration)
