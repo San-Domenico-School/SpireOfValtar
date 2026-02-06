@@ -10,6 +10,7 @@ public class EnemyHealth : MonoBehaviour
   private Renderer enemyRenderer;
   private Color originalColor;
   private bool isFlashing = false;
+  private bool warnedMissingHealthBar = false;
 
   [SerializeField] FloatingHealthBar healthBar;
   [SerializeField] private GameObject deathParticle;
@@ -50,7 +51,15 @@ public class EnemyHealth : MonoBehaviour
   public void TakeDamage(float amount)
   {
     currentHealth -= amount;
-    healthBar.SliderUpdate(currentHealth, maxHealth);
+    if (healthBar != null)
+    {
+      healthBar.SliderUpdate(currentHealth, maxHealth);
+    }
+    else if (!warnedMissingHealthBar)
+    {
+      warnedMissingHealthBar = true;
+      Debug.LogWarning("EnemyHealth has no FloatingHealthBar child; skipping health bar update.", this);
+    }
     Debug.Log($"{gameObject.name} took {amount} damage! Remaining health: {currentHealth}");
 
     if (!isFlashing && enemyRenderer != null)

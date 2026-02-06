@@ -13,21 +13,21 @@ public class MeleeAttack : MonoBehaviour
 {
     [Header("Melee Attack Settings")]
     [SerializeField] private float meleeDamage = 25f;
-    [SerializeField] private float attackRange = 2f; // Range for melee attack detection
-    [SerializeField] private float cooldown = 2f; // Cooldown between melee attacks (seconds)
+    [SerializeField] private float attackRange = 2f;
+    [SerializeField] private float cooldown = 2f; 
     
     [Header("Animation")]
-    [SerializeField] private Animator attackAnimator; // Animator for attack animations (to be assigned later)
+    [SerializeField] private Animator attackAnimator; 
 
     [Header("Input")]
     [SerializeField] private InputActionReference meleeAction;
     
-    // Components
+   
     private CharacterController characterController;
     
-    // Input state
+    
     private bool meleeAttackPressed = false;
-    private float lastAttackTime = -999f; // Track when last attack happened
+    private float lastAttackTime = -999f; 
     
     private void Awake()
     {
@@ -37,13 +37,13 @@ public class MeleeAttack : MonoBehaviour
             Debug.LogError("CharacterController required on the Player for MeleeAttack.");
         }
         
-        // Try to get animator if not assigned
+        
         if (attackAnimator == null)
         {
             attackAnimator = GetComponent<Animator>();
         }
 
-        // Ensure saved keybinds are applied to the PlayerInput actions at runtime
+         
         var playerInput = GetComponent<PlayerInput>();
         if (playerInput != null)
         {
@@ -70,46 +70,41 @@ public class MeleeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Checks if melee attack is available (cooldown has passed).
-    /// </summary>
+   
     public bool canAttack => Time.time >= lastAttackTime + cooldown && Time.timeScale > 0f;
     
     private void Update()
     {
-        // Don't process input when game is paused
+         
         if (Time.timeScale == 0f) return;
         
-        // Check for melee attack input (from PlayerInput callback)
+       
         if (meleeAttackPressed)
         {
-            meleeAttackPressed = false; // Consume the input
+            meleeAttackPressed = false; 
             
             if (canAttack)
             {
                 PerformMeleeAttack();
-                lastAttackTime = Time.time; // Update last attack time
+                lastAttackTime = Time.time;  
             }
         }
         
-        // Intentionally rely on Input System bindings so rebinding works via settings.
+        
     }
     
-    /// <summary>
-    /// Performs a melee attack, checking for enemies within range and dealing damage.
-    /// Uses the same logic as FireballProjectile for enemy detection.
-    /// </summary>
+ 
     private void PerformMeleeAttack()
     {
-        // Use a sphere check from the player's position (same pattern as Fireball AOE)
+        
         Vector3 attackCenter = transform.position + characterController.center;
         
-        // AOE Damage - damage all enemies within radius (copied from FireballProjectile)
+  
         Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
         
         foreach (Collider nearby in hitColliders)
         {
-            // Skip if it's the player itself
+             
             if (nearby.gameObject == gameObject || nearby.transform == transform)
             {
                 continue;
@@ -122,6 +117,15 @@ public class MeleeAttack : MonoBehaviour
                 if (enemyHealth != null)
                 {
                     enemyHealth.TakeDamage(meleeDamage);
+                }
+                else
+                {
+                    // Fallback: check parent for EnemyHealth
+                    enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
+                    if (enemyHealth != null)
+                    {
+                        enemyHealth.TakeDamage(meleeDamage);
+                    }
                 }
             }
             else

@@ -155,6 +155,7 @@ GameObject:
   - component: {fileID: 1311476162909644520}
   - component: {fileID: 4850373086718553156}
   - component: {fileID: 3865945351040155882}
+  - component: {fileID: 6123456789012345678}
   - component: {fileID: 6144566078965563371}
   - component: {fileID: 2470579908735636197}
   - component: {fileID: 2542972724569915613}
@@ -286,7 +287,7 @@ MonoBehaviour:
   previousAction: {fileID: 2411907206095950430, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   attackAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   maxStamina: 100
-  regenRate: 10
+  regenRate: 10000
   uiDocument: {fileID: 0}
   spellUI: {fileID: 0}
 --- !u!114 &1311476162909644520
@@ -339,6 +340,23 @@ MonoBehaviour:
   cooldown: 0
   spawnDistance: 1
   spellAudio: {fileID: 0}
+--- !u!114 &6123456789012345678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4654921610813067680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caac4a6660a914d89bee864bca30acc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
+  meleeDamage: 25
+  attackRange: 2
+  cooldown: 2
+  attackAnimator: {fileID: 0}
+  meleeAction: {fileID: 0}
 --- !u!114 &6144566078965563371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -624,7 +642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   health: 0
-  maxHealth: 100
+  maxHealth: 1000
   healthUIDocument: {fileID: 0}
 --- !u!114 &8058498361456050140
 MonoBehaviour:
