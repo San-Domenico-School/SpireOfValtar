@@ -242,8 +242,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1296916844248590325, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
+      propertyPath: Teleporter
+      value: 
+      objectReference: {fileID: 1660265833}
+    - target: {fileID: 1296916844248590325, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
       propertyPath: wallLayer.m_Bits
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 3234746755272328536, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3579315416277727637, guid: 7f379d2d918ae44ad97e27bde380adcc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -313,7 +321,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1660265834
 MonoBehaviour:
   m_ObjectHideFlags: 0
