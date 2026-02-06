@@ -41,17 +41,6 @@ public class SlimeController : MonoBehaviour
     [Header("Audio (optional)")]
     [SerializeField] private EnemySoundController enemySound;
 
-    [Header("Hitbox Sync")]
-    [Tooltip("The collider used as the hitbox. If left empty, will auto-find a trigger collider in children.")]
-    [SerializeField] private Collider hitboxCollider;
-    [Tooltip("Enable to make the hitbox follow the visual model's Y position when jumping.")]
-    [SerializeField] private bool syncHitboxToModel = true;
-
-    // Store the hitbox's initial local position offset and renderer for tracking
-    private Vector3 hitboxInitialLocalPos;
-    private Renderer modelRenderer;
-    private float initialRendererYOffset;
-
     void Start()
     {
         playerHealth = FindFirstObjectByType<PlayerHealth>();
@@ -101,52 +90,6 @@ public class SlimeController : MonoBehaviour
 
         // Set initial destination to current position
         navAgent.SetDestination(transform.position);
-
-        // Setup hitbox sync - find collider if not assigned
-        if (hitboxCollider == null)
-        {
-            // Try to find a trigger collider in children (not the NavMeshAgent's obstacle avoidance)
-            Collider[] colliders = GetComponentsInChildren<Collider>();
-            foreach (Collider col in colliders)
-            {
-                if (col.isTrigger && col.gameObject != gameObject)
-                {
-                    hitboxCollider = col;
-                    break;
-                }
-            }
-            // If no child trigger found, use any child collider
-            if (hitboxCollider == null && colliders.Length > 1)
-            {
-                foreach (Collider col in colliders)
-                {
-                    if (col.gameObject != gameObject)
-                    {
-                        hitboxCollider = col;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Find the renderer to track the actual visual position (works with bone animations)
-        modelRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
-        if (modelRenderer == null)
-        {
-            modelRenderer = GetComponentInChildren<MeshRenderer>();
-        }
-
-        // Store initial positions
-        if (hitboxCollider != null)
-        {
-            hitboxInitialLocalPos = hitboxCollider.transform.localPosition;
-        }
-        
-        // Store the initial Y offset of the renderer bounds center relative to root
-        if (modelRenderer != null)
-        {
-            initialRendererYOffset = modelRenderer.bounds.center.y - transform.position.y;
-        }
     }
 
     void Update()
@@ -200,28 +143,6 @@ public class SlimeController : MonoBehaviour
         if (speed < moveThreshold) speed = 0f;
 
         animator.SetFloat(speedParam, speed);
-    }
-
-    void LateUpdate()
-    {
-        // Sync hitbox collider position with the visual model (for jump animations)
-        SyncHitboxToModel();
-    }
-
-    private void SyncHitboxToModel()
-    {
-        if (!syncHitboxToModel || hitboxCollider == null || modelRenderer == null) return;
-
-        // Get the current Y offset of the renderer bounds center relative to root
-        float currentRendererYOffset = modelRenderer.bounds.center.y - transform.position.y;
-        
-        // Calculate how much the model has moved from its initial position
-        float yDelta = currentRendererYOffset - initialRendererYOffset;
-
-        // Apply the same Y offset to the hitbox collider
-        Vector3 newHitboxPos = hitboxInitialLocalPos;
-        newHitboxPos.y += yDelta;
-        hitboxCollider.transform.localPosition = newHitboxPos;
     }
 
     private void StartAttack()

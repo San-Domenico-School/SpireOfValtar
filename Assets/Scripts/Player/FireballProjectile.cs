@@ -47,32 +47,11 @@ public class FireballProjectile : MonoBehaviour
                     {
                         if (nearby.CompareTag("Enemy"))
                         {
-                            // Try to get EnemyHealth directly, or via EnemyHitbox proxy, or from parent
                             EnemyHealth enemyHealth = nearby.GetComponent<EnemyHealth>();
                             if (enemyHealth != null)
                             {
                                 enemyHealth.TakeDamage(damage);
                                 Debug.Log($"Dealt {damage} damage to {nearby.name}");
-                            }
-                            else
-                            {
-                                // Check for EnemyHitbox proxy (for child hitboxes)
-                                EnemyHitbox hitbox = nearby.GetComponent<EnemyHitbox>();
-                                if (hitbox != null)
-                                {
-                                    hitbox.TakeDamage(damage);
-                                    Debug.Log($"Dealt {damage} damage to {nearby.name} via hitbox");
-                                }
-                                else
-                                {
-                                    // Fallback: check parent for EnemyHealth
-                                    enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
-                                    if (enemyHealth != null)
-                                    {
-                                        enemyHealth.TakeDamage(damage);
-                                        Debug.Log($"Dealt {damage} damage to {nearby.name} via parent");
-                                    }
-                                }
                             }
                         }
                     }
