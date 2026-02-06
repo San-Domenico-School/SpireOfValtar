@@ -55,8 +55,18 @@ public class PlayerSpawner : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         EnsureSession();
+        
+        // Clear cached spawn point to find the new scene's spawn point
+        spawnPoint = null;
         CacheSpawnPoint();
+        
         SpawnIfMissing();
+        
+        // Always place existing player at the new scene's spawn point
+        if (currentPlayer != null && spawnPoint != null)
+        {
+            PlaceAtSpawnPoint(currentPlayer.transform);
+        }
     }
 
     public void StartGame()
@@ -153,6 +163,28 @@ public class PlayerSpawner : MonoBehaviour
         if (spawnPoint != null)
         {
             target.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
+        }
+    }
+
+    
+    private void PlaceAtSpawnPoint(Transform target)
+    {
+        if (target == null || spawnPoint == null) return;
+
+        // Disable CharacterController to allow position change
+        var controller = target.GetComponent<CharacterController>();
+        bool wasEnabled = controller != null && controller.enabled;
+        if (wasEnabled)
+        {
+            controller.enabled = false;
+        }
+
+        target.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
+        Debug.Log($"PlayerSpawner: Placed player at spawn point {spawnPoint.Position}");
+
+        if (wasEnabled)
+        {
+            controller.enabled = true;
         }
     }
 
