@@ -58,11 +58,6 @@ public class MeleeAttack : MonoBehaviour
         {
             action.performed += OnMeleeActionPerformed;
             action.Enable();
-            Debug.Log($"MeleeAttack: Input action '{action.name}' enabled with bindings: {action.bindings.Count}");
-        }
-        else
-        {
-            Debug.LogWarning("MeleeAttack: No input action found! Will use keyboard fallback (F key).");
         }
     }
 
@@ -85,14 +80,7 @@ public class MeleeAttack : MonoBehaviour
         // Don't process input when game is paused
         if (Time.timeScale == 0f) return;
         
-        // Keyboard fallback - check F key directly if Input System action isn't working
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("MeleeAttack: F key pressed (keyboard fallback)");
-            meleeAttackPressed = true;
-        }
-        
-        // Check for melee attack input (from PlayerInput callback or keyboard fallback)
+        // Check for melee attack input (from PlayerInput callback)
         if (meleeAttackPressed)
         {
             meleeAttackPressed = false; // Consume the input
@@ -102,11 +90,9 @@ public class MeleeAttack : MonoBehaviour
                 PerformMeleeAttack();
                 lastAttackTime = Time.time; // Update last attack time
             }
-            else
-            {
-                Debug.Log($"MeleeAttack: On cooldown. Time remaining: {(lastAttackTime + cooldown - Time.time):F1}s");
-            }
         }
+        
+        // Intentionally rely on Input System bindings so rebinding works via settings.
     }
     
     /// <summary>
@@ -115,15 +101,11 @@ public class MeleeAttack : MonoBehaviour
     /// </summary>
     private void PerformMeleeAttack()
     {
-        Debug.Log("Melee attack performed!");
-        
         // Use a sphere check from the player's position (same pattern as Fireball AOE)
         Vector3 attackCenter = transform.position + characterController.center;
         
         // AOE Damage - damage all enemies within radius (copied from FireballProjectile)
         Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
-        
-        Debug.Log($"Melee attack found {hitColliders.Length} colliders in range {attackRange}");
         
         foreach (Collider nearby in hitColliders)
         {
@@ -133,14 +115,15 @@ public class MeleeAttack : MonoBehaviour
                 continue;
             }
             
-            Debug.Log($"Checking collider: {nearby.name}, Tag: {nearby.tag}");
-            
             // Check if collider or its parent has the "Enemy" tag (same as Fireball logic)
             if (nearby.CompareTag("Enemy"))
             {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 Debug.Log($"Found enemy-tagged collider: {nearby.name}");
                 
+=======
+>>>>>>> parent of ee0bcbd (123)
                 // Try to get EnemyHealth directly, or via EnemyHitbox proxy, or from parent
 =======
 >>>>>>> parent of 1fbaa1a (slime hitbox)
@@ -148,7 +131,6 @@ public class MeleeAttack : MonoBehaviour
                 if (enemyHealth != null)
                 {
                     enemyHealth.TakeDamage(meleeDamage);
-                    Debug.Log($"Dealt {meleeDamage} melee damage to {nearby.name} (direct)");
                 }
 <<<<<<< HEAD
                 else
@@ -158,7 +140,6 @@ public class MeleeAttack : MonoBehaviour
                     if (hitbox != null)
                     {
                         hitbox.TakeDamage(meleeDamage);
-                        Debug.Log($"Dealt {meleeDamage} melee damage to {nearby.name} (via hitbox)");
                     }
                     else
                     {
@@ -167,11 +148,6 @@ public class MeleeAttack : MonoBehaviour
                         if (enemyHealth != null)
                         {
                             enemyHealth.TakeDamage(meleeDamage);
-                            Debug.Log($"Dealt {meleeDamage} melee damage to {nearby.name} (via parent)");
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"Enemy {nearby.name} has no EnemyHealth or EnemyHitbox!");
                         }
                     }
                 }
@@ -186,12 +162,10 @@ public class MeleeAttack : MonoBehaviour
                 {
                     if (parent.CompareTag("Enemy"))
                     {
-                        Debug.Log($"Found enemy via parent: {parent.name}");
                         EnemyHealth enemyHealth = parent.GetComponent<EnemyHealth>();
                         if (enemyHealth != null)
                         {
                             enemyHealth.TakeDamage(meleeDamage);
-                            Debug.Log($"Dealt {meleeDamage} melee damage to {parent.name}");
                         }
                         break; // Found the enemy, no need to check further up
                     }
@@ -243,7 +217,9 @@ public class MeleeAttack : MonoBehaviour
         return null;
     }
     
-   
+    /// <summary>
+    /// Draws gizmos in the editor to visualize the attack range.
+    /// </summary>
     private void OnDrawGizmosSelected()
     {
         if (characterController == null)
