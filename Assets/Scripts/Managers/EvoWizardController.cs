@@ -422,6 +422,8 @@ public class EvoWizardController : MonoBehaviour
 
   public void ApplyFreezeEffect(float slowAmount, float duration)
   {
+    Debug.Log($"[EvoWizard] Freeze applied! phase={currentPhase} slow={slowAmount} duration={duration}", this);
+    
     if (freezeTimer != null) StopCoroutine(freezeTimer);
     SetSpeedMultiplier(1f - slowAmount);
     freezeTimer = StartCoroutine(FreezeTimer(duration));
