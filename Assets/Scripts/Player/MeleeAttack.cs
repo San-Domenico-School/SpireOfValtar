@@ -118,41 +118,20 @@ public class MeleeAttack : MonoBehaviour
             // Check if collider or its parent has the "Enemy" tag (same as Fireball logic)
             if (nearby.CompareTag("Enemy"))
             {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                Debug.Log($"Found enemy-tagged collider: {nearby.name}");
-                
-=======
->>>>>>> parent of ee0bcbd (123)
-                // Try to get EnemyHealth directly, or via EnemyHitbox proxy, or from parent
-=======
->>>>>>> parent of 1fbaa1a (slime hitbox)
                 EnemyHealth enemyHealth = nearby.GetComponent<EnemyHealth>();
                 if (enemyHealth != null)
                 {
                     enemyHealth.TakeDamage(meleeDamage);
                 }
-<<<<<<< HEAD
                 else
                 {
-                    // Check for EnemyHitbox proxy (for child hitboxes)
-                    EnemyHitbox hitbox = nearby.GetComponent<EnemyHitbox>();
-                    if (hitbox != null)
+                    // Fallback: check parent for EnemyHealth
+                    enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
+                    if (enemyHealth != null)
                     {
-                        hitbox.TakeDamage(meleeDamage);
-                    }
-                    else
-                    {
-                        // Fallback: check parent for EnemyHealth
-                        enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
-                        if (enemyHealth != null)
-                        {
-                            enemyHealth.TakeDamage(meleeDamage);
-                        }
+                        enemyHealth.TakeDamage(meleeDamage);
                     }
                 }
-=======
->>>>>>> parent of 1fbaa1a (slime hitbox)
             }
             else
             {
