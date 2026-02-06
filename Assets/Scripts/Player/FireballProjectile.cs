@@ -48,6 +48,10 @@ public class FireballProjectile : MonoBehaviour
                         if (nearby.CompareTag("Enemy"))
                         {
                             EnemyHealth enemyHealth = nearby.GetComponent<EnemyHealth>();
+                            if (enemyHealth == null)
+                            {
+                                enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
+                            }
                             if (enemyHealth != null)
                             {
                                 enemyHealth.TakeDamage(damage);
