@@ -7,6 +7,8 @@ public class EnemyFleeing : MonoBehaviour
     public Transform player;
     public float fleeDistance = 10f;
     public float moveSpeed = 3f;
+    private Rigidbody rb;
+    private Vector3 currentMoveDir;
 
     // Rotate enemy
     public float rotationSpeed = 10f;
@@ -19,54 +21,41 @@ public class EnemyFleeing : MonoBehaviour
     // Level Progression GameObject
     public GameObject Teleporter;
 
-    void Start()
-    {
-        lockedY = transform.position.y;
-        AssignPlayer();
-    }
-
-    // private void Awake()
-    // {
-    //     AssignPlayer();
-    // }
+        void Awake()
+{
+    rb = GetComponent<Rigidbody>();
+    AssignPlayer();
+    lockedY = transform.position.y;
+}
 
     void AssignPlayer()
-    {
-        if (player == null)
-        {
-            GameObject foundPlayer = GameObject.FindGameObjectWithTag("Player");
-
-            if (foundPlayer != null)
-            {
-                player = foundPlayer.transform;
-            }
-            else
-            {
-                Debug.LogError("Player not found in scene!");
-            }
-        }
+    { 
+            GameObject.FindGameObjectWithTag("Player");
     }
 
-    void Update()
+void FixedUpdate()
 {
-    if (player == null) return;
-
     float distance = Vector3.Distance(transform.position, player.position);
+    if (distance > fleeDistance) return;
 
-    if (distance <= fleeDistance)
-    {
-        Vector3 fleeDir = (transform.position - player.position).normalized;
-        fleeDir = GetFleeDirectionWithSliding(fleeDir);
+    Vector3 fleeDir = (transform.position - player.position).normalized;
+    fleeDir = GetFleeDirectionWithSliding(fleeDir);
 
-        transform.position += fleeDir * moveSpeed * Time.deltaTime;
+    currentMoveDir = fleeDir;
 
-        Quaternion targetRotation = Quaternion.LookRotation(fleeDir);
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            targetRotation,
-            rotationSpeed * Time.deltaTime
-        );
-    }
+    rb.MovePosition(rb.position + currentMoveDir * moveSpeed * Time.fixedDeltaTime);
+}
+
+void Update()
+{
+    if (currentMoveDir == Vector3.zero) return;
+
+    Quaternion targetRotation = Quaternion.LookRotation(currentMoveDir);
+    transform.rotation = Quaternion.Slerp(
+        transform.rotation,
+        targetRotation,
+        rotationSpeed * Time.deltaTime
+    );
 }
 
     void OnDrawGizmos()
