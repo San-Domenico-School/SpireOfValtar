@@ -287,7 +287,7 @@ MonoBehaviour:
   previousAction: {fileID: 2411907206095950430, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   attackAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   maxStamina: 100
-  regenRate: 10000
+  regenRate: 100
   uiDocument: {fileID: 0}
   spellUI: {fileID: 0}
 --- !u!114 &1311476162909644520
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   range: 30
   cooldown: 0
-  damage: 25
+  damage: 50
   lightningVFXPrefab: {fileID: 4159723444550947670, guid: 18eccc8d944514aebb6f083126b3214d, type: 3}
   boltHeight: 6
   vfxLifetime: 2
@@ -654,7 +654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   health: 0
-  maxHealth: 1000
+  maxHealth: 100
   healthUIDocument: {fileID: 0}
 --- !u!114 &8058498361456050140
 MonoBehaviour:
