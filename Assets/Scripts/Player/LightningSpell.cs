@@ -57,6 +57,10 @@ public class LightningSpell : MonoBehaviour
             {
                 if (spellAudio != null) spellAudio.PlayHit(SpellSfxId.Lightning, hit.point);
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
+                if (enemyHealth == null)
+                {
+                    enemyHealth = hit.collider.GetComponentInParent<EnemyHealth>();
+                }
                 if (enemyHealth != null)
                 {
                     enemyHealth.TakeDamage(damage);

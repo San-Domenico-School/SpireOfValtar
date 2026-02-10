@@ -98,6 +98,7 @@ public class MeleeAttack : MonoBehaviour
     {
         
         Vector3 attackCenter = transform.position + characterController.center;
+        attackCenter.y -= characterController.height * 0.5f;
         
   
         Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
@@ -114,13 +115,21 @@ public class MeleeAttack : MonoBehaviour
             if (nearby.CompareTag("Enemy"))
             {
                 EnemyHealth enemyHealth = nearby.GetComponent<EnemyHealth>();
+                if (enemyHealth == null || !enemyHealth.isActiveAndEnabled)
+                {
+                    Transform parentTransform = nearby.transform.parent;
+                    if (parentTransform != null)
+                    {
+                        enemyHealth = parentTransform.GetComponentInParent<EnemyHealth>();
+                    }
+                }
+
                 if (enemyHealth != null)
                 {
                     enemyHealth.TakeDamage(meleeDamage);
                 }
                 else
                 {
-                    // Fallback: check parent for EnemyHealth
                     enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
                     if (enemyHealth != null)
                     {

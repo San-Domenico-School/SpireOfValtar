@@ -265,7 +265,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.39
   m_Center: {x: 0, y: -0.93, z: 0}
 --- !u!114 &432314041051503826
 MonoBehaviour:
@@ -291,7 +291,6 @@ GameObject:
   - component: {fileID: 2833931114604344829}
   - component: {fileID: 328129803126716651}
   - component: {fileID: 5039179718751441628}
-  - component: {fileID: 1003626742726703362}
   - component: {fileID: 5515090270170000542}
   - component: {fileID: 610022956096750080}
   m_Layer: 0
@@ -359,27 +358,6 @@ MonoBehaviour:
   deathParticle: {fileID: 2018934290385573034, guid: 70ff6a001b890447b9b164ad19d654c6, type: 3}
   enemyKillsNeeded: 1
   enemiesKilled: 0
---- !u!135 &1003626742726703362
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6342462121640250399}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: -0.8682269, z: 0.0028910637}
 --- !u!114 &5515090270170000542
 MonoBehaviour:
   m_ObjectHideFlags: 0
