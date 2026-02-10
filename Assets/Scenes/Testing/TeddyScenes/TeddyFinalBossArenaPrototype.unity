@@ -1289,7 +1289,6 @@ MonoBehaviour:
   m_NavMeshData: {fileID: 23800000, guid: c882623964c9140319408ebb2dcb3280, type: 2}
   m_BuildHeightMesh: 0
 --- !u!64 &1778456951
-MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}

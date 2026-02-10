@@ -37,6 +37,7 @@ public class SlimeController : MonoBehaviour
     public int damage = 15;
     [SerializeField] private float damageInterval = 3f;
     private Coroutine damageCoroutine;
+    private bool playerInDamageRange;
 
     [Header("Audio (optional)")]
     [SerializeField] private EnemySoundController enemySound;
@@ -130,6 +131,8 @@ public class SlimeController : MonoBehaviour
 
         // ---- Animation drive ----
         UpdateAnimation();
+
+        HandleDamageRange(distanceToPlayer);
     }
 
     private void UpdateAnimation()
@@ -254,6 +257,37 @@ public class SlimeController : MonoBehaviour
                 Debug.Log($"{gameObject.name} dealt periodic damage: {damage}");
             }
             yield return new WaitForSeconds(damageInterval);
+        }
+    }
+
+    private void HandleDamageRange(float distanceToPlayer)
+    {
+        if (player == null || playerHealth == null) return;
+
+        bool inRange = distanceToPlayer <= attackRange;
+
+        if (inRange != playerInDamageRange)
+        {
+            playerInDamageRange = inRange;
+
+            if (inRange)
+            {
+                if (enemySound != null) enemySound.PlayAttackSfx();
+                playerHealth.TakeDamage(damage);
+                if (damageCoroutine == null)
+                {
+                    damageCoroutine = StartCoroutine(DamageOverTime());
+                }
+            }
+            else if (damageCoroutine != null)
+            {
+                StopCoroutine(damageCoroutine);
+                damageCoroutine = null;
+            }
+        }
+        else if (inRange && damageCoroutine == null)
+        {
+            damageCoroutine = StartCoroutine(DamageOverTime());
         }
     }
 }
