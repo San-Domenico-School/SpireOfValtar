@@ -10,7 +10,7 @@ public class FireballProjectile : MonoBehaviour
     [SerializeField] private float arcHeight = 1f;
     [SerializeField] private float fireballRadius = 5f; // AOE
 
-    [SerializeField] private float damage = 25f; // Balanced for souls-like: AOE damage
+    [SerializeField] private float damage = 35f; // Balanced for souls-like: AOE damage
 
     private SpellAudioController spellAudio;
     private SpellSfxId spellId = SpellSfxId.Fireball;
