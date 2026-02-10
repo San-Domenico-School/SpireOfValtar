@@ -290,9 +290,11 @@ GameObject:
   m_Component:
   - component: {fileID: 2833931114604344829}
   - component: {fileID: 328129803126716651}
+  - component: {fileID: 1234567890123456789}
   - component: {fileID: 5039179718751441628}
   - component: {fileID: 5515090270170000542}
   - component: {fileID: 610022956096750080}
+  - component: {fileID: 8054311440388798181}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Enemy
@@ -340,6 +342,33 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!54 &1234567890123456789
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6342462121640250399}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &5039179718751441628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,6 +439,27 @@ MonoBehaviour:
   moveSource: {fileID: 0}
   attackSource: {fileID: 0}
   debugWarnings: 0
+--- !u!135 &8054311440388798181
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6342462121640250399}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: -0.98, z: 0}
 --- !u!1 &6783358730827970569
 GameObject:
   m_ObjectHideFlags: 0
