@@ -11,6 +11,10 @@ public class FreezeProjectile : MonoBehaviour
   [SerializeField] private float freezeSlowAmount = 0.6f; // 60% slower (0.4x speed) - Balanced for souls-like
   [SerializeField] private float freezeDuration = 4f; // How long the freeze effect lasts - Balanced for souls-like
   [SerializeField] private float freezeRadius = 5f; // AOE
+  [Header("Impact VFX")]
+  [SerializeField] private GameObject impactVfxPrefab;
+  [SerializeField] private float impactVfxLifetime = 3f;
+  [SerializeField] private bool spawnVfxOnExpire = false;
 
   private SpellAudioController spellAudio;
   private SpellSfxId spellId = SpellSfxId.Freeze;
@@ -60,49 +64,50 @@ public class FreezeProjectile : MonoBehaviour
       {
         Debug.Log($"Freeze spell hit {hit.collider.name} (Tag: {hit.collider.tag})");
 
-        if (hit.collider.CompareTag("Enemy"))
+        // ✅ Always spawn impact VFX
+        SpawnImpactVfx(hit.point, hit.normal);
+
+        // Optional: play hit SFX for any impact
+        if (spellAudio != null)
+          spellAudio.PlayHit(spellId, hit.point);
+
+        // Apply freeze only if enemies are within radius
+        Collider[] hitCollider = Physics.OverlapSphere(hit.point, freezeRadius);
+        foreach (Collider nearby in hitCollider)
         {
-          Debug.Log("Freeze spell hit an enemy! Effecting...");
-          if (spellAudio != null) spellAudio.PlayHit(spellId, hit.point);
-
-          Collider[] hitCollider = Physics.OverlapSphere(hit.point, freezeRadius);
-          foreach (Collider nearby in hitCollider)
+          EvoWizardController boss = nearby.GetComponentInParent<EvoWizardController>();
+          if (boss != null)
           {
-            // Use parent lookup so child colliders work
-            EvoWizardController boss = nearby.GetComponentInParent<EvoWizardController>();
-            if (boss != null)
-            {
-              boss.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
-              continue;
-            }
+            boss.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
+            continue;
+          }
 
-            // Normal enemies
-            EnemyController enemy = nearby.GetComponentInParent<EnemyController>();
-            if (enemy != null)
-            {
-              enemy.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
-              continue;
-            }
+          EnemyController enemy = nearby.GetComponentInParent<EnemyController>();
+          if (enemy != null)
+          {
+            enemy.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
+            continue;
+          }
 
-            WizardController wiz = nearby.GetComponentInParent<WizardController>();
-            if (wiz != null)
-            {
-              wiz.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
-              continue;
-            }
+          WizardController wiz = nearby.GetComponentInParent<WizardController>();
+          if (wiz != null)
+          {
+            wiz.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
+            continue;
+          }
 
-            SlimeController slime = nearby.GetComponentInParent<SlimeController>();
-            if (slime != null)
-            {
-              slime.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
-              continue;
-            }
+          SlimeController slime = nearby.GetComponentInParent<SlimeController>();
+          if (slime != null)
+          {
+            slime.ApplyFreezeEffect(freezeSlowAmount, freezeDuration);
+            continue;
           }
         }
 
         Destroy(gameObject);
         yield break;
       }
+
 
       // Apply position & orientation
       transform.position = nextPos;
@@ -115,4 +120,16 @@ public class FreezeProjectile : MonoBehaviour
     Debug.Log("Freeze spell expired");
     Destroy(gameObject);
   }
+
+  private void SpawnImpactVfx(Vector3 position, Vector3 normal)
+  {
+    if (impactVfxPrefab == null) return;
+
+    Quaternion rotation = Quaternion.LookRotation(normal, Vector3.up);
+
+    GameObject vfx = Instantiate(impactVfxPrefab, position, rotation);
+
+    Destroy(vfx, impactVfxLifetime);
+  }
+
 }

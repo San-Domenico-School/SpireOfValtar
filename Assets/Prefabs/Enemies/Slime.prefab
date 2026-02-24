@@ -295,6 +295,7 @@ GameObject:
   - component: {fileID: 5515090270170000542}
   - component: {fileID: 610022956096750080}
   - component: {fileID: 8054311440388798181}
+  - component: {fileID: -7475377289672544066}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Enemy
@@ -460,6 +461,22 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: -0.98, z: 0}
+--- !u!114 &-7475377289672544066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6342462121640250399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6a66ae196204002b3bc87a684fc628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootDropper
+  dropPrefab: {fileID: 98685163727146675, guid: 143ca02001d964e54bc7b4bf7dad1dcb, type: 3}
+  minDrop: 1
+  maxDrop: 2
+  dropSpreadRadius: 1.5
 --- !u!1 &6783358730827970569
 GameObject:
   m_ObjectHideFlags: 0
