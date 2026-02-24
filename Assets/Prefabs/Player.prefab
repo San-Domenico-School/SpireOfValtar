@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 4380578801919735770}
   - component: {fileID: 648765997522169627}
   - component: {fileID: 8058498361456050140}
+  - component: {fileID: 2486578467623477028}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -670,6 +671,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c826ef8031a30440b87950d22f92a626, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+--- !u!114 &2486578467623477028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4654921610813067680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 178d86f41ef7c4eb9bb10a84ff8e90da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoldCollector
+  goldCollected: 0
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0
