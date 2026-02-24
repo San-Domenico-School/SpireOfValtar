@@ -308,6 +308,8 @@ MonoBehaviour:
   lightningVFXPrefab: {fileID: 4159723444550947670, guid: 18eccc8d944514aebb6f083126b3214d, type: 3}
   boltHeight: 6
   vfxLifetime: 2
+  impactVfxPrefab: {fileID: 3088364739578782, guid: e47abe75dd8494fd5b1bb2b193e65d9a, type: 3}
+  impactVfxLifetime: 2
   spellAudio: {fileID: 0}
 --- !u!114 &4850373086718553156
 MonoBehaviour:
