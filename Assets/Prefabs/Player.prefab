@@ -163,7 +163,8 @@ GameObject:
   - component: {fileID: 4380578801919735770}
   - component: {fileID: 648765997522169627}
   - component: {fileID: 8058498361456050140}
-  m_Layer: 8
+  - component: {fileID: 2486578467623477028}
+  m_Layer: 0
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -308,6 +309,8 @@ MonoBehaviour:
   lightningVFXPrefab: {fileID: 4159723444550947670, guid: 18eccc8d944514aebb6f083126b3214d, type: 3}
   boltHeight: 6
   vfxLifetime: 2
+  impactVfxPrefab: {fileID: 3088364739578782, guid: e47abe75dd8494fd5b1bb2b193e65d9a, type: 3}
+  impactVfxLifetime: 2
   spellAudio: {fileID: 0}
 --- !u!114 &4850373086718553156
 MonoBehaviour:
@@ -668,6 +671,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c826ef8031a30440b87950d22f92a626, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+--- !u!114 &2486578467623477028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4654921610813067680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 178d86f41ef7c4eb9bb10a84ff8e90da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoldCollector
+  goldCollected: 0
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0

@@ -14581,6 +14581,9 @@ MonoBehaviour:
   arcHeight: 1
   fireballRadius: 5
   damage: 25
+  impactVfxPrefab: {fileID: 6524002429591652523, guid: 3bf453fb8982a4ff99ee3e8ed689a5d7, type: 3}
+  spawnVfxOnExpire: 1
+  impactVfxLifetime: 3
 --- !u!1 &4911641219556916762
 GameObject:
   m_ObjectHideFlags: 0
