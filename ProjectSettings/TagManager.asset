@@ -8,6 +8,7 @@ TagManager:
   - Completed
   - Enemy
   - Door
+  - Gold
   layers:
   - Default
   - TransparentFX
