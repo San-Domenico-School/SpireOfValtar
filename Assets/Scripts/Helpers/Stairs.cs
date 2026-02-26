@@ -30,7 +30,7 @@ public class Stairs : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         playTimeDuration = 4.0f / numberOfEnemies;
-        animator.Play("Scene");
+        animator.Play("stairs.001|Cube.001Action");
         animator.speed = 0;
     }
 
