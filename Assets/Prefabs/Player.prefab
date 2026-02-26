@@ -164,6 +164,8 @@ GameObject:
   - component: {fileID: 648765997522169627}
   - component: {fileID: 8058498361456050140}
   - component: {fileID: 2486578467623477028}
+  - component: {fileID: 2484075919418288376}
+  - component: {fileID: 466534885314528405}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -684,6 +686,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoldCollector
   goldCollected: 0
+--- !u!114 &2484075919418288376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4654921610813067680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8634011b008cf4914b86123ed3c4c411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpellAudioController
+  sfxSets: []
+  hitsAre3D: 1
+  hitMinDistance: 2
+  hitMaxDistance: 60
+  hitRolloffMode: 1
+  debugWarnings: 0
+  castSource: {fileID: 0}
+--- !u!114 &466534885314528405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4654921610813067680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75b748485ae294688b39b9eb20cf62ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpellInventory
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0
