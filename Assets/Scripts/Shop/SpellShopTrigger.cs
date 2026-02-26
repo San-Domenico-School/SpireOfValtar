@@ -19,6 +19,9 @@ public class SpellShopTrigger : MonoBehaviour
     [Header("Prompt UI (Game_View UIDocument)")]
     [SerializeField] private UIDocument gameViewDocument;
 
+    [Header("Ground Circle")]
+    [SerializeField] private ShopRadiusIndicator radiusIndicator;
+
     private bool playerInRange = false;
     private Label promptLabel;
 
@@ -34,6 +37,10 @@ public class SpellShopTrigger : MonoBehaviour
         // Auto-find SpellShopUI if not assigned
         if (spellShopUI == null)
             spellShopUI = FindFirstObjectByType<SpellShopUI>();
+
+        // Auto-find radius indicator on this GameObject if not assigned
+        if (radiusIndicator == null)
+            radiusIndicator = GetComponent<ShopRadiusIndicator>();
 
         // Build the prompt label and inject it into the Game_View UIDocument
         BuildPromptLabel();
@@ -84,6 +91,8 @@ public class SpellShopTrigger : MonoBehaviour
         {
             playerInRange = inRange;
             SetPromptVisible(inRange && (spellShopUI == null || !spellShopUI.IsOpen));
+            // Circle shows when far away, hides once player steps inside
+            if (radiusIndicator != null) radiusIndicator.SetVisible(!inRange);
         }
 
         // B key: open or close shop
