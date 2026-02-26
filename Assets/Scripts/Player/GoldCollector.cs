@@ -27,7 +27,7 @@ public class GoldCollector : MonoBehaviour
             goldCollected++;
             Destroy(other.gameObject);
 
-            Debug.Log("Gold Collected: " + goldCollected);
+            Debug.Log("Gold C ollected: " + goldCollected);
         }
     }
 
