@@ -7,6 +7,8 @@ public class EnemyHealth : MonoBehaviour
   public float maxHealth = 100f;
   public float currentHealth;
 
+  public System.Action OnDeath;
+
   private Renderer enemyRenderer;
   private Color originalColor;
   private bool isFlashing = false;
@@ -17,8 +19,6 @@ public class EnemyHealth : MonoBehaviour
 
   [SerializeField] private int enemyKillsNeeded = 1;
   [SerializeField] private int enemiesKilled = 0;
-
-
   private Stairs stairs;
 
   private void Awake()
@@ -82,12 +82,18 @@ public class EnemyHealth : MonoBehaviour
   private void Die()
   {
     Debug.Log($"{gameObject.name} has been defeated!");
+
+    // ✅ Notify listeners BEFORE destruction
+    OnDeath?.Invoke();
+
     if (deathParticle != null)
     {
       Instantiate(deathParticle, transform.position, Quaternion.identity);
     }
+
+    EnemyKilled(); // stairs logic still works
+
     Destroy(gameObject);
-    EnemyKilled();
   }
 
   public void EnemyKilled()
