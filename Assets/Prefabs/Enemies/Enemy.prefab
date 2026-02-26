@@ -267,6 +267,7 @@ GameObject:
   - component: {fileID: 5233339416854855808}
   - component: {fileID: 5906325879628883707}
   - component: {fileID: 7090493283282442718}
+  - component: {fileID: -4712555996921021477}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -427,6 +428,24 @@ MonoBehaviour:
   currentHealth: 0
   healthBar: {fileID: 5282411321960592848}
   deathParticle: {fileID: 0}
+  enemyKillsNeeded: 1
+  enemiesKilled: 0
+--- !u!114 &-4712555996921021477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3177292819868564285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6a66ae196204002b3bc87a684fc628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootDropper
+  dropPrefab: {fileID: 98685163727146675, guid: 143ca02001d964e54bc7b4bf7dad1dcb, type: 3}
+  minDrop: 1
+  maxDrop: 2
+  dropSpreadRadius: 1.5
 --- !u!1 &3405793167048218186
 GameObject:
   m_ObjectHideFlags: 0
