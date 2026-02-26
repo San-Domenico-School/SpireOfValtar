@@ -15,19 +15,22 @@ public class SpellShopUI : MonoBehaviour
     [SerializeField] private int fireballPrice  = 1;
     [SerializeField] private int lightningPrice = 1;
     [SerializeField] private int freezePrice    = 1;
+    [SerializeField] private int dashPrice      = 1;
 
     private bool isOpen = false;
 
-    // Spell index constants matching PlayerAbilityController order
+    // Spell index constants — must match SpellInventory array order
     private const int IDX_LIGHTNING = 0;
     private const int IDX_FIREBALL  = 1;
     private const int IDX_FREEZE    = 2;
+    private const int IDX_DASH      = 3;
 
     // Cached UI elements
     private Label  goldLabel;
     private Button buyFireball;
     private Button buyLightning;
     private Button buyFreeze;
+    private Button buyDash;
     private Button closeButton;
 
     private void Awake()
@@ -54,11 +57,13 @@ public class SpellShopUI : MonoBehaviour
         buyFireball  = root.Q<Button>("Buy_Fireball");
         buyLightning = root.Q<Button>("Buy_Lightning");
         buyFreeze    = root.Q<Button>("Buy_Freeze");
+        buyDash      = root.Q<Button>("Buy_Dash");
         closeButton  = root.Q<Button>("CloseShopButton");
 
         if (buyFireball  != null) buyFireball .clicked += () => TryBuy(IDX_FIREBALL,  fireballPrice);
         if (buyLightning != null) buyLightning.clicked += () => TryBuy(IDX_LIGHTNING, lightningPrice);
         if (buyFreeze    != null) buyFreeze   .clicked += () => TryBuy(IDX_FREEZE,    freezePrice);
+        if (buyDash      != null) buyDash     .clicked += () => TryBuy(IDX_DASH,      dashPrice);
         if (closeButton  != null) closeButton .clicked += CloseShop;
     }
 
@@ -121,6 +126,7 @@ public class SpellShopUI : MonoBehaviour
         RefreshCard(IDX_FIREBALL,  buyFireball,  "Buy_Fireball");
         RefreshCard(IDX_LIGHTNING, buyLightning, "Buy_Lightning");
         RefreshCard(IDX_FREEZE,    buyFreeze,    "Buy_Freeze");
+        RefreshCard(IDX_DASH,      buyDash,      "Buy_Dash");
     }
 
     private void RefreshCard(int spellIndex, Button btn, string btnName)

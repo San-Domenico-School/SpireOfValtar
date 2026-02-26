@@ -2,6 +2,7 @@
 // Attach to the shop cube GameObject.
 // When the player enters the interaction radius a "Press B to open shop" prompt appears on the HUD.
 // Pressing B opens the shop (game freezes); pressing B again closes it.
+// Uses a dedicated ShopPrompt UIDocument so the label renders correctly at screen position.
 
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -16,8 +17,8 @@ public class SpellShopTrigger : MonoBehaviour
     [Header("Shop")]
     [SerializeField] private SpellShopUI spellShopUI;
 
-    [Header("Prompt UI (Game_View UIDocument)")]
-    [SerializeField] private UIDocument gameViewDocument;
+    [Header("Prompt UI (ShopPrompt UIDocument)")]
+    [SerializeField] private UIDocument shopPromptDocument;
 
     [Header("Ground Circle")]
     [SerializeField] private ShopRadiusIndicator radiusIndicator;
@@ -42,46 +43,40 @@ public class SpellShopTrigger : MonoBehaviour
         if (radiusIndicator == null)
             radiusIndicator = GetComponent<ShopRadiusIndicator>();
 
-        // Build the prompt label and inject it into the Game_View UIDocument
-        BuildPromptLabel();
-    }
-
-    private void BuildPromptLabel()
-    {
-        // Try to locate the Game_View UIDocument if not set
-        if (gameViewDocument == null)
+        // Auto-find the ShopPrompt UIDocument if not assigned in Inspector
+        if (shopPromptDocument == null)
         {
             var docs = FindObjectsOfType<UIDocument>(true);
             foreach (var doc in docs)
             {
                 if (doc != null && doc.visualTreeAsset != null &&
-                    doc.visualTreeAsset.name.Equals("Game_View", System.StringComparison.OrdinalIgnoreCase))
+                    doc.visualTreeAsset.name.Equals("ShopPrompt", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    gameViewDocument = doc;
+                    shopPromptDocument = doc;
                     break;
                 }
             }
         }
 
-        if (gameViewDocument == null || gameViewDocument.rootVisualElement == null) return;
+        BuildPromptLabel();
+    }
 
-        promptLabel = new Label("Press B to open shop");
-        promptLabel.name = "ShopPromptLabel";
-        promptLabel.style.position        = Position.Absolute;
-        promptLabel.style.bottom          = new StyleLength(new Length(18, LengthUnit.Percent));
-        promptLabel.style.left            = 0;
-        promptLabel.style.right           = 0;
-        promptLabel.style.unityTextAlign  = TextAnchor.MiddleCenter;
-        promptLabel.style.fontSize        = 20;
-        promptLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-        promptLabel.style.color           = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
-        promptLabel.style.display         = DisplayStyle.None;
+    private void BuildPromptLabel()
+    {
+        if (shopPromptDocument == null || shopPromptDocument.rootVisualElement == null) return;
 
-        gameViewDocument.rootVisualElement.Add(promptLabel);
+        promptLabel = shopPromptDocument.rootVisualElement.Q<Label>("ShopPromptLabel");
+
+        // Start hidden
+        SetPromptVisible(false);
     }
 
     private void Update()
     {
+        // Retry finding the label every frame until found (UIDocument may not be ready in Start)
+        if (promptLabel == null)
+            BuildPromptLabel();
+
         if (playerTransform == null) return;
 
         float dist = Vector3.Distance(transform.position, playerTransform.position);
