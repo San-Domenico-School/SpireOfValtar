@@ -28,12 +28,12 @@ public class GoldCollector : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Gold"))
+        if (collision.gameObject.CompareTag("Gold"))
         {
             goldCollected++;
-            Destroy(other.gameObject);
+            Destroy(collision.gameObject);
 
             Debug.Log("Gold Collected: " + goldCollected);
         }
