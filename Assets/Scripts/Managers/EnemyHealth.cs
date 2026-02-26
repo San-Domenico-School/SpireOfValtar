@@ -25,12 +25,18 @@ public class EnemyHealth : MonoBehaviour
   {
     healthBar = GetComponentInChildren<FloatingHealthBar>();
 
-    GameObject stairsGO = GameObject.Find("Great Hall new Materials_001");
+    GameObject stairsGO = GameObject.Find("Great Hall new Materials_001/Stairs");
+
+    Debug.Log("awake");
+
     if (stairsGO != null)
     {
       stairs = stairsGO.GetComponent<Stairs>();
+
       if (stairs == null)
+      {
         Debug.LogWarning("Found Great Hall new Materials_001 but it has no Stairs component.", this);
+      }
     }
     else
     {
