@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements; // ✅ Added for UI Toolkit
+using UnityEngine.UIElements;
 
 public class PlayerAbilityController : MonoBehaviour
 {
@@ -9,7 +9,7 @@ public class PlayerAbilityController : MonoBehaviour
     /************************************
      * Handles spell selection and casting.
      * Now includes a stamina system and connected to UI.
-     * Teddy F 10/21/25
+     * Teddy 10/21/25
      * Version 2.1
      ************************************/
 
@@ -33,13 +33,13 @@ public class PlayerAbilityController : MonoBehaviour
 
     [Header("Stamina Settings")]
     [SerializeField] private float maxStamina = 100f;
-    [SerializeField] private float regenRate = 10f; // stamina per second
+    [SerializeField] private float regenRate = 10f; 
     private float currentStamina;
 
-    [Header("UI")] // ✅ Added UI connection
-    [SerializeField] private UIDocument uiDocument; // Drag your UI Document here
-    [SerializeField] private SpellUI spellUI; // Reference to SpellUI component
-    private ProgressBar staminaBar; // Reference to ProgressBar in UI Builder
+    [Header("UI")] 
+    [SerializeField] private UIDocument uiDocument;
+    [SerializeField] private SpellUI spellUI; 
+    private ProgressBar staminaBar; 
 
     private int currentIndex = 0;
 
@@ -157,7 +157,7 @@ public class PlayerAbilityController : MonoBehaviour
                 uiDocument = null;
                 return;
             }
-            staminaBar = root.Q<ProgressBar>("StaminaProgressBar"); // Must match name in UI Builder
+            staminaBar = root.Q<ProgressBar>("StaminaProgressBar");
             if (staminaBar != null)
             {
                 staminaBar.lowValue = 0;
@@ -222,9 +222,8 @@ public class PlayerAbilityController : MonoBehaviour
     private void Update()
     {
         RegenerateStamina();
-        UpdateStaminaUI(); //update bar each frame
-        // Debug.Log($"Current Stamina: {currentStamina:F1}"); //use this for debugging
-        // Debug.Log("update is called in PAC");
+        UpdateStaminaUI(); 
+        
     }
 
     private void RegenerateStamina()
@@ -236,7 +235,7 @@ public class PlayerAbilityController : MonoBehaviour
         }
     }
 
-    private void UpdateStaminaUI() // ✅ Added method to sync stamina bar
+    private void UpdateStaminaUI()
     {
         if (staminaBar != null)
             staminaBar.value = currentStamina;
@@ -301,7 +300,7 @@ public class PlayerAbilityController : MonoBehaviour
     {
         switch (currentIndex)
         {
-            case 0: // Lightning Spell
+            case 0: 
                 if (SpellInventory.Instance != null && !SpellInventory.Instance.IsUnlocked(0))
                 {
                     Debug.Log("Lightning not purchased.");
@@ -313,7 +312,7 @@ public class PlayerAbilityController : MonoBehaviour
                     {
                         return;
                     }
-                    if (TryUseStamina(30f)) // Balanced for souls-like: High cost for high damage
+                    if (TryUseStamina(30f))
                     {
                         Debug.Log("Casting Spell 1 (Lightning)");
                         if (spellAudio != null) spellAudio.PlayCast(SpellSfxId.Lightning);
@@ -323,7 +322,7 @@ public class PlayerAbilityController : MonoBehaviour
                 else Debug.LogWarning("Spell 1 is not assigned");
                 break;
 
-            case 1: // Fireball Spell
+            case 1: 
                 if (SpellInventory.Instance != null && !SpellInventory.Instance.IsUnlocked(1))
                 {
                     Debug.Log("Fireball not purchased.");
@@ -335,7 +334,7 @@ public class PlayerAbilityController : MonoBehaviour
                     {
                         return;
                     }
-                    if (TryUseStamina(25f)) // Balanced for souls-like: Medium cost for AOE damage
+                    if (TryUseStamina(25f))
                     {
                         Debug.Log("Casting Spell 2 (Fireball)");
                         if (spellAudio != null) spellAudio.PlayCast(SpellSfxId.Fireball);
@@ -345,7 +344,7 @@ public class PlayerAbilityController : MonoBehaviour
                 else Debug.LogWarning("Spell 2 is not assigned");
                 break;
 
-            case 2: // Freeze Spell
+            case 2: 
                 if (SpellInventory.Instance != null && !SpellInventory.Instance.IsUnlocked(2))
                 {
                     Debug.Log("Freeze not purchased.");
@@ -357,7 +356,7 @@ public class PlayerAbilityController : MonoBehaviour
                     {
                         return;
                     }
-                    if (TryUseStamina(30f)) // Balanced for souls-like: High cost for utility/CC
+                    if (TryUseStamina(30f)) 
                     {
                         Debug.Log("Casting Spell 3 (Freeze)");
                         if (spellAudio != null) spellAudio.PlayCast(SpellSfxId.Freeze);
