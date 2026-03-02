@@ -12,7 +12,6 @@ public class Stairs : MonoBehaviour
     public float numberOfEnemies = 1; 
 
     [SerializeField] GameObject audioSource;
-    [SerializeField] bool test = false;
 
 
     private Animator animator;
@@ -24,7 +23,6 @@ public class Stairs : MonoBehaviour
     {
         playTimeLeft += playTimeDuration; 
         audioSource.GetComponent<AudioSource>().Play();
-        Debug.Log("progress");
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -32,19 +30,13 @@ public class Stairs : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         playTimeDuration = 4.0f / numberOfEnemies;
-        animator.Play("stairs.001|Cube.001Action");
+        animator.Play("Scene");
         animator.speed = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (test)
-        {
-            Progress();
-            test = false;
-        }
-
         if (playTimeLeft > 0)
         {
             animator.speed = 1;
