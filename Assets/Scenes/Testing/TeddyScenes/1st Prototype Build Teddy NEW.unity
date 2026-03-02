@@ -1264,6 +1264,67 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 384517158661324152, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
+--- !u!1001 &1254275756
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4085287308944436577, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_Name
+      value: Great Hall Works
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132886102278794071, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225036718157009698, guid: 922d344daad23da42ab5d600487bf280, type: 3}
+      propertyPath: m_NavMeshData
+      value: 
+      objectReference: {fileID: 23800000, guid: 803656d1529c74d49a5dea8f2d641312, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 922d344daad23da42ab5d600487bf280, type: 3}
 --- !u!1 &1267328355 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6710916338463916353, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -1921,6 +1982,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Great Hall new Materials_001
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1127727175970978474, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.4603448
@@ -2175,6 +2240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stairs
   numberOfEnemies: 1
   audioSource: {fileID: 1120287998}
+  test: 0
 --- !u!95 &1679775817
 Animator:
   serializedVersion: 7
@@ -2756,3 +2822,4 @@ SceneRoots:
   - {fileID: 2449937136283309859}
   - {fileID: 3340989392370847973}
   - {fileID: 1940482129}
+  - {fileID: 1254275756}
