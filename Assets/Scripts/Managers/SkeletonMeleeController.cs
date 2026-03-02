@@ -2,24 +2,37 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class SlimeController : MonoBehaviour
+public class SkeletonMeleeController : MonoBehaviour
 {
     [Header("Enemy Settings")]
     [SerializeField] private float baseSpeed = 6f;
     [SerializeField] private float detectionRange = 10f;
-    [SerializeField] private float attackRange = 2f;
+    [SerializeField] private float attackRange = 1.05f;
     [SerializeField] private float rotationSpeed = 5f;
 
     [Header("Speed Modifiers")]
     [SerializeField] private float currentSpeedMultiplier = 0.2f;
 
     [Header("Animation")]
-    [Tooltip("Animator on the slime model (often on a child object). If left empty, will auto-find in children.")]
+    [Tooltip("Animator on the skeleton model (often on a child object). If left empty, will auto-find in children.")]
     [SerializeField] private Animator animator;
     [Tooltip("Velocity magnitude above this counts as moving.")]
     [SerializeField] private float moveThreshold = 0.1f;
     [Tooltip("Animator float parameter name used to blend/switch states.")]
     [SerializeField] private string speedParam = "Speed";
+
+    [Header("Melee Hitbox")]
+    [Tooltip("Weapon hitbox script (usually on the sword). If empty, will auto-find in children.")]
+    [SerializeField] private SkeletonMeleeHitbox hitbox;
+
+    [Header("Melee Damage")]
+    [SerializeField] private int damage = 15;
+    [Tooltip("Cooldown between hits while the sword overlaps the player.")]
+    [SerializeField] private float damageInterval = 0.5f;
+    [SerializeField] private string playerTag = "Player";
+
+    [Header("Audio (optional)")]
+    [SerializeField] private EnemySoundController enemySound;
 
     // Components
     private NavMeshAgent navAgent;
@@ -32,29 +45,16 @@ public class SlimeController : MonoBehaviour
     // Freeze effect management
     private Coroutine freezeTimer = null;
 
-    // Damage player
-    private PlayerHealth playerHealth;
-    public int damage = 15;
-    [SerializeField] private float damageInterval = 3f;
-    private Coroutine damageCoroutine;
-    private bool playerInDamageRange;
-
-    [Header("Audio (optional)")]
-    [SerializeField] private EnemySoundController enemySound;
+    private readonly System.Collections.Generic.Dictionary<Collider, float> nextDamageTime =
+        new System.Collections.Generic.Dictionary<Collider, float>();
 
     void Start()
     {
-        playerHealth = FindFirstObjectByType<PlayerHealth>();
-        if (playerHealth == null)
-        {
-            Debug.LogWarning("PlayerHealth not found in scene!");
-        }
-
         // Get NavMeshAgent component
         navAgent = GetComponent<NavMeshAgent>();
         if (navAgent == null)
         {
-            Debug.LogError("SlimeController requires a NavMeshAgent component!");
+            Debug.LogError("SkeletonMeleeController requires a NavMeshAgent component!");
             return;
         }
 
@@ -62,13 +62,15 @@ public class SlimeController : MonoBehaviour
         if (enemySound == null) enemySound = GetComponentInParent<EnemySoundController>();
         if (enemySound == null) enemySound = GetComponentInChildren<EnemySoundController>();
 
+        if (hitbox == null) hitbox = GetComponentInChildren<SkeletonMeleeHitbox>(true);
+
         // Find Animator if not assigned (usually on the model child)
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
             if (animator == null)
             {
-                Debug.LogWarning("No Animator found on Slime or its children. Animations won't play.");
+                Debug.LogWarning("No Animator found on Skeleton or its children. Animations won't play.");
             }
         }
 
@@ -90,7 +92,7 @@ public class SlimeController : MonoBehaviour
         navAgent.stoppingDistance = attackRange;
 
         // Set initial destination to current position
-       // navAgent.SetDestination(transform.position);
+        navAgent.SetDestination(transform.position);
     }
 
     void Update()
@@ -103,27 +105,24 @@ public class SlimeController : MonoBehaviour
 
         if (isPlayerDetected)
         {
-            // Update destination to player position
-         //   navAgent.SetDestination(player.position);
-
-            // Check if in attack range
-            if (distanceToPlayer <= attackRange && !isAttacking)
+            if (distanceToPlayer <= attackRange)
             {
-                StartAttack();
+                if (!isAttacking) StartAttack();
+                navAgent.isStopped = true;
+                FacePlayer();
             }
-            else if (distanceToPlayer > attackRange && isAttacking)
+            else
             {
-                StopAttack();
+                if (isAttacking) StopAttack();
+                navAgent.isStopped = false;
+                navAgent.SetDestination(player.position);
             }
         }
         else
         {
-            // Player not detected, stop moving
-         //   navAgent.SetDestination(transform.position);
-            if (isAttacking)
-            {
-                StopAttack();
-            }
+            navAgent.isStopped = true;
+            navAgent.ResetPath();
+            if (isAttacking) StopAttack();
         }
 
         // Update NavMeshAgent speed
@@ -131,8 +130,6 @@ public class SlimeController : MonoBehaviour
 
         // ---- Animation drive ----
         UpdateAnimation();
-
-        HandleDamageRange(distanceToPlayer);
     }
 
     private void UpdateAnimation()
@@ -142,24 +139,61 @@ public class SlimeController : MonoBehaviour
         // NavMeshAgent velocity is the most reliable for agent-driven movement
         float speed = navAgent.velocity.magnitude;
 
-        // Kill tiny jitters near 0 to avoid flickering states
-        if (speed < moveThreshold) speed = 0f;
+        // The current animator uses Speed to switch between Walk and Downward_slash.
+        // Keep slash only when actually attacking; otherwise force Walk even if standing still.
+        if (isAttacking)
+        {
+            speed = 0f; // triggers Downward_slash state
+        }
+        else if (!isPlayerDetected)
+        {
+            // Force Walk (idle proxy) so we don't play the slash when idle.
+            speed = Mathf.Max(speed, 0.11f);
+        }
+        else
+        {
+            // Kill tiny jitters near 0 to avoid flickering states
+            if (speed < moveThreshold) speed = 0f;
+        }
 
         animator.SetFloat(speedParam, speed);
+    }
+
+    private void FacePlayer()
+    {
+        if (player == null) return;
+
+        Vector3 dir = player.position - transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.001f) return;
+
+        Quaternion targetRot = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
     }
 
     private void StartAttack()
     {
         isAttacking = true;
-        // TODO: Add attack logic here (you can also trigger attack animations)
-        // Example: animator?.SetTrigger("Attack");
-        if (enemySound != null) enemySound.PlayAttackSfx();
     }
 
     private void StopAttack()
     {
         isAttacking = false;
-        // TODO: Add stop attack logic here
+        // Intentionally do not disable hitbox here.
+    }
+
+    // ===== Animation Events =====
+    // Add these events to the sword swing animation clip (Downward_slash)
+    // at the start/end of the contact window.
+    public void AnimAttackStart()
+    {
+        if (enemySound != null) enemySound.PlayAttackSfx();
+        if (hitbox != null) hitbox.BeginAttack();
+    }
+
+    public void AnimAttackEnd()
+    {
+        // Intentionally left blank so the hitbox stays active until we leave attack range.
     }
 
     // Public method for external speed modification (for spells, etc.)
@@ -213,81 +247,33 @@ public class SlimeController : MonoBehaviour
         freezeTimer = null;
     }
 
-    // Enemy collision with player
-    private void OnTriggerEnter(Collider other)
+    private void OnDisable()
     {
-        if (other.CompareTag("Player") && other.gameObject != null)
-        {
-            Debug.Log("Enemy collided");
-
-            if (playerHealth != null)
-            {
-                if (enemySound != null) enemySound.PlayAttackSfx();
-                playerHealth.TakeDamage(damage); // initial instant damage
-                Debug.Log($"{gameObject.name} has hit Player!");
-
-                // Start periodic damage if not already running
-                if (damageCoroutine == null)
-                {
-                    damageCoroutine = StartCoroutine(DamageOverTime());
-                }
-            }
-        }
+        if (hitbox != null) hitbox.EndAttack();
     }
 
-    private void OnTriggerExit(Collider other)
+    public void TryDamage(Collider other)
     {
-        if (other.CompareTag("Player") && damageCoroutine != null)
+        if (other == null || !other.CompareTag(playerTag)) return;
+
+        if (damageInterval > 0f)
         {
-            StopCoroutine(damageCoroutine);
-            damageCoroutine = null;
+            if (nextDamageTime.TryGetValue(other, out float nextTime) && Time.time < nextTime) return;
+            nextDamageTime[other] = Time.time + damageInterval;
         }
+
+        PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+        if (playerHealth == null) playerHealth = other.GetComponentInParent<PlayerHealth>();
+        if (playerHealth != null) playerHealth.TakeDamage(damage);
     }
 
-    private IEnumerator DamageOverTime()
+    public void ClearDamageTarget(Collider other)
     {
-        yield return new WaitForSeconds(damageInterval);
-
-        while (true)
+        if (other == null)
         {
-            if (playerHealth != null)
-            {
-                if (enemySound != null) enemySound.PlayAttackSfx();
-                playerHealth.TakeDamage(damage);
-                Debug.Log($"{gameObject.name} dealt periodic damage: {damage}");
-            }
-            yield return new WaitForSeconds(damageInterval);
+            nextDamageTime.Clear();
+            return;
         }
-    }
-
-    private void HandleDamageRange(float distanceToPlayer)
-    {
-        if (player == null || playerHealth == null) return;
-
-        bool inRange = distanceToPlayer <= attackRange;
-
-        if (inRange != playerInDamageRange)
-        {
-            playerInDamageRange = inRange;
-
-            if (inRange)
-            {
-                if (enemySound != null) enemySound.PlayAttackSfx();
-                playerHealth.TakeDamage(damage);
-                if (damageCoroutine == null)
-                {
-                    damageCoroutine = StartCoroutine(DamageOverTime());
-                }
-            }
-            else if (damageCoroutine != null)
-            {
-                StopCoroutine(damageCoroutine);
-                damageCoroutine = null;
-            }
-        }
-        else if (inRange && damageCoroutine == null)
-        {
-            damageCoroutine = StartCoroutine(DamageOverTime());
-        }
+        nextDamageTime.Remove(other);
     }
 }
