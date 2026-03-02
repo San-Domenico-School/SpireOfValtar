@@ -90,7 +90,7 @@ public class SlimeController : MonoBehaviour
         navAgent.stoppingDistance = attackRange;
 
         // Set initial destination to current position
-       // navAgent.SetDestination(transform.position);
+        navAgent.SetDestination(transform.position);
     }
 
     void Update()
@@ -104,7 +104,7 @@ public class SlimeController : MonoBehaviour
         if (isPlayerDetected)
         {
             // Update destination to player position
-         //   navAgent.SetDestination(player.position);
+            navAgent.SetDestination(player.position);
 
             // Check if in attack range
             if (distanceToPlayer <= attackRange && !isAttacking)
@@ -119,7 +119,7 @@ public class SlimeController : MonoBehaviour
         else
         {
             // Player not detected, stop moving
-         //   navAgent.SetDestination(transform.position);
+            navAgent.SetDestination(transform.position);
             if (isAttacking)
             {
                 StopAttack();
