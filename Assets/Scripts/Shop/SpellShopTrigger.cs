@@ -26,6 +26,25 @@ public class SpellShopTrigger : MonoBehaviour
     private bool playerInRange = false;
     private Label promptLabel;
 
+    private void OnEnable()
+    {
+        // Always start hidden - prevents bleed-over from previous scene
+        playerInRange = false;
+        SetPromptVisible(false);
+    }
+
+    private void OnDisable()
+    {
+        // Hide immediately when this trigger is disabled/scene unloads
+        SetPromptVisible(false);
+    }
+
+    private void OnDestroy()
+    {
+        // Hide when shop is destroyed (scene switch)
+        SetPromptVisible(false);
+    }
+
     private void Start()
     {
        

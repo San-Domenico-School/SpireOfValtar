@@ -549,6 +549,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 83187929279066403, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
+--- !u!1 &301702313 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5105848553506206668, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+  m_PrefabInstance: {fileID: 4868112149460240186}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &380532064 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8033748254376537500, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -844,6 +849,51 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 590625017482438197, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
+--- !u!1 &789234561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 789234562}
+  - component: {fileID: 789234563}
+  m_Layer: 0
+  m_Name: UIReticleController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &789234562
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789234561}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &789234563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789234561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4feb6f52d60394cedab1126f0978ec28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIReticleController
+  gameViewDocument: {fileID: 0}
 --- !u!1 &875548684 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8493015188241380710, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -930,12 +980,24 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3346992907095793089, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
   m_PrefabInstance: {fileID: 4868112149460240186}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 301702313}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+--- !u!114 &1030639218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301702313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b77e6504b91ed44d39460002f3b84d0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopPromptHider
 --- !u!1 &1038128491 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3215728508509212452, guid: 618aff6c4ba08ad418af087e90f49477, type: 3}
@@ -1425,7 +1487,7 @@ Transform:
   m_GameObject: {fileID: 1331499947}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.754, y: 7.439, z: -0.2154336}
+  m_LocalPosition: {x: 5.754, y: 2, z: -0.2154336}
   m_LocalScale: {x: 1.0442, y: 1.0442, z: 1.0442}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2595,7 +2657,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5105848553506206668, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1030639218}
   m_SourcePrefab: {fileID: 100100000, guid: b1ca3fe65da2a4d6b92e1e17c379a197, type: 3}
 --- !u!1001 &4907152308160513088
 PrefabInstance:
@@ -2662,51 +2727,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c2612c10145c4a999b3d176f9ca7260, type: 3}
---- !u!1 &789234561
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 789234562}
-  - component: {fileID: 789234563}
-  m_Layer: 0
-  m_Name: UIReticleController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &789234562
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 789234561}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &789234563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 789234561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4feb6f52d60394cedab1126f0978ec28, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::UIReticleController
-  gameViewDocument: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
