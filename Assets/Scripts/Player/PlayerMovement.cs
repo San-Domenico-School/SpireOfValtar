@@ -177,9 +177,8 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
 
-        // Dodge (roll) — requires Dash purchased from shop (SpellInventory index 3)
-        bool dashUnlocked = SpellInventory.Instance == null || SpellInventory.Instance.IsUnlocked(3);
-        if (dashUnlocked && dodgePressed && Time.time >= lastDodgeTime + dodgeCooldown && move.sqrMagnitude > 0.01f && grounded)
+        // Dodge (roll)
+        if (dodgePressed && Time.time >= lastDodgeTime + dodgeCooldown && move.sqrMagnitude > 0.01f && grounded)
         {
             StartCoroutine(DashRoutine(move.normalized, dodgeDistance, dodgeDuration, isDodge: true));
             lastDodgeTime = Time.time;
