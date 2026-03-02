@@ -12,6 +12,7 @@ public class Stairs : MonoBehaviour
     public float numberOfEnemies = 1; 
 
     [SerializeField] GameObject audioSource;
+    [SerializeField] bool test = false;
 
 
     private Animator animator;
@@ -38,6 +39,12 @@ public class Stairs : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (test)
+        {
+            Progress();
+            test = false;
+        }
+
         if (playTimeLeft > 0)
         {
             animator.speed = 1;
