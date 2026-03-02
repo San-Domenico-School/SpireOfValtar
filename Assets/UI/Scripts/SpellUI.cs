@@ -113,16 +113,10 @@ public class SpellUI : MonoBehaviour
 
     private void CreateSpellBox(int index, string spellName)
     {
-        bool owned = SpellInventory.Instance != null && SpellInventory.Instance.IsUnlocked(index);
-
         // Main box container
         VisualElement spellBox = new VisualElement();
         spellBox.name = $"SpellBox_{index}";
-
-        Color borderCol = owned
-            ? new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f)
-            : new Color(80f / 255f, 80f / 255f, 80f / 255f, 1f);
-
+        
         // Style the spell box to match UI theme
         spellBox.style.width = 100;
         spellBox.style.height = 100;
@@ -131,10 +125,10 @@ public class SpellUI : MonoBehaviour
         spellBox.style.borderRightWidth = 3;
         spellBox.style.borderTopWidth = 3;
         spellBox.style.borderBottomWidth = 3;
-        spellBox.style.borderLeftColor = borderCol;
-        spellBox.style.borderRightColor = borderCol;
-        spellBox.style.borderTopColor = borderCol;
-        spellBox.style.borderBottomColor = borderCol;
+        spellBox.style.borderLeftColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
+        spellBox.style.borderRightColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
+        spellBox.style.borderTopColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
+        spellBox.style.borderBottomColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
         spellBox.style.borderTopLeftRadius = 8;
         spellBox.style.borderTopRightRadius = 8;
         spellBox.style.borderBottomLeftRadius = 8;
@@ -148,11 +142,9 @@ public class SpellUI : MonoBehaviour
         spellBox.style.paddingRight = 5;
 
         // Spell name label
-        Label spellLabel = new Label(owned ? spellName : "?");
+        Label spellLabel = new Label(spellName);
         spellLabel.name = "SpellLabel";
-        spellLabel.style.color = owned
-            ? new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f)
-            : new Color(80f / 255f, 80f / 255f, 80f / 255f, 1f);
+        spellLabel.style.color = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
         spellLabel.style.fontSize = 16;
         spellLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
         spellLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
@@ -179,12 +171,6 @@ public class SpellUI : MonoBehaviour
 
         spellContainer.Add(spellBox);
         spellBoxes.Add(spellBox);
-    }
-
-    // Call this after a spell is purchased so the HUD updates immediately.
-    public void RefreshOwnership()
-    {
-        InitializeSpellUI();
     }
 
     public void SetSpellNames(List<string> names)

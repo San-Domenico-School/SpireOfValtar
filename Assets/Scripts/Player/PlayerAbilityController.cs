@@ -302,11 +302,6 @@ public class PlayerAbilityController : MonoBehaviour
         switch (currentIndex)
         {
             case 0: // Lightning Spell
-                if (SpellInventory.Instance != null && !SpellInventory.Instance.IsUnlocked(0))
-                {
-                    Debug.Log("Lightning not purchased.");
-                    return;
-                }
                 if (spell1 != null)
                 {
                     if (!spell1.canCast)
@@ -324,11 +319,6 @@ public class PlayerAbilityController : MonoBehaviour
                 break;
 
             case 1: // Fireball Spell
-                if (SpellInventory.Instance != null && !SpellInventory.Instance.IsUnlocked(1))
-                {
-                    Debug.Log("Fireball not purchased.");
-                    return;
-                }
                 if (spell2 != null)
                 {
                     if (!spell2.canCast)
@@ -346,11 +336,6 @@ public class PlayerAbilityController : MonoBehaviour
                 break;
 
             case 2: // Freeze Spell
-                if (SpellInventory.Instance != null && !SpellInventory.Instance.IsUnlocked(2))
-                {
-                    Debug.Log("Freeze not purchased.");
-                    return;
-                }
                 if (spell3 != null)
                 {
                     if (!spell3.canCast)

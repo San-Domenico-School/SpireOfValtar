@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4660677940210089108}
   - component: {fileID: 8555625129146847293}
   - component: {fileID: 2217434796633799266}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 439
+    m_Bits: 55
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -164,8 +164,6 @@ GameObject:
   - component: {fileID: 648765997522169627}
   - component: {fileID: 8058498361456050140}
   - component: {fileID: 2486578467623477028}
-  - component: {fileID: 2484075919418288376}
-  - component: {fileID: 466534885314528405}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -265,7 +263,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 1.5
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
@@ -686,37 +684,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoldCollector
   goldCollected: 0
---- !u!114 &2484075919418288376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4654921610813067680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8634011b008cf4914b86123ed3c4c411, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellAudioController
-  sfxSets: []
-  hitsAre3D: 1
-  hitMinDistance: 2
-  hitMaxDistance: 60
-  hitRolloffMode: 1
-  debugWarnings: 0
-  castSource: {fileID: 0}
---- !u!114 &466534885314528405
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4654921610813067680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75b748485ae294688b39b9eb20cf62ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellInventory
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,7 +695,7 @@ GameObject:
   - component: {fileID: 7981547603358428860}
   - component: {fileID: 1216070496362953335}
   - component: {fileID: 3042788103300191517}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: ReticleCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -904,10 +871,6 @@ PrefabInstance:
     - target: {fileID: 5554426149742070109, guid: 1c3652a38a0b94286a1443342b6c132f, type: 3}
       propertyPath: m_Name
       value: VR_Reticle_Circular
-      objectReference: {fileID: 0}
-    - target: {fileID: 5554426149742070109, guid: 1c3652a38a0b94286a1443342b6c132f, type: 3}
-      propertyPath: m_Layer
-      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
