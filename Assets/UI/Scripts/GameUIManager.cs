@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UI.MouseFollow;
 
 /************************************
  * Handles game UI, pause menu, and ESC key controls.
@@ -21,7 +20,7 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private UIDocument pauseMenuDocument;
     [SerializeField] private UIDocument controlsDocument;
     [SerializeField] private UIDocument controlsPauseDocument;
-    [SerializeField] private ReticleController reticleController;
+    [SerializeField] private UIReticleController reticleController;
     [SerializeField] private int gameUISortOrder = 0;
     [SerializeField] private int pauseMenuSortOrder = 10;
     [SerializeField] private int controlsMenuSortOrder = 20;
@@ -87,7 +86,7 @@ public class GameUIManager : MonoBehaviour
 
         if (reticleController == null)
         {
-            reticleController = FindObjectOfType<ReticleController>(true);
+            reticleController = FindObjectOfType<UIReticleController>(true);
         }
 
         ApplyUIDocumentSorting();
@@ -1216,16 +1215,8 @@ public class GameUIManager : MonoBehaviour
 
     private void SetReticleVisible(bool isVisible)
     {
-        if (reticleController == null)
-        {
-            return;
-        }
-
-        reticleController.enabled = isVisible;
-        if (reticleController.reticle != null)
-        {
-            reticleController.reticle.gameObject.SetActive(isVisible);
-        }
+        if (reticleController == null) return;
+        reticleController.SetVisible(isVisible);
     }
 
     private void EnsureSpellUI()

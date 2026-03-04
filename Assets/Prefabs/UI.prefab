@@ -433,6 +433,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4183618315526271691}
   - component: {fileID: 3346992907095793089}
+  - component: {fileID: 1566644390337243096}
   m_Layer: 0
   m_Name: ShopPromptUI
   m_TagString: Untagged
@@ -478,6 +479,18 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &1566644390337243096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5105848553506206668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b77e6504b91ed44d39460002f3b84d0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopPromptHider
 --- !u!1 &8387379346246659782
 GameObject:
   m_ObjectHideFlags: 0
