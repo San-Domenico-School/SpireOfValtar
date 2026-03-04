@@ -6,7 +6,8 @@ public class EnemyFleeing : MonoBehaviour
     // Movement
     public Transform player;
     public float fleeDistance = 10f;
-    public float moveSpeed = 3f;
+    public float minSpeed = 5f;
+    public float maxSpeed = 15f;
 
     // Rotate enemy
     public float rotationSpeed = 10f;
@@ -19,9 +20,16 @@ public class EnemyFleeing : MonoBehaviour
     // Level Progression GameObject
     public GameObject Teleporter;
 
+    public float stuckThreshold = 0.05f;
+    private Vector3 lastPosition;
+
+    public float bodyRadius = 0.3f;
+
     void Start()
     {
         lockedY = transform.position.y;
+
+        lastPosition = transform.position;
     }
 
     private void Awake()
@@ -53,9 +61,20 @@ public class EnemyFleeing : MonoBehaviour
         if (distance <= fleeDistance)
         {
             Vector3 fleeDirection = (transform.position - player.position).normalized;
+
+            if (IsBlocked(fleeDirection) || IsStuck())
+            {
+                fleeDirection = FindEscapeDirection(fleeDirection);
+            }
+
+            lastPosition = transform.position;
+
             if (!Physics.Raycast(transform.position, fleeDirection, wallCheckDistance, wallLayer))
             {
-                transform.position += fleeDirection * moveSpeed * Time.deltaTime;
+                float speedMultiplier = Mathf.Clamp01(1f - (distance / fleeDistance));
+                float currentSpeed = Mathf.Lerp(minSpeed, maxSpeed, speedMultiplier);
+
+                transform.position += fleeDirection * currentSpeed * Time.deltaTime;
             }
             else
             {
@@ -73,7 +92,39 @@ public class EnemyFleeing : MonoBehaviour
                 );
 
             }
+
         }
+    }
+
+    bool IsBlocked(Vector3 direction)
+    {
+        return Physics.SphereCast(
+            transform.position,
+            bodyRadius,
+            direction,
+            out _,
+            wallCheckDistance,
+            wallLayer
+        );
+    }
+
+    bool IsStuck()
+    {
+        return Vector3.Distance(transform.position, lastPosition) < stuckThreshold;
+    }
+
+    Vector3 FindEscapeDirection(Vector3 baseDirection)
+    {
+        for (int angle = 30; angle <= 180; angle += 30)
+        {
+            Vector3 left = Quaternion.Euler(0, angle, 0) * baseDirection;
+            Vector3 right = Quaternion.Euler(0, -angle, 0) * baseDirection;
+
+            if (!IsBlocked(left)) return left;
+            if (!IsBlocked(right)) return right;
+        }
+
+        return Random.insideUnitSphere.normalized;
     }
 
     void OnDrawGizmos()
