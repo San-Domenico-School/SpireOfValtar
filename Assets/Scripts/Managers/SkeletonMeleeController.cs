@@ -174,11 +174,13 @@ public class SkeletonMeleeController : MonoBehaviour
     private void StartAttack()
     {
         isAttacking = true;
+        animator.SetBool("isAttacking", true);
     }
 
     private void StopAttack()
     {
         isAttacking = false;
+        animator.SetBool("isAttacking", false);
         // Intentionally do not disable hitbox here.
     }
 
