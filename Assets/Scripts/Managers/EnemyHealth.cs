@@ -25,7 +25,7 @@ public class EnemyHealth : MonoBehaviour
   {
     healthBar = GetComponentInChildren<FloatingHealthBar>();
 
-    GameObject stairsGO = GameObject.Find("Great Hall new Materials_001");
+    GameObject stairsGO = GameObject.Find("Great Hall Works/Stairs");
     if (stairsGO != null)
     {
       stairs = stairsGO.GetComponent<Stairs>();
