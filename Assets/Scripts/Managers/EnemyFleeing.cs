@@ -2,17 +2,11 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 
-public class EnemyFleeController : MonoBehaviour
+[RequireComponent(typeof(NavMeshAgent))]
+public class EnemyFleeing : MonoBehaviour
 {
-<<<<<<< HEAD
-    // Movement
-    public Transform player;
-    public float fleeDistance = 10f;
-    public float minSpeed = 5f;
-    public float maxSpeed = 15f;
-=======
+    // Waypoints to choose from when fleeing
     public Transform[] waypoints;
->>>>>>> 651b3d4d2eb165bb2f2cf145893e7bc3c3df0538
 
     // Fleeing settings
     public float fleeRange = 10f;
@@ -27,6 +21,9 @@ public class EnemyFleeController : MonoBehaviour
     public float fleeAcceleration = 25f;
     public float fixedYPosition = 1.1f;
 
+    // Optional door to open when player collides
+    public GameObject door;
+
     private NavMeshAgent agent;
     private Transform player;
 
@@ -34,25 +31,20 @@ public class EnemyFleeController : MonoBehaviour
     private Transform currentWaypoint;
     private HashSet<Transform> visitedWaypoints = new HashSet<Transform>();
 
-    public GameObject door;
-
-    public float stuckThreshold = 0.05f;
-    private Vector3 lastPosition;
-
-    public float bodyRadius = 0.3f;
-
     void Start()
     {
-<<<<<<< HEAD
-        lockedY = transform.position.y;
-
-        lastPosition = transform.position;
-    }
-=======
         agent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
->>>>>>> 651b3d4d2eb165bb2f2cf145893e7bc3c3df0538
+        if (agent == null)
+        {
+            Debug.LogError("NavMeshAgent required on EnemyFleeing.");
+            enabled = false;
+            return;
+        }
 
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null) player = playerObj.transform;
+
+        // initialize agent with normal settings
         agent.speed = normalSpeed;
         agent.angularSpeed = normalAngularSpeed;
         agent.acceleration = normalAcceleration;
@@ -61,41 +53,16 @@ public class EnemyFleeController : MonoBehaviour
 
     void Update()
     {
-        if (player == null || waypoints.Length == 0)
+        if (player == null || waypoints == null || waypoints.Length == 0)
             return;
 
         float playerDistance = Vector3.Distance(transform.position, player.position);
 
         if (playerDistance <= fleeRange)
         {
-<<<<<<< HEAD
-            Vector3 fleeDirection = (transform.position - player.position).normalized;
-
-            if (IsBlocked(fleeDirection) || IsStuck())
-            {
-                fleeDirection = FindEscapeDirection(fleeDirection);
-            }
-
-            lastPosition = transform.position;
-
-            if (!Physics.Raycast(transform.position, fleeDirection, wallCheckDistance, wallLayer))
-            {
-                float speedMultiplier = Mathf.Clamp01(1f - (distance / fleeDistance));
-                float currentSpeed = Mathf.Lerp(minSpeed, maxSpeed, speedMultiplier);
-
-                transform.position += fleeDirection * currentSpeed * Time.deltaTime;
-            }
-            else
-            {
-                // Optional: slightly turn away if hitting a wall
-                fleeDirection = Quaternion.Euler(0, Random.Range(-90, 90), 0) * fleeDirection;
-            }
-=======
             if (!isFleeing)
             {
                 isFleeing = true;
->>>>>>> 651b3d4d2eb165bb2f2cf145893e7bc3c3df0538
-
                 agent.speed = fleeSpeed;
                 agent.angularSpeed = fleeAngularSpeed;
                 agent.acceleration = fleeAcceleration;
@@ -103,49 +70,11 @@ public class EnemyFleeController : MonoBehaviour
                 visitedWaypoints.Clear();
                 SelectNextWaypoint();
             }
-
         }
         else if (isFleeing)
         {
+            // stop fleeing -> restore normal movement
             isFleeing = false;
-
-<<<<<<< HEAD
-    bool IsBlocked(Vector3 direction)
-    {
-        return Physics.SphereCast(
-            transform.position,
-            bodyRadius,
-            direction,
-            out _,
-            wallCheckDistance,
-            wallLayer
-        );
-    }
-
-    bool IsStuck()
-    {
-        return Vector3.Distance(transform.position, lastPosition) < stuckThreshold;
-    }
-
-    Vector3 FindEscapeDirection(Vector3 baseDirection)
-    {
-        for (int angle = 30; angle <= 180; angle += 30)
-        {
-            Vector3 left = Quaternion.Euler(0, angle, 0) * baseDirection;
-            Vector3 right = Quaternion.Euler(0, -angle, 0) * baseDirection;
-
-            if (!IsBlocked(left)) return left;
-            if (!IsBlocked(right)) return right;
-        }
-
-        return Random.insideUnitSphere.normalized;
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, fleeDistance);
-=======
             agent.speed = normalSpeed;
             agent.angularSpeed = normalAngularSpeed;
             agent.acceleration = normalAcceleration;
@@ -156,6 +85,7 @@ public class EnemyFleeController : MonoBehaviour
             return;
         }
 
+        // While fleeing, manage waypoint switching
         if (isFleeing && currentWaypoint != null)
         {
             if (!agent.pathPending && agent.remainingDistance <= waypointSwitchDistance)
@@ -164,11 +94,11 @@ public class EnemyFleeController : MonoBehaviour
                 SelectNextWaypoint();
             }
         }
->>>>>>> 651b3d4d2eb165bb2f2cf145893e7bc3c3df0538
     }
 
     void LateUpdate()
     {
+        // Keep enemy on fixed Y plane to avoid sinking/floating
         Vector3 pos = transform.position;
         pos.y = fixedYPosition;
         transform.position = pos;
@@ -181,12 +111,14 @@ public class EnemyFleeController : MonoBehaviour
 
         foreach (Transform waypoint in waypoints)
         {
+            if (waypoint == null) continue;
             if (visitedWaypoints.Contains(waypoint))
                 continue;
 
             float distanceToEnemy = Vector3.Distance(transform.position, waypoint.position);
             float distanceToPlayer = Vector3.Distance(player.position, waypoint.position);
 
+            // Prefer waypoints that are far from player and relatively close to enemy
             float score = distanceToPlayer - distanceToEnemy;
 
             if (score > bestScore)
@@ -198,9 +130,11 @@ public class EnemyFleeController : MonoBehaviour
 
         if (bestWaypoint == null)
         {
+            // all visited or none available: reset visited set and try again
             visitedWaypoints.Clear();
-            SelectNextWaypoint();
-            return;
+            // if still null after clearing (e.g., all waypoints null), bail out
+            foreach (Transform wp in waypoints) if (wp != null) { bestWaypoint = wp; break; }
+            if (bestWaypoint == null) return;
         }
 
         currentWaypoint = bestWaypoint;
@@ -233,7 +167,7 @@ public class EnemyFleeController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Door not found in the scene!");
+            Debug.LogWarning("Door not assigned on EnemyFleeing.");
         }
         Destroy(gameObject);
     }
