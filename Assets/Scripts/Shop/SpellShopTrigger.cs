@@ -26,24 +26,42 @@ public class SpellShopTrigger : MonoBehaviour
     private bool playerInRange = false;
     private Label promptLabel;
 
+    private void OnEnable()
+    {
+        // Always start hidden - prevents bleed-over from previous scene
+        playerInRange = false;
+        SetPromptVisible(false);
+    }
+
+    private void OnDisable()
+    {
+        // Hide immediately when this trigger is disabled/scene unloads
+        SetPromptVisible(false);
+    }
+
+    private void OnDestroy()
+    {
+        // Hide when shop is destroyed (scene switch)
+        SetPromptVisible(false);
+    }
+
     private void Start()
     {
-        // Auto-find player if not assigned
+       
         if (playerTransform == null)
         {
             var go = GameObject.FindWithTag("Player");
             if (go != null) playerTransform = go.transform;
         }
 
-        // Auto-find SpellShopUI if not assigned
+        
         if (spellShopUI == null)
             spellShopUI = FindFirstObjectByType<SpellShopUI>();
 
-        // Auto-find radius indicator on this GameObject if not assigned
         if (radiusIndicator == null)
             radiusIndicator = GetComponent<ShopRadiusIndicator>();
 
-        // Auto-find the ShopPrompt UIDocument if not assigned in Inspector
+        
         if (shopPromptDocument == null)
         {
             var docs = FindObjectsOfType<UIDocument>(true);
@@ -67,13 +85,13 @@ public class SpellShopTrigger : MonoBehaviour
 
         promptLabel = shopPromptDocument.rootVisualElement.Q<Label>("ShopPromptLabel");
 
-        // Start hidden
+        
         SetPromptVisible(false);
     }
 
     private void Update()
     {
-        // Retry finding the label every frame until found (UIDocument may not be ready in Start)
+       
         if (promptLabel == null)
             BuildPromptLabel();
 
@@ -86,11 +104,11 @@ public class SpellShopTrigger : MonoBehaviour
         {
             playerInRange = inRange;
             SetPromptVisible(inRange && (spellShopUI == null || !spellShopUI.IsOpen));
-            // Circle shows when far away, hides once player steps inside
+          
             if (radiusIndicator != null) radiusIndicator.SetVisible(!inRange);
         }
 
-        // B key: open or close shop
+     
         if (Keyboard.current != null && Keyboard.current.bKey.wasPressedThisFrame)
         {
             if (spellShopUI == null) return;
@@ -114,7 +132,6 @@ public class SpellShopTrigger : MonoBehaviour
         promptLabel.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
     }
 
-    // Draw radius in the editor for easy tuning
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(1f, 0.85f, 0.1f, 0.4f);
