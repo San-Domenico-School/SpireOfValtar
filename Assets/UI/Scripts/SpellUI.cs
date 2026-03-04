@@ -10,6 +10,8 @@ using System.Collections.Generic;
  ************************************/
 public class SpellUI : MonoBehaviour
 {
+    private const string GameViewUxmlName = "Game_View";
+
     [Header("UI References")]
     [SerializeField] private UIDocument uiDocument;
     
@@ -20,24 +22,74 @@ public class SpellUI : MonoBehaviour
     private List<VisualElement> spellBoxes = new List<VisualElement>();
     private int currentSpellIndex = 0;
 
+    private void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        RefreshSpellUI();
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Start()
     {
-        if (uiDocument == null)
+        RefreshSpellUI();
+    }
+
+    public void RefreshSpellUI()
+    {
+        ResolveUIDocument();
+        InitializeSpellUI();
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        RefreshSpellUI();
+    }
+
+    private void ResolveUIDocument()
+    {
+        if (uiDocument != null)
         {
-            uiDocument = GetComponent<UIDocument>();
+            return;
         }
 
+        uiDocument = GetComponent<UIDocument>();
+        if (uiDocument != null)
+        {
+            return;
+        }
+
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals(GameViewUxmlName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                uiDocument = document;
+                return;
+            }
+        }
+    }
+
+    private void InitializeSpellUI()
+    {
         if (uiDocument == null)
         {
             return;
         }
 
-        InitializeSpellUI();
-    }
-
-    private void InitializeSpellUI()
-    {
         var root = uiDocument.rootVisualElement;
+        if (root == null)
+        {
+            return;
+        }
         spellContainer = root.Q<VisualElement>("SpellContainer");
 
         if (spellContainer == null)
@@ -61,10 +113,16 @@ public class SpellUI : MonoBehaviour
 
     private void CreateSpellBox(int index, string spellName)
     {
+        bool owned = SpellInventory.Instance != null && SpellInventory.Instance.IsUnlocked(index);
+
         // Main box container
         VisualElement spellBox = new VisualElement();
         spellBox.name = $"SpellBox_{index}";
-        
+
+        Color borderCol = owned
+            ? new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f)
+            : new Color(80f / 255f, 80f / 255f, 80f / 255f, 1f);
+
         // Style the spell box to match UI theme
         spellBox.style.width = 100;
         spellBox.style.height = 100;
@@ -73,10 +131,10 @@ public class SpellUI : MonoBehaviour
         spellBox.style.borderRightWidth = 3;
         spellBox.style.borderTopWidth = 3;
         spellBox.style.borderBottomWidth = 3;
-        spellBox.style.borderLeftColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
-        spellBox.style.borderRightColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
-        spellBox.style.borderTopColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
-        spellBox.style.borderBottomColor = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
+        spellBox.style.borderLeftColor = borderCol;
+        spellBox.style.borderRightColor = borderCol;
+        spellBox.style.borderTopColor = borderCol;
+        spellBox.style.borderBottomColor = borderCol;
         spellBox.style.borderTopLeftRadius = 8;
         spellBox.style.borderTopRightRadius = 8;
         spellBox.style.borderBottomLeftRadius = 8;
@@ -90,9 +148,11 @@ public class SpellUI : MonoBehaviour
         spellBox.style.paddingRight = 5;
 
         // Spell name label
-        Label spellLabel = new Label(spellName);
+        Label spellLabel = new Label(owned ? spellName : "?");
         spellLabel.name = "SpellLabel";
-        spellLabel.style.color = new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f);
+        spellLabel.style.color = owned
+            ? new Color(236f / 255f, 165f / 255f, 41f / 255f, 1f)
+            : new Color(80f / 255f, 80f / 255f, 80f / 255f, 1f);
         spellLabel.style.fontSize = 16;
         spellLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
         spellLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
@@ -119,6 +179,12 @@ public class SpellUI : MonoBehaviour
 
         spellContainer.Add(spellBox);
         spellBoxes.Add(spellBox);
+    }
+
+    // Call this after a spell is purchased so the HUD updates immediately.
+    public void RefreshOwnership()
+    {
+        InitializeSpellUI();
     }
 
     public void SetSpellNames(List<string> names)
@@ -162,4 +228,3 @@ public class SpellUI : MonoBehaviour
         return spellBoxes.Count;
     }
 }
-

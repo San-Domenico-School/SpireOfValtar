@@ -3,82 +3,125 @@ using System.Collections;
 
 public class EnemyHealth : MonoBehaviour
 {
-    [Header("Enemy Settings")]
-    public float maxHealth = 100f;
-    public float currentHealth;
+  [Header("Enemy Settings")]
+  public float maxHealth = 100f;
+  public float currentHealth;
 
-    private Renderer enemyRenderer;
-    private Color originalColor;
-    private bool isFlashing = false;
+  public System.Action OnDeath;
 
-    [SerializeField] FloatingHealthBar healthBar;
-    [SerializeField] private GameObject deathParticle;
+  private Renderer enemyRenderer;
+  private Color originalColor;
+  private bool isFlashing = false;
+  private bool warnedMissingHealthBar = false;
 
-    [SerializeField] private int enemyKillsNeeded = 1;
-    [SerializeField] private int enemiesKilled = 0;
+  [SerializeField] FloatingHealthBar healthBar;
+  [SerializeField] private GameObject deathParticle;
 
+  [SerializeField] private int enemyKillsNeeded = 1;
+  [SerializeField] private int enemiesKilled = 0;
+  private Stairs stairs;
 
-    private Stairs stairs;
+  private void Awake()
+  {
+    healthBar = GetComponentInChildren<FloatingHealthBar>();
 
-    private void Awake()
+    GameObject stairsGO = GameObject.Find("Great Hall new Materials_001");
+    if (stairsGO != null)
     {
-        healthBar = GetComponentInChildren<FloatingHealthBar>();
+      stairs = stairsGO.GetComponent<Stairs>();
+      if (stairs == null)
+        Debug.LogWarning("Found Great Hall new Materials_001 but it has no Stairs component.", this);
+    }
+    else
+    {
+      Debug.LogWarning("Could not find 'Great Hall new Materials_001' in this scene.", this);
+    }
+  }
 
-        stairs = GameObject.Find("Great Hall new Materials_001").GetComponent<Stairs>();
+
+
+  private void Start()
+  {
+    currentHealth = maxHealth;
+    enemyRenderer = GetComponent<Renderer>();
+    if (enemyRenderer != null)
+      originalColor = enemyRenderer.material.color;
+  }
+
+  public void TakeDamage(float amount)
+  {
+    currentHealth -= amount;
+    if (healthBar != null)
+    {
+      healthBar.SliderUpdate(currentHealth, maxHealth);
+    }
+    else if (!warnedMissingHealthBar)
+    {
+      warnedMissingHealthBar = true;
+      Debug.LogWarning("EnemyHealth has no FloatingHealthBar child; skipping health bar update.", this);
+    }
+    Debug.Log($"{gameObject.name} took {amount} damage! Remaining health: {currentHealth}");
+
+    if (!isFlashing && enemyRenderer != null)
+      StartCoroutine(FlashRed());
+
+    if (currentHealth <= 0)
+      Die();
+    Debug.Log(currentHealth);
+  }
+
+  private IEnumerator FlashRed()
+  {
+    isFlashing = true;
+    enemyRenderer.material.color = Color.red;
+    yield return new WaitForSeconds(0.1f);
+    enemyRenderer.material.color = originalColor;
+    isFlashing = false;
+  }
+
+  private void Die()
+  {
+    Debug.Log($"{gameObject.name} has been defeated!");
+
+    // ✅ Notify listeners BEFORE destruction
+    OnDeath?.Invoke();
+
+    if (deathParticle != null)
+    {
+      Instantiate(deathParticle, transform.position, Quaternion.identity);
     }
 
-    private void Start()
+    EnemyKilled(); // stairs logic still works
+
+    Destroy(gameObject);
+  }
+
+  public void EnemyKilled()
+  {
+    enemiesKilled++;
+    Debug.Log("+1 Enemy Killed");
+
+    if (enemiesKilled >= enemyKillsNeeded)
     {
-        currentHealth = maxHealth;
-        enemyRenderer = GetComponent<Renderer>();
-        if (enemyRenderer != null)
-            originalColor = enemyRenderer.material.color;
+      if (stairs != null)
+      {
+        stairs.Progress();
+        Debug.Log("Stairs lowered, teleporter active");
+      }
+      else
+      {
+        Debug.LogWarning("No Stairs found in this scene — skipping Progress().", this);
+      }
     }
+  }
 
-    public void TakeDamage(float amount)
-    {
-        currentHealth -= amount;
-        healthBar.SliderUpdate(currentHealth, maxHealth);
-        Debug.Log($"{gameObject.name} took {amount} damage! Remaining health: {currentHealth}");
+  void OnDisable()
+  {
+    if (!Application.isPlaying) return;
 
-        if (!isFlashing && enemyRenderer != null)
-            StartCoroutine(FlashRed());
-
-        if (currentHealth <= 0)
-            Die();
-        Debug.Log(currentHealth);
-    }
-
-    private IEnumerator FlashRed()
-    {
-        isFlashing = true;
-        enemyRenderer.material.color = Color.red;
-        yield return new WaitForSeconds(0.1f);
-        enemyRenderer.material.color = originalColor;
-        isFlashing = false;
-    }
-
-    private void Die()
-    {
-        Debug.Log($"{gameObject.name} has been defeated!");
-        if (deathParticle != null)
-        {
-            Instantiate(deathParticle, transform.position, Quaternion.identity);
-        }
-        Destroy(gameObject);
-        EnemyKilled();
-    }
-
-    public void EnemyKilled()
-    {
-        enemiesKilled++;
-        Debug.Log("+1 Enemy Killed");
-
-        if (enemiesKilled >= enemyKillsNeeded)
-        {
-            //gameObject.SetActive(true);
-            stairs.Progress();
-            Debug.Log("Stairs lowered, teleporter active");
-        }
-    }
+    UnityEngine.Debug.LogWarning(
+        $"{name} ({GetType().Name}) was disabled\n{StackTraceUtility.ExtractStackTrace()}",
+        this
+    );
+  }
 }

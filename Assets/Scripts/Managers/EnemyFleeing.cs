@@ -1,24 +1,40 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
-public class EnemyFleeing : MonoBehaviour
+public class EnemyFleeController : MonoBehaviour
 {
+<<<<<<< HEAD
     // Movement
     public Transform player;
     public float fleeDistance = 10f;
     public float minSpeed = 5f;
     public float maxSpeed = 15f;
+=======
+    public Transform[] waypoints;
+>>>>>>> 651b3d4d2eb165bb2f2cf145893e7bc3c3df0538
 
-    // Rotate enemy
-    public float rotationSpeed = 10f;
-    public float lockedY = 2f;
+    // Fleeing settings
+    public float fleeRange = 10f;
+    public float waypointSwitchDistance = 2.5f;
 
-    // Check distance from wall
-    public float wallCheckDistance = 1f;
-    public LayerMask wallLayer;
+    // Enemy movement settings
+    public float normalSpeed = 3.5f;
+    public float fleeSpeed = 6.5f;
+    public float normalAngularSpeed = 360f;
+    public float fleeAngularSpeed = 360f;
+    public float normalAcceleration = 5f;
+    public float fleeAcceleration = 25f;
+    public float fixedYPosition = 1.1f;
 
-    // Level Progression GameObject
-    public GameObject Teleporter;
+    private NavMeshAgent agent;
+    private Transform player;
+
+    private bool isFleeing = false;
+    private Transform currentWaypoint;
+    private HashSet<Transform> visitedWaypoints = new HashSet<Transform>();
+
+    public GameObject door;
 
     public float stuckThreshold = 0.05f;
     private Vector3 lastPosition;
@@ -27,39 +43,32 @@ public class EnemyFleeing : MonoBehaviour
 
     void Start()
     {
+<<<<<<< HEAD
         lockedY = transform.position.y;
 
         lastPosition = transform.position;
     }
+=======
+        agent = GetComponent<NavMeshAgent>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+>>>>>>> 651b3d4d2eb165bb2f2cf145893e7bc3c3df0538
 
-    private void Awake()
-    {
-        AssignPlayer();
-    }
-
-    void AssignPlayer()
-    {
-        if (player == null)
-        {
-            GameObject foundPlayer = GameObject.FindGameObjectWithTag("Player");
-
-            if (foundPlayer != null)
-            {
-                player = foundPlayer.transform;
-            }
-            else
-            {
-                Debug.LogError("Player not found in scene!");
-            }
-        }
+        agent.speed = normalSpeed;
+        agent.angularSpeed = normalAngularSpeed;
+        agent.acceleration = normalAcceleration;
+        agent.autoBraking = false;
     }
 
     void Update()
     {
-        float distance = Vector3.Distance(transform.position, player.position);
+        if (player == null || waypoints.Length == 0)
+            return;
 
-        if (distance <= fleeDistance)
+        float playerDistance = Vector3.Distance(transform.position, player.position);
+
+        if (playerDistance <= fleeRange)
         {
+<<<<<<< HEAD
             Vector3 fleeDirection = (transform.position - player.position).normalized;
 
             if (IsBlocked(fleeDirection) || IsStuck())
@@ -81,21 +90,26 @@ public class EnemyFleeing : MonoBehaviour
                 // Optional: slightly turn away if hitting a wall
                 fleeDirection = Quaternion.Euler(0, Random.Range(-90, 90), 0) * fleeDirection;
             }
-
-            if (fleeDirection != Vector3.zero)
+=======
+            if (!isFleeing)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(fleeDirection);
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    targetRotation,
-                    rotationSpeed * Time.deltaTime
-                );
+                isFleeing = true;
+>>>>>>> 651b3d4d2eb165bb2f2cf145893e7bc3c3df0538
 
+                agent.speed = fleeSpeed;
+                agent.angularSpeed = fleeAngularSpeed;
+                agent.acceleration = fleeAcceleration;
+
+                visitedWaypoints.Clear();
+                SelectNextWaypoint();
             }
 
         }
-    }
+        else if (isFleeing)
+        {
+            isFleeing = false;
 
+<<<<<<< HEAD
     bool IsBlocked(Vector3 direction)
     {
         return Physics.SphereCast(
@@ -131,28 +145,96 @@ public class EnemyFleeing : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, fleeDistance);
+=======
+            agent.speed = normalSpeed;
+            agent.angularSpeed = normalAngularSpeed;
+            agent.acceleration = normalAcceleration;
+
+            visitedWaypoints.Clear();
+            agent.ResetPath();
+            currentWaypoint = null;
+            return;
+        }
+
+        if (isFleeing && currentWaypoint != null)
+        {
+            if (!agent.pathPending && agent.remainingDistance <= waypointSwitchDistance)
+            {
+                visitedWaypoints.Add(currentWaypoint);
+                SelectNextWaypoint();
+            }
+        }
+>>>>>>> 651b3d4d2eb165bb2f2cf145893e7bc3c3df0538
     }
 
     void LateUpdate()
     {
         Vector3 pos = transform.position;
-        pos.y = lockedY;
+        pos.y = fixedYPosition;
         transform.position = pos;
     }
 
-    public void OnTriggerEnter(Collider other)
+    void SelectNextWaypoint()
+    {
+        Transform bestWaypoint = null;
+        float bestScore = Mathf.NegativeInfinity;
+
+        foreach (Transform waypoint in waypoints)
+        {
+            if (visitedWaypoints.Contains(waypoint))
+                continue;
+
+            float distanceToEnemy = Vector3.Distance(transform.position, waypoint.position);
+            float distanceToPlayer = Vector3.Distance(player.position, waypoint.position);
+
+            float score = distanceToPlayer - distanceToEnemy;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestWaypoint = waypoint;
+            }
+        }
+
+        if (bestWaypoint == null)
+        {
+            visitedWaypoints.Clear();
+            SelectNextWaypoint();
+            return;
+        }
+
+        currentWaypoint = bestWaypoint;
+        agent.SetDestination(currentWaypoint.position);
+    }
+
+    void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            if (Teleporter != null)
-            {
-                Teleporter.SetActive(true);
-                Debug.Log("Next room is open");
-            }
-
-            Destroy(gameObject);
-
-            Debug.Log($"{gameObject.name} was caught");
+            HandlePlayerCollision();
         }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            HandlePlayerCollision();
+        }
+    }
+
+    void HandlePlayerCollision()
+    {
+        Debug.Log("Enemy caught");
+        if (door != null)
+        {
+            door.SetActive(true);
+            Debug.Log("Door enabled");
+        }
+        else
+        {
+            Debug.LogWarning("Door not found in the scene!");
+        }
+        Destroy(gameObject);
     }
 }

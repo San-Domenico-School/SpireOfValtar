@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Label name="ShopPromptLabel" text="Press B to open shop" picking-mode="Ignore"
+        style="display: flex; position: absolute; left: 0; right: 0; bottom: 160px;
+               -unity-text-align: middle-center;
+               color: rgba(236, 165, 41, 0.95);
+               font-size: 28px;
+               -unity-font-style: bold;
+               letter-spacing: 0.5px;" />
+</ui:UXML>

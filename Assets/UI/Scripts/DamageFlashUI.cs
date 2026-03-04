@@ -33,7 +33,28 @@ public class DamageFlashUI : MonoBehaviour
     private int previousHealth;
     private Coroutine flashCoroutine;
     
+    void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        TryInitialize();
+    }
+
+    void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     void Start()
+    {
+        TryInitialize();
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        TryInitialize();
+    }
+
+    private void TryInitialize()
     {
         // Get UIDocument if not assigned
         if (uiDocument == null)
@@ -80,6 +101,10 @@ public class DamageFlashUI : MonoBehaviour
     private void InitializeUI()
     {
         root = uiDocument.rootVisualElement;
+        if (root == null)
+        {
+            return;
+        }
         
         // Create gradient texture
         CreateGradientTexture();
@@ -135,6 +160,15 @@ public class DamageFlashUI : MonoBehaviour
     
     public void TriggerFlash()
     {
+        if (gradientOverlay == null)
+        {
+            InitializeUI();
+            if (gradientOverlay == null)
+            {
+                return;
+            }
+        }
+
         if (flashCoroutine != null)
         {
             StopCoroutine(flashCoroutine);
@@ -145,6 +179,11 @@ public class DamageFlashUI : MonoBehaviour
     
     private IEnumerator FlashCoroutine()
     {
+        if (gradientOverlay == null)
+        {
+            yield break;
+        }
+
         // Show the gradient overlay at full opacity
         gradientOverlay.style.opacity = 1f;
         
@@ -160,7 +199,10 @@ public class DamageFlashUI : MonoBehaviour
         }
         
         // Ensure overlay is fully transparent at the end
-        gradientOverlay.style.opacity = 0f;
+        if (gradientOverlay != null)
+        {
+            gradientOverlay.style.opacity = 0f;
+        }
         
         flashCoroutine = null;
     }

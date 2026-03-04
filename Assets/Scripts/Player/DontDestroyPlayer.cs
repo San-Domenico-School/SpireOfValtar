@@ -1,19 +1,32 @@
 using UnityEngine;
 
+/***************************************************
+ * Player.cs
+ * 
+ * Player prefab root script.
+ * Registers with PlayerSession and persists data when needed.
+ * Does NOT use DontDestroyOnLoad.
+ * Gleb
+ * 01.27.2026
+ ***************************************************/
 public class Player : MonoBehaviour
 {
-    private static Player Instance;
+    private PlayerSession session;
 
     void Awake()
     {
-        if (Instance == null)
+        session = FindFirstObjectByType<PlayerSession>(FindObjectsInactive.Include);
+        if (session != null)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            session.ApplyToPlayer(this);
         }
-        else 
+    }
+
+    void OnDestroy()
+    {
+        if (session != null && !session.RestartFlag)
         {
-            Destroy(gameObject); // prevent duplicates
+            session.SaveFromPlayer(this);
         }
     }
 }

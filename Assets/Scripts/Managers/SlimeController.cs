@@ -37,6 +37,10 @@ public class SlimeController : MonoBehaviour
     public int damage = 15;
     [SerializeField] private float damageInterval = 3f;
     private Coroutine damageCoroutine;
+    private bool playerInDamageRange;
+
+    [Header("Audio (optional)")]
+    [SerializeField] private EnemySoundController enemySound;
 
     void Start()
     {
@@ -53,6 +57,10 @@ public class SlimeController : MonoBehaviour
             Debug.LogError("SlimeController requires a NavMeshAgent component!");
             return;
         }
+
+        if (enemySound == null) enemySound = GetComponent<EnemySoundController>();
+        if (enemySound == null) enemySound = GetComponentInParent<EnemySoundController>();
+        if (enemySound == null) enemySound = GetComponentInChildren<EnemySoundController>();
 
         // Find Animator if not assigned (usually on the model child)
         if (animator == null)
@@ -82,7 +90,7 @@ public class SlimeController : MonoBehaviour
         navAgent.stoppingDistance = attackRange;
 
         // Set initial destination to current position
-        navAgent.SetDestination(transform.position);
+       // navAgent.SetDestination(transform.position);
     }
 
     void Update()
@@ -96,7 +104,7 @@ public class SlimeController : MonoBehaviour
         if (isPlayerDetected)
         {
             // Update destination to player position
-            navAgent.SetDestination(player.position);
+         //   navAgent.SetDestination(player.position);
 
             // Check if in attack range
             if (distanceToPlayer <= attackRange && !isAttacking)
@@ -111,7 +119,7 @@ public class SlimeController : MonoBehaviour
         else
         {
             // Player not detected, stop moving
-            navAgent.SetDestination(transform.position);
+         //   navAgent.SetDestination(transform.position);
             if (isAttacking)
             {
                 StopAttack();
@@ -123,6 +131,8 @@ public class SlimeController : MonoBehaviour
 
         // ---- Animation drive ----
         UpdateAnimation();
+
+        HandleDamageRange(distanceToPlayer);
     }
 
     private void UpdateAnimation()
@@ -143,6 +153,7 @@ public class SlimeController : MonoBehaviour
         isAttacking = true;
         // TODO: Add attack logic here (you can also trigger attack animations)
         // Example: animator?.SetTrigger("Attack");
+        if (enemySound != null) enemySound.PlayAttackSfx();
     }
 
     private void StopAttack()
@@ -211,6 +222,7 @@ public class SlimeController : MonoBehaviour
 
             if (playerHealth != null)
             {
+                if (enemySound != null) enemySound.PlayAttackSfx();
                 playerHealth.TakeDamage(damage); // initial instant damage
                 Debug.Log($"{gameObject.name} has hit Player!");
 
@@ -240,10 +252,42 @@ public class SlimeController : MonoBehaviour
         {
             if (playerHealth != null)
             {
+                if (enemySound != null) enemySound.PlayAttackSfx();
                 playerHealth.TakeDamage(damage);
                 Debug.Log($"{gameObject.name} dealt periodic damage: {damage}");
             }
             yield return new WaitForSeconds(damageInterval);
+        }
+    }
+
+    private void HandleDamageRange(float distanceToPlayer)
+    {
+        if (player == null || playerHealth == null) return;
+
+        bool inRange = distanceToPlayer <= attackRange;
+
+        if (inRange != playerInDamageRange)
+        {
+            playerInDamageRange = inRange;
+
+            if (inRange)
+            {
+                if (enemySound != null) enemySound.PlayAttackSfx();
+                playerHealth.TakeDamage(damage);
+                if (damageCoroutine == null)
+                {
+                    damageCoroutine = StartCoroutine(DamageOverTime());
+                }
+            }
+            else if (damageCoroutine != null)
+            {
+                StopCoroutine(damageCoroutine);
+                damageCoroutine = null;
+            }
+        }
+        else if (inRange && damageCoroutine == null)
+        {
+            damageCoroutine = StartCoroutine(DamageOverTime());
         }
     }
 }

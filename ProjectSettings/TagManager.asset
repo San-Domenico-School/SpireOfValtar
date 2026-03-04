@@ -8,6 +8,7 @@ TagManager:
   - Completed
   - Enemy
   - Door
+  - Gold
   layers:
   - Default
   - TransparentFX
@@ -16,8 +17,8 @@ TagManager:
   - Water
   - UI
   - Reticle
-  - 
-  - 
+  - Enemy_Weapons
+  - Player
   - 
   - 
   - 

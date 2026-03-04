@@ -8,7 +8,15 @@ public class FireballCaster : MonoBehaviour
     [SerializeField] private float cooldown = 3f; 
     private bool isOnCooldown = false;
 
+    [Header("Audio (optional)")]
+    [SerializeField] private SpellAudioController spellAudio;
+
     public bool canCast => !isOnCooldown && Time.timeScale > 0f;
+
+    private void Awake()
+    {
+        if (spellAudio == null) spellAudio = GetComponentInParent<SpellAudioController>();
+    }
 
     public void OnCast()
     {
@@ -29,6 +37,7 @@ public class FireballCaster : MonoBehaviour
         FireballProjectile projectile = fireball.GetComponent<FireballProjectile>();
         if (projectile != null)
         {
+            projectile.Init(spellAudio, SpellSfxId.Fireball);
             projectile.StartCoroutine(projectile.MoveRoutine(cam.forward));
         }
     }

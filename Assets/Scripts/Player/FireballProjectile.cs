@@ -9,12 +9,26 @@ public class FireballProjectile : MonoBehaviour
     [SerializeField] private AnimationCurve arcCurve;
     [SerializeField] private float arcHeight = 1f;
     [SerializeField] private float fireballRadius = 5f; // AOE
+    [SerializeField] private float damage = 35f;
 
-    [SerializeField] private float damage = 25f; // Balanced for souls-like: AOE damage
+    [Header("Impact VFX")]
+    [Tooltip("Particle System prefab to spawn on impact.")]
+    [SerializeField] private GameObject impactVfxPrefab;
+    [Tooltip("If true, spawn impact VFX when lifetime expires too.")]
+    [SerializeField] private bool spawnVfxOnExpire = false;
+    [SerializeField] private float impactVfxLifetime = 3f; // safety cleanup
+
+    private SpellAudioController spellAudio;
+    private SpellSfxId spellId = SpellSfxId.Fireball;
+
+    public void Init(SpellAudioController audio, SpellSfxId id)
+    {
+        spellAudio = audio;
+        spellId = id;
+    }
 
     public IEnumerator MoveRoutine(Vector3 direction)
     {
-        Vector3 startPos = transform.position;
         Vector3 forward = direction.normalized;
 
         float t = 0f;
@@ -22,54 +36,72 @@ public class FireballProjectile : MonoBehaviour
         {
             Vector3 movement = forward * speed * Time.deltaTime;
 
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, forward, out hit, movement.magnitude))
+            if (Physics.Raycast(transform.position, forward, out RaycastHit hit, movement.magnitude))
             {
                 Debug.Log($"Fireball hit {hit.collider.name} (Tag: {hit.collider.tag})");
 
+                // Always spawn impact VFX on any collision
+                SpawnImpactVfx(hit.point, hit.normal);
+
+                // Optional hit SFX (you can choose to play on any hit or only enemy hits)
+                if (spellAudio != null) spellAudio.PlayHit(spellId, hit.point);
+
+                // Damage enemies (AOE) only if we hit an enemy (your existing rule)
                 if (hit.collider.CompareTag("Enemy"))
                 {
                     Debug.Log("Fireball hit an enemy! Applying AOE damage...");
 
-                    // AOE Damage - damage all enemies within radius
                     Collider[] hitColliders = Physics.OverlapSphere(hit.point, fireballRadius);
                     foreach (Collider nearby in hitColliders)
                     {
-                        if (nearby.CompareTag("Enemy"))
-                        {
-                            EnemyHealth enemyHealth = nearby.GetComponent<EnemyHealth>();
-                            if (enemyHealth != null)
-                            {
-                                enemyHealth.TakeDamage(damage);
-                                Debug.Log($"Dealt {damage} damage to {nearby.name}");
-                            }
-                        }
+                        // Use parent lookup so child colliders work
+                        EnemyHealth enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
+                        if (enemyHealth == null) continue;
+
+                        // Only damage enemy-tagged objects if you want to keep that rule
+                        // If your EnemyHealth exists on enemies only, you can remove this tag check.
+                        if (!nearby.CompareTag("Enemy") && (nearby.transform.root.CompareTag("Enemy") == false))
+                            continue;
+
+                        enemyHealth.TakeDamage(damage);
+                        Debug.Log($"Dealt {damage} damage to {nearby.name}");
                     }
                 }
 
-                // Destroy only this fireball projectile
                 Destroy(gameObject);
                 yield break;
             }
 
+            // Move
             float normalizedTime = t / lifetime;
 
-            // Move horizontally along the forward vector
             Vector3 planarMove = forward * speed * Time.deltaTime;
             transform.position += planarMove;
 
-            // Apply vertical arc relative to the fireball’s forward distance
-            float arcOffset = arcCurve.Evaluate(normalizedTime) * arcHeight;
+            float arcOffset = (arcCurve != null ? arcCurve.Evaluate(normalizedTime) : 0f) * arcHeight;
             transform.position += Vector3.down * arcOffset;
 
             t += Time.deltaTime;
             yield return null;
         }
 
-        
+        // Lifetime expired
+        if (spawnVfxOnExpire)
+            SpawnImpactVfx(transform.position, Vector3.up);
 
-        Debug.Log("Fireball expired");
-        // Destroy only this fireball projectile
         Destroy(gameObject);
+    }
+
+    private void SpawnImpactVfx(Vector3 position, Vector3 normal)
+    {
+        if (impactVfxPrefab == null) return;
+
+        // Rotate so the particle faces outward from the surface
+        Quaternion rot = Quaternion.LookRotation(normal, Vector3.up);
+
+        GameObject vfx = Instantiate(impactVfxPrefab, position, rot);
+
+        // Safety cleanup in case particle prefab doesn't self-destroy
+        Destroy(vfx, impactVfxLifetime);
     }
 }
