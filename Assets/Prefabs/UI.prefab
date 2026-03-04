@@ -1,73 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &786855021893341595
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1268661189177031471}
-  - component: {fileID: 1207294286793380811}
-  - component: {fileID: 1728166914638651060}
-  m_Layer: 0
-  m_Name: ShopPromptUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1268661189177031471
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 786855021893341595}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5588750606060276492}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1207294286793380811
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 786855021893341595}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 1bc8c8ec8e6d14c6687b19d1000a9578, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 5d32f9ee30eda491193d45e3f9689d6b, type: 3}
-  m_SortingOrder: 5
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &1728166914638651060
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 786855021893341595}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b77e6504b91ed44d39460002f3b84d0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShopPromptHider
 --- !u!1 &1599586514907694819
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,7 +84,6 @@ GameObject:
   - component: {fileID: 4259893960087995556}
   - component: {fileID: 4220763070154417613}
   - component: {fileID: 2715430271132613491}
-  - component: {fileID: 2940603151190460159}
   m_Layer: 0
   m_Name: ControlsUI
   m_TagString: Untagged
@@ -212,20 +143,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ControlsManager
   controlsImage: {fileID: 2800000, guid: 56438728568364e4aad127933b27f12f, type: 3}
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
---- !u!114 &2940603151190460159
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1699642764503225338}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5af0edb24517a416a946009f62020d7f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlsManager
-  controlsImage: {fileID: 2800000, guid: 56438728568364e4aad127933b27f12f, type: 3}
-  inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &1820786876712878410
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,7 +154,6 @@ GameObject:
   - component: {fileID: 5588750606060276492}
   - component: {fileID: 7521267681197462796}
   - component: {fileID: 5229288694638968183}
-  - component: {fileID: 6859780726619606796}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -266,8 +182,6 @@ Transform:
   - {fileID: 4882105482023681743}
   - {fileID: 557840252752171661}
   - {fileID: 4183618315526271691}
-  - {fileID: 5985868104282242845}
-  - {fileID: 1268661189177031471}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7521267681197462796
@@ -287,23 +201,6 @@ MonoBehaviour:
   gameUIDocument: {fileID: 6365394897216457393}
   mainMenuSceneIndex: 0
 --- !u!114 &5229288694638968183
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1820786876712878410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19408aba6c55f4a338255b55c3aed7ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellUI
-  uiDocument: {fileID: 6365394897216457393}
-  spellNames:
-  - Lightning
-  - Fireball
-  - Freeze
---- !u!114 &6859780726619606796
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -442,7 +339,6 @@ GameObject:
   - component: {fileID: 6365394897216457393}
   - component: {fileID: 6280839312589281497}
   - component: {fileID: 732586471934586868}
-  - component: {fileID: 2724843092659682818}
   m_Layer: 0
   m_Name: GameUI
   m_TagString: Untagged
@@ -510,24 +406,6 @@ MonoBehaviour:
   controlsMenuSortOrder: 20
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!114 &732586471934586868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4446561019528792011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28f3d54e2a7e84037a6505ec1cd025a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DamageFlashUI
-  uiDocument: {fileID: 6365394897216457393}
-  playerHealth: {fileID: 0}
-  flashDuration: 1
-  flashColor: {r: 1, g: 0, b: 0, a: 0.5}
-  edgeThickness: 20
-  gradientTextureSize: 512
---- !u!114 &2724843092659682818
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -613,79 +491,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b77e6504b91ed44d39460002f3b84d0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopPromptHider
---- !u!1 &5638783627640779036
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5985868104282242845}
-  - component: {fileID: 4990730668051800956}
-  - component: {fileID: 9019363670947353175}
-  m_Layer: 0
-  m_Name: ShopUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5985868104282242845
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5638783627640779036}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.94325006, y: 3.764, z: 1.8243799}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5588750606060276492}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4990730668051800956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5638783627640779036}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 1bc8c8ec8e6d14c6687b19d1000a9578, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: a470dce327f974e81a8d19dada4791b6, type: 3}
-  m_SortingOrder: 15
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &9019363670947353175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5638783627640779036}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fb89bff332904a809bffb59695f97d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellShopUI
-  shopDocument: {fileID: 4990730668051800956}
-  fireballPrice: 1
-  lightningPrice: 1
-  freezePrice: 1
-  dashPrice: 1
 --- !u!1 &8387379346246659782
 GameObject:
   m_ObjectHideFlags: 0
