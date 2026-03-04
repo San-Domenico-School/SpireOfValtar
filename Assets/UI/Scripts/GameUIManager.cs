@@ -174,6 +174,8 @@ public class GameUIManager : MonoBehaviour
             }
             else
             {
+                // Block pause while the spell shop is open
+                if (SpellShopUI.Instance != null && SpellShopUI.Instance.IsOpen) return;
                 // Pause the game - ESC can only open pause menu
                 PauseGame();
             }
