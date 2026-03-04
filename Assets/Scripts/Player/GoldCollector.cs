@@ -44,6 +44,12 @@ public class GoldCollector : MonoBehaviour
         return goldCollected;
     }
 
+    public void AddGold(int amount)
+    {
+        goldCollected += amount;
+        Debug.Log("Gold Collected: " + goldCollected);
+    }
+
     // Returns true and deducts the amount if the player can afford it.
     public bool SpendGold(int amount)
     {

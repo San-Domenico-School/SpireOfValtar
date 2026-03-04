@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 
 public class SpellShopUI : MonoBehaviour
 {
+    public static SpellShopUI Instance { get; private set; }
     [Header("UI")]
     [SerializeField] private UIDocument shopDocument;
 
@@ -35,6 +36,8 @@ public class SpellShopUI : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         if (shopDocument == null)
         {
             shopDocument = GetComponent<UIDocument>();
