@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3077538878605041437
+--- !u!1 &4399798268224575995
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,13 +8,13 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6520410838893179779}
-  - component: {fileID: 507790759329575690}
-  - component: {fileID: 7306592399470613911}
-  - component: {fileID: 3323825540510250906}
-  - component: {fileID: 2995445183025848909}
-  - component: {fileID: 6102079626057288510}
-  - component: {fileID: 5787395654877503138}
+  - component: {fileID: 3845998099333410635}
+  - component: {fileID: 3538208932750311902}
+  - component: {fileID: 8751151130004066244}
+  - component: {fileID: 3399769605603942651}
+  - component: {fileID: 7423139510284136837}
+  - component: {fileID: 4654117822612847057}
+  - component: {fileID: 195448161122676187}
   m_Layer: 0
   m_Name: Store
   m_TagString: Untagged
@@ -22,36 +22,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6520410838893179779
+--- !u!4 &3845998099333410635
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3077538878605041437}
+  m_GameObject: {fileID: 4399798268224575995}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3, y: 4, z: 4}
+  m_LocalPosition: {x: -1, y: 0.59, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &507790759329575690
+--- !u!33 &3538208932750311902
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3077538878605041437}
+  m_GameObject: {fileID: 4399798268224575995}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &7306592399470613911
+--- !u!23 &8751151130004066244
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3077538878605041437}
+  m_GameObject: {fileID: 4399798268224575995}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -93,13 +93,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3323825540510250906
+--- !u!65 &3399769605603942651
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3077538878605041437}
+  m_GameObject: {fileID: 4399798268224575995}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -114,13 +114,13 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2995445183025848909
+--- !u!114 &7423139510284136837
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3077538878605041437}
+  m_GameObject: {fileID: 4399798268224575995}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0096838fdec4034bbc7718b3d2c902, type: 3}
@@ -129,16 +129,16 @@ MonoBehaviour:
   interactionRadius: 3.16
   playerTransform: {fileID: 0}
   spellShopUI: {fileID: 0}
-  gameViewDocument: {fileID: 0}
+  shopPromptDocument: {fileID: 0}
   radiusIndicator: {fileID: 0}
---- !u!120 &6102079626057288510
+--- !u!120 &4654117822612847057
 LineRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3077538878605041437}
+  m_GameObject: {fileID: 4399798268224575995}
   m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -241,13 +241,13 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &5787395654877503138
+--- !u!114 &195448161122676187
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3077538878605041437}
+  m_GameObject: {fileID: 4399798268224575995}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2f9d528b5319d4b62afde0f52b498dae, type: 3}

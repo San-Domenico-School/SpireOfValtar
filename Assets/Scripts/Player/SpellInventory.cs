@@ -8,8 +8,8 @@ public class SpellInventory : MonoBehaviour
 {
     public static SpellInventory Instance { get; private set; }
 
-    // Each index matches the spell slots in PlayerAbilityController: 0=Lightning, 1=Fireball, 2=Freeze
-    private bool[] unlockedSpells = new bool[3];
+    // 0=Lightning, 1=Fireball, 2=Freeze, 3=Dash
+    private bool[] unlockedSpells = new bool[4];
 
     private void Awake()
     {
