@@ -303,6 +303,7 @@ GameObject:
   - component: {fileID: 436963044692907946}
   - component: {fileID: 595754619050326763}
   - component: {fileID: 5810052520953255633}
+  - component: {fileID: 6286785354656033643}
   m_Layer: 0
   m_Name: Skeleton
   m_TagString: Enemy
@@ -482,6 +483,22 @@ MonoBehaviour:
   damageInterval: 0.5
   playerTag: Player
   enemySound: {fileID: 0}
+--- !u!114 &6286785354656033643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043927312112991726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6a66ae196204002b3bc87a684fc628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootDropper
+  dropPrefab: {fileID: 2975802989904335909, guid: b4611cbb4f1f6154d883701ab569bca0, type: 3}
+  minDrop: 1
+  maxDrop: 2
+  dropSpreadRadius: 1.5
 --- !u!1 &6697825833002519335
 GameObject:
   m_ObjectHideFlags: 0

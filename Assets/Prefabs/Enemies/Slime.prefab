@@ -473,7 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca6a66ae196204002b3bc87a684fc628, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LootDropper
-  dropPrefab: {fileID: 98685163727146675, guid: 143ca02001d964e54bc7b4bf7dad1dcb, type: 3}
+  dropPrefab: {fileID: 2975802989904335909, guid: b4611cbb4f1f6154d883701ab569bca0, type: 3}
   minDrop: 1
   maxDrop: 2
   dropSpreadRadius: 1.5
