@@ -2,8 +2,10 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 
-public class EnemyFleeController : MonoBehaviour
+[RequireComponent(typeof(NavMeshAgent))]
+public class EnemyFleeing : MonoBehaviour
 {
+    // Waypoints to choose from when fleeing
     public Transform[] waypoints;
 
     // Fleeing settings
@@ -19,6 +21,9 @@ public class EnemyFleeController : MonoBehaviour
     public float fleeAcceleration = 25f;
     public float fixedYPosition = 1.1f;
 
+    // Optional door to open when player collides
+    public GameObject door;
+
     private NavMeshAgent agent;
     private Transform player;
 
@@ -26,13 +31,20 @@ public class EnemyFleeController : MonoBehaviour
     private Transform currentWaypoint;
     private HashSet<Transform> visitedWaypoints = new HashSet<Transform>();
 
-    public GameObject door;
-
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        if (agent == null)
+        {
+            Debug.LogError("NavMeshAgent required on EnemyFleeing.");
+            enabled = false;
+            return;
+        }
 
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null) player = playerObj.transform;
+
+        // initialize agent with normal settings
         agent.speed = normalSpeed;
         agent.angularSpeed = normalAngularSpeed;
         agent.acceleration = normalAcceleration;
@@ -41,7 +53,7 @@ public class EnemyFleeController : MonoBehaviour
 
     void Update()
     {
-        if (player == null || waypoints.Length == 0)
+        if (player == null || waypoints == null || waypoints.Length == 0)
             return;
 
         float playerDistance = Vector3.Distance(transform.position, player.position);
@@ -51,7 +63,6 @@ public class EnemyFleeController : MonoBehaviour
             if (!isFleeing)
             {
                 isFleeing = true;
-
                 agent.speed = fleeSpeed;
                 agent.angularSpeed = fleeAngularSpeed;
                 agent.acceleration = fleeAcceleration;
@@ -62,8 +73,8 @@ public class EnemyFleeController : MonoBehaviour
         }
         else if (isFleeing)
         {
+            // stop fleeing -> restore normal movement
             isFleeing = false;
-
             agent.speed = normalSpeed;
             agent.angularSpeed = normalAngularSpeed;
             agent.acceleration = normalAcceleration;
@@ -74,6 +85,7 @@ public class EnemyFleeController : MonoBehaviour
             return;
         }
 
+        // While fleeing, manage waypoint switching
         if (isFleeing && currentWaypoint != null)
         {
             if (!agent.pathPending && agent.remainingDistance <= waypointSwitchDistance)
@@ -86,6 +98,7 @@ public class EnemyFleeController : MonoBehaviour
 
     void LateUpdate()
     {
+        // Keep enemy on fixed Y plane to avoid sinking/floating
         Vector3 pos = transform.position;
         pos.y = fixedYPosition;
         transform.position = pos;
@@ -98,12 +111,14 @@ public class EnemyFleeController : MonoBehaviour
 
         foreach (Transform waypoint in waypoints)
         {
+            if (waypoint == null) continue;
             if (visitedWaypoints.Contains(waypoint))
                 continue;
 
             float distanceToEnemy = Vector3.Distance(transform.position, waypoint.position);
             float distanceToPlayer = Vector3.Distance(player.position, waypoint.position);
 
+            // Prefer waypoints that are far from player and relatively close to enemy
             float score = distanceToPlayer - distanceToEnemy;
 
             if (score > bestScore)
@@ -115,9 +130,11 @@ public class EnemyFleeController : MonoBehaviour
 
         if (bestWaypoint == null)
         {
+            // all visited or none available: reset visited set and try again
             visitedWaypoints.Clear();
-            SelectNextWaypoint();
-            return;
+            // if still null after clearing (e.g., all waypoints null), bail out
+            foreach (Transform wp in waypoints) if (wp != null) { bestWaypoint = wp; break; }
+            if (bestWaypoint == null) return;
         }
 
         currentWaypoint = bestWaypoint;
@@ -150,7 +167,7 @@ public class EnemyFleeController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Door not found in the scene!");
+            Debug.LogWarning("Door not assigned on EnemyFleeing.");
         }
         Destroy(gameObject);
     }
