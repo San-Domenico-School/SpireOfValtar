@@ -14,8 +14,8 @@ public class SpellShopUI : MonoBehaviour
 
     [Header("Spell Prices")]
     [SerializeField] private int fireballPrice  = 1;
-    [SerializeField] private int lightningPrice = 1;
-    [SerializeField] private int freezePrice    = 1;
+    [SerializeField] private int lightningPrice = 3;
+    [SerializeField] private int freezePrice    = 5;
     [SerializeField] private int dashPrice      = 1;
 
     private bool isOpen = false;
@@ -28,6 +28,10 @@ public class SpellShopUI : MonoBehaviour
 
     // Cached UI elements
     private Label  goldLabel;
+    private Label  priceFireball;
+    private Label  priceLightning;
+    private Label  priceFreeze;
+    private Label  priceDash;
     private Button buyFireball;
     private Button buyLightning;
     private Button buyFreeze;
@@ -56,12 +60,16 @@ public class SpellShopUI : MonoBehaviour
 
         var root = shopDocument.rootVisualElement;
 
-        goldLabel    = root.Q<Label> ("GoldLabel");
-        buyFireball  = root.Q<Button>("Buy_Fireball");
-        buyLightning = root.Q<Button>("Buy_Lightning");
-        buyFreeze    = root.Q<Button>("Buy_Freeze");
-        buyDash      = root.Q<Button>("Buy_Dash");
-        closeButton  = root.Q<Button>("CloseShopButton");
+        goldLabel      = root.Q<Label> ("GoldLabel");
+        priceFireball  = root.Q<Label> ("Price_Fireball");
+        priceLightning = root.Q<Label> ("Price_Lightning");
+        priceFreeze    = root.Q<Label> ("Price_Freeze");
+        priceDash      = root.Q<Label> ("Price_Dash");
+        buyFireball    = root.Q<Button>("Buy_Fireball");
+        buyLightning   = root.Q<Button>("Buy_Lightning");
+        buyFreeze      = root.Q<Button>("Buy_Freeze");
+        buyDash        = root.Q<Button>("Buy_Dash");
+        closeButton    = root.Q<Button>("CloseShopButton");
 
         if (buyFireball  != null) buyFireball .clicked += () => TryBuy(IDX_FIREBALL,  fireballPrice);
         if (buyLightning != null) buyLightning.clicked += () => TryBuy(IDX_LIGHTNING, lightningPrice);
@@ -125,6 +133,11 @@ public class SpellShopUI : MonoBehaviour
 
         int gold = GoldCollector.Instance != null ? GoldCollector.Instance.GetGold() : 0;
         if (goldLabel != null) goldLabel.text = $"Gold: {gold}";
+
+        if (priceFireball  != null) priceFireball.text  = $"{fireballPrice} Gold";
+        if (priceLightning != null) priceLightning.text = $"{lightningPrice} Gold";
+        if (priceFreeze    != null) priceFreeze.text    = $"{freezePrice} Gold";
+        if (priceDash      != null) priceDash.text      = $"{dashPrice} Gold";
 
         RefreshCard(IDX_FIREBALL,  buyFireball,  "Buy_Fireball");
         RefreshCard(IDX_LIGHTNING, buyLightning, "Buy_Lightning");
