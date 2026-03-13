@@ -1,3 +1,4 @@
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ public class OpenDoor : MonoBehaviour
     void Start()
     {
         animator.speed = 0;
+        first = false;
     }
 
 
@@ -25,7 +27,7 @@ public class OpenDoor : MonoBehaviour
     {
         if (first)
             return;
-
+       
         if (other.CompareTag("Player"))
         {
             animator.speed = 1;
