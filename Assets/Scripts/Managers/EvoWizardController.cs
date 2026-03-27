@@ -9,8 +9,8 @@ public class EvoWizardController : MonoBehaviour
 
   [Header("Core")]
   [SerializeField] private float baseSpeed = 3.5f;
-  [SerializeField] private float detectionRange = 12f;
-  [SerializeField] private float attackRange = 10f;   // ranged effective range
+  [SerializeField] private float detectionRange = 20f;
+  [SerializeField] private float attackRange = 4f;   // ranged effective range
   [SerializeField] private float meleeRange = 2.0f;   // phase 3 melee distance
   [SerializeField] private float rotationSpeed = 8f;
 
@@ -32,7 +32,7 @@ public class EvoWizardController : MonoBehaviour
   private bool isCastingLightning = false;
 
   [Header("Phase Thresholds (percent)")]
-  [Range(0f, 1f)][SerializeField] private float phase2At = 0.70f; // <= 70% goes phase 2? (we’ll do 70-40 is phase2)
+  [Range(0f, 1f)][SerializeField] private float phase2At = 0.70f;
   [Range(0f, 1f)][SerializeField] private float phase3At = 0.40f;
 
   [Header("Resist / Vulnerability")]
@@ -52,16 +52,21 @@ public class EvoWizardController : MonoBehaviour
   [SerializeField] private float dodgeChanceVsProjectiles = 0.65f;
 
   [Header("Summoning (Phase 3)")]
-  [SerializeField] private EnemySpawner wizardSpawner; // drag in spawner in scene (or put as child)
+  [SerializeField] private EnemySpawner wizardSpawner;
   [SerializeField] private float summonInterval = 6f;
   [SerializeField] private int maxSummonAliveFromThisBoss = 6;
 
   [Header("Phase Visuals")]
   private Renderer[] phaseRenderers;
-
-  [SerializeField] private string colorProperty = "_BaseColor"; // URP Lit uses _BaseColor; Standard uses _Color
+  [SerializeField] private string colorProperty = "_BaseColor";
   private MaterialPropertyBlock mpb;
 
+  [Header("Animation")]
+  [SerializeField] private Animator animator;
+  // How long to wait for the phase-switch animation before resuming combat
+  [SerializeField] private float phaseSwitchAnimDuration = 1.5f;
+  // Set to true while a phase-switch animation is playing so we don't act
+  private bool isPhaseTransitioning = false;
 
   // Components
   private NavMeshAgent navAgent;
@@ -75,6 +80,8 @@ public class EvoWizardController : MonoBehaviour
   private Coroutine summonRoutine;
   private Coroutine meleeRoutine;
   private float lastDodgeTime = -999f;
+  private bool isDead = false;
+  private bool hasInitialized = false;
 
   // Slowed state (set by Freeze spell)
   private float currentSpeedMultiplier = 1f;
@@ -84,23 +91,39 @@ public class EvoWizardController : MonoBehaviour
     navAgent = GetComponent<NavMeshAgent>();
     enemyHealth = GetComponent<EnemyHealth>();
 
+    // Auto-find animator if not assigned in Inspector
+    if (animator == null)
+      animator = GetComponentInChildren<Animator>();
+
     var playerGO = GameObject.FindGameObjectWithTag("Player");
     if (playerGO != null) player = playerGO.transform;
 
-    // initial nav settings
     navAgent.angularSpeed = 360f;
     navAgent.acceleration = 8f;
+    navAgent.updateRotation = false;
 
-    // Start in phase 1
     EnterPhase(Phase.Phase1_Fire);
+    hasInitialized = true;
   }
 
   void Update()
   {
+    if (isDead) return;
     if (navAgent == null || player == null || enemyHealth == null) return;
 
-    // phase check from HP %
+    // Don't do anything while the phase-switch animation is playing
+    if (isPhaseTransitioning) return;
+
+    // ---------- Phase check from HP % ----------
     float hp01 = GetHealth01();
+
+    // Death check
+    if (hp01 <= 0f)
+    {
+      Die();
+      return;
+    }
+
     if (hp01 <= phase3At && currentPhase != Phase.Phase3_MeleeSummon)
       EnterPhase(Phase.Phase3_MeleeSummon);
     else if (hp01 <= phase2At && hp01 > phase3At && currentPhase != Phase.Phase2_Lightning)
@@ -108,7 +131,7 @@ public class EvoWizardController : MonoBehaviour
     else if (hp01 > phase2At && currentPhase != Phase.Phase1_Fire)
       EnterPhase(Phase.Phase1_Fire);
 
-    // detect
+    // ---------- Detection ----------
     float dist = Vector3.Distance(transform.position, player.position);
     isPlayerDetected = dist <= detectionRange;
 
@@ -117,19 +140,25 @@ public class EvoWizardController : MonoBehaviour
       navAgent.SetDestination(transform.position);
       StopAllCombatRoutines();
       if (summonRoutine != null) { StopCoroutine(summonRoutine); summonRoutine = null; }
+
+      // Tell animator we're idle (not moving, not attacking)
+      SetAnimMoving(false);
       return;
     }
 
-    // chase
+    // ---------- Chase ----------
     navAgent.SetDestination(player.position);
+    FacePlayer();
 
-    // phase behaviors
+    // Update movement animation based on whether the agent is actually moving
+    bool isMoving = navAgent.velocity.sqrMagnitude > 0.1f;
+    SetAnimMoving(isMoving);
+
+    // ---------- Phase behaviors ----------
     if (currentPhase == Phase.Phase3_MeleeSummon)
     {
-      // try dodge occasionally if not slowed too hard
       TryDodgeIfThreatened();
 
-      // melee when close
       if (dist <= meleeRange)
       {
         if (meleeRoutine == null)
@@ -144,7 +173,6 @@ public class EvoWizardController : MonoBehaviour
         }
       }
 
-      // stop ranged attacks in phase 3
       if (attackRoutine != null)
       {
         StopCoroutine(attackRoutine);
@@ -153,7 +181,6 @@ public class EvoWizardController : MonoBehaviour
     }
     else
     {
-      // ranged phase: attack when within attackRange
       if (dist <= attackRange)
       {
         if (attackRoutine == null)
@@ -168,7 +195,6 @@ public class EvoWizardController : MonoBehaviour
         }
       }
 
-      // stop melee in ranged phases
       if (meleeRoutine != null)
       {
         StopCoroutine(meleeRoutine);
@@ -176,9 +202,63 @@ public class EvoWizardController : MonoBehaviour
       }
     }
 
-    // apply movement speed each frame
     navAgent.speed = baseSpeed * currentSpeedMultiplier * GetPhaseSpeedMultiplier();
   }
+
+  // ==================== ANIMATION HELPERS ====================
+
+  void SetAnimMoving(bool moving)
+  {
+    if (animator == null) return;
+    animator.SetBool("isMoving", moving);
+  }
+
+  void TriggerAttackAnim()
+  {
+    if (animator == null) return;
+    animator.SetTrigger("Attack");
+  }
+
+  void TriggerPhaseSwitch()
+  {
+    if (animator == null) return;
+    animator.SetTrigger("PhaseSwitch");
+  }
+
+  void TriggerDeath()
+  {
+    if (animator == null) return;
+    animator.SetTrigger("Die");
+  }
+
+  // ==================== DEATH ====================
+
+  void Die()
+{
+    if (isDead) return;
+    isDead = true;
+
+    navAgent.isStopped = true;
+    navAgent.velocity = Vector3.zero;
+    StopAllCombatRoutines();
+    if (summonRoutine != null) { StopCoroutine(summonRoutine); summonRoutine = null; }
+
+    TriggerDeath();
+
+    foreach (var col in GetComponentsInChildren<Collider>())
+        col.enabled = false;
+
+    // Also disable the NavMeshAgent so it doesn't interfere
+    navAgent.enabled = false;
+
+    Debug.Log("[EvoWizard] Boss died!");
+
+    // Match this to your actual death animation clip length
+    // Check the clip duration in the Animation tab of your model import
+    Destroy(gameObject, 4f);
+}
+
+  // ==================== PHASE MANAGEMENT ====================
 
   float GetHealth01()
   {
@@ -194,16 +274,21 @@ public class EvoWizardController : MonoBehaviour
   {
     currentPhase = newPhase;
     ApplyPhaseVisuals(newPhase);
-    // clean up old behaviors
     StopAllCombatRoutines();
 
-    // phase-specific nav settings
+    // Play the phase-switch animation and pause combat briefly
+    if (hasInitialized)
+    {
+      TriggerPhaseSwitch();
+      StartCoroutine(PhaseTransitionPause());
+    }
+
     if (currentPhase == Phase.Phase3_MeleeSummon)
     {
       navAgent.stoppingDistance = 0.2f;
 
       if (wizardSpawner != null)
-        wizardSpawner.StartSpawning();   // Start spawning little wizards
+        wizardSpawner.StartSpawning();
 
       if (summonRoutine == null)
         summonRoutine = StartCoroutine(SummonRoutine());
@@ -213,20 +298,36 @@ public class EvoWizardController : MonoBehaviour
       navAgent.stoppingDistance = Mathf.Min(attackRange * 0.6f, 6f);
     }
 
+    // Tell the animator which phase we're in (0, 1, 2) in case you want
+    // different idle/attack blend trees per phase later
+    animator?.SetInteger("Phase", (int)currentPhase);
+
     Debug.Log($"[EvoWizard] Entered {currentPhase}");
+  }
+
+  IEnumerator PhaseTransitionPause()
+  {
+    isPhaseTransitioning = true;
+    navAgent.isStopped = true;
+
+    yield return new WaitForSeconds(phaseSwitchAnimDuration);
+
+    navAgent.isStopped = false;
+    isPhaseTransitioning = false;
   }
 
   void StopAllCombatRoutines()
   {
     if (attackRoutine != null) { StopCoroutine(attackRoutine); attackRoutine = null; }
     if (meleeRoutine != null) { StopCoroutine(meleeRoutine); meleeRoutine = null; }
-    // do not stop summon routine unless leaving phase 3
     if (currentPhase != Phase.Phase3_MeleeSummon && summonRoutine != null)
     {
       StopCoroutine(summonRoutine);
       summonRoutine = null;
     }
   }
+
+  // ==================== COMBAT ====================
 
   IEnumerator RangedAttackRoutine()
   {
@@ -235,17 +336,7 @@ public class EvoWizardController : MonoBehaviour
     while (true)
     {
       FacePlayer();
-
-      // choose projectile based on phase
-      if (currentPhase == Phase.Phase1_Fire)
-      {
-        ShootProjectile(fireProjectilePrefab);
-      }
-      else if (currentPhase == Phase.Phase2_Lightning)
-      {
-        CastBossLightning();
-      }
-
+      TriggerAttackAnim();
       yield return new WaitForSeconds(delay);
     }
   }
@@ -269,7 +360,6 @@ public class EvoWizardController : MonoBehaviour
 
     Vector3 dir = (player.position - spawnPoint.position).normalized;
 
-    // Boss fireball
     var bossFireball = projGO.GetComponent<BossFireballProjectile>();
     if (bossFireball != null)
     {
@@ -277,7 +367,6 @@ public class EvoWizardController : MonoBehaviour
       return;
     }
 
-    // Player-style fireball (if you still use it somewhere)
     var fireball = projGO.GetComponent<FireballProjectile>();
     if (fireball != null)
     {
@@ -298,18 +387,12 @@ public class EvoWizardController : MonoBehaviour
   {
     isCastingLightning = true;
 
-    // Lock the target position (where the player was when cast started)
     Vector3 targetPos = player.position;
-
-    // Optional: telegraph here (small VFX or decal)
-    // e.g. SpawnTelegraph(targetPos);
 
     yield return new WaitForSeconds(lightningCastDelay);
 
-    // Strike the locked position
     SpawnLightning(targetPos);
 
-    // Damage only if player is still near that position
     if (Vector3.Distance(player.position, targetPos) <= lightningHitRadius)
     {
       var playerHealth = player.GetComponent<PlayerHealth>();
@@ -337,32 +420,30 @@ public class EvoWizardController : MonoBehaviour
 
   IEnumerator MeleeDamageRoutine()
   {
-    var playerHealth = FindFirstObjectByType<PlayerHealth>();
     while (true)
     {
-      if (playerHealth != null)
-        playerHealth.TakeDamage(phase3MeleeDamage);
+      navAgent.isStopped = true;
+      SetAnimMoving(false);
+
+      TriggerAttackAnim();
 
       yield return new WaitForSeconds(meleeDamageInterval);
+
+      navAgent.isStopped = false;
     }
   }
 
   void TryDodgeIfThreatened()
   {
-    // If slowed heavily, don’t dodge much.
     if (currentSpeedMultiplier < 0.6f) return;
-
     if (Time.time < lastDodgeTime + dodgeCooldown) return;
 
-    // For prototype: probabilistic dodge when the player is aiming at boss.
-    // Later you can hook this to projectile detection.
     Transform cam = Camera.main != null ? Camera.main.transform : null;
     if (cam == null) return;
 
     Vector3 toBoss = (transform.position - cam.position).normalized;
     float aimDot = Vector3.Dot(cam.forward, toBoss);
 
-    // if player is aiming roughly at boss, treat as “threatened”
     if (aimDot > 0.85f && Random.value < dodgeChanceVsProjectiles)
     {
       Vector3 right = Vector3.Cross(Vector3.up, (player.position - transform.position).normalized);
@@ -370,9 +451,7 @@ public class EvoWizardController : MonoBehaviour
 
       Vector3 target = transform.position + dodgeDir * dodgeDistance;
 
-      // Use agent move/warp for prototype dodge
       navAgent.Warp(target);
-
       lastDodgeTime = Time.time;
     }
   }
@@ -383,39 +462,39 @@ public class EvoWizardController : MonoBehaviour
     {
       if (wizardSpawner != null)
       {
-        // Keep it simple: Try spawn until max reached (spawner already caps maxAlive globally).
-        // If you want per-boss tracking, add your own counter.
         wizardSpawner.TrySpawnOne();
       }
       yield return new WaitForSeconds(summonInterval);
     }
   }
 
-  // ======== This is what spells call for phase-based resist/vuln =========
+  // ==================== DAMAGE / RESIST ====================
+
   public void ApplyTypedDamage(float amount, DamageType type)
   {
-    float final = amount;
+    float final_amount = amount;
 
-    // Phase 1: resist fire
     if (currentPhase == Phase.Phase1_Fire && type == DamageType.Fire)
-      final *= phase1FireMultiplier;
+      final_amount *= phase1FireMultiplier;
 
-    // Phase 2: resist lightning, vulnerable to fire (i.e. fire does full or more)
     if (currentPhase == Phase.Phase2_Lightning)
     {
-      if (type == DamageType.Lightning) final *= phase2LightningMultiplier;
-      // vulnerable to fire: you said vulnerable, so do 1.25x for prototype:
-      if (type == DamageType.Fire) final *= 1.25f;
+      if (type == DamageType.Lightning) final_amount *= phase2LightningMultiplier;
+      if (type == DamageType.Fire) final_amount *= 1.25f;
     }
 
-    // Phase 3: up to you. Often: no resist, just speed + summons.
-    enemyHealth.TakeDamage(final);
+    enemyHealth.TakeDamage(final_amount);
   }
 
-  // Freeze hook (same as WizardController)
+  // ==================== FREEZE ====================
+
   public void SetSpeedMultiplier(float multiplier)
   {
     currentSpeedMultiplier = Mathf.Clamp(multiplier, 0.1f, 2f);
+
+    // Slow the animation speed to match movement slowdown
+    if (animator != null)
+      animator.speed = currentSpeedMultiplier;
   }
 
   private Coroutine freezeTimer;
@@ -423,11 +502,19 @@ public class EvoWizardController : MonoBehaviour
   public void ApplyFreezeEffect(float slowAmount, float duration)
   {
     Debug.Log($"[EvoWizard] Freeze applied! phase={currentPhase} slow={slowAmount} duration={duration}", this);
-    
+
     if (freezeTimer != null) StopCoroutine(freezeTimer);
     SetSpeedMultiplier(1f - slowAmount);
     freezeTimer = StartCoroutine(FreezeTimer(duration));
   }
+
+  IEnumerator FreezeTimer(float duration)
+  {
+    yield return new WaitForSeconds(duration);
+    SetSpeedMultiplier(1f);
+  }
+
+  // ==================== VISUALS ====================
 
   private void ApplyPhaseVisuals(Phase phase)
   {
@@ -447,16 +534,31 @@ public class EvoWizardController : MonoBehaviour
     foreach (var r in phaseRenderers)
     {
       if (r == null) continue;
-
       r.GetPropertyBlock(mpb);
       mpb.SetColor(colorProperty, c);
       r.SetPropertyBlock(mpb);
     }
   }
 
-  IEnumerator FreezeTimer(float duration)
+  // Called by Animation Event on the attack clip
+  public void OnAttackHit()
   {
-    yield return new WaitForSeconds(duration);
-    SetSpeedMultiplier(1f);
+    if (isDead || isPhaseTransitioning) return;
+
+    if (currentPhase == Phase.Phase1_Fire)
+    {
+      ShootProjectile(fireProjectilePrefab);
+    }
+    else if (currentPhase == Phase.Phase2_Lightning)
+    {
+      CastBossLightning();
+    }
+    else if (currentPhase == Phase.Phase3_MeleeSummon)
+    {
+      var playerHealth = FindFirstObjectByType<PlayerHealth>();
+      float dist = Vector3.Distance(transform.position, player.position);
+      if (playerHealth != null && dist <= meleeRange)
+        playerHealth.TakeDamage(phase3MeleeDamage);
+    }
   }
 }
