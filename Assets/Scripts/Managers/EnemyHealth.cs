@@ -80,21 +80,26 @@ public class EnemyHealth : MonoBehaviour
   }
 
   private void Die()
-  {
+{
     Debug.Log($"{gameObject.name} has been defeated!");
 
-    // ✅ Notify listeners BEFORE destruction
     OnDeath?.Invoke();
 
     if (deathParticle != null)
     {
-      Instantiate(deathParticle, transform.position, Quaternion.identity);
+        Instantiate(deathParticle, transform.position, Quaternion.identity);
     }
 
-    EnemyKilled(); // stairs logic still works
+    EnemyKilled();
 
-    Destroy(gameObject);
-  }
+    // Only destroy if no one else is handling death (like a boss controller)
+    var bossController = GetComponent<EvoWizardController>();
+    if (bossController == null)
+    {
+        Destroy(gameObject);
+    }
+    // If boss controller exists, it handles the destroy after the death animation
+}
 
   public void EnemyKilled()
   {
