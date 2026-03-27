@@ -70,8 +70,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpellShopUI
   shopDocument: {fileID: 1908593690296127851}
   fireballPrice: 1
-  lightningPrice: 1
-  freezePrice: 1
+  lightningPrice: 3
+  freezePrice: 5
   dashPrice: 1
 --- !u!1 &1699642764503225338
 GameObject:
