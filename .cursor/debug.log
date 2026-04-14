@@ -485,6 +485,7 @@
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":20,"previous":85,"current":65,"isDead":false,"suppress":false},"timestamp":1773264155660}
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":20,"previous":65,"current":45,"isDead":false,"suppress":false},"timestamp":1773264156919}
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":20,"previous":45,"current":25,"isDead":false,"suppress":false},"timestamp":1773264159986}
+<<<<<<< Updated upstream
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":100,"current":90,"isDead":false,"suppress":false},"timestamp":1776202443119}
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":90,"current":80,"isDead":false,"suppress":false},"timestamp":1776202443120}
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":80,"current":70,"isDead":false,"suppress":false},"timestamp":1776202445256}
@@ -504,3 +505,12 @@
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":20,"current":10,"isDead":false,"suppress":false},"timestamp":1776202522698}
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":10,"current":0,"isDead":false,"suppress":false},"timestamp":1776202522699}
 {"sessionId":"debug-session","runId":"run1","hypothesisId":"H3","location":"PlayerDeathHandler.cs:HandleDeath","message":"OnDeath received","data":{},"timestamp":1776202522699}
+=======
+{"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":15,"previous":100,"current":85,"isDead":false,"suppress":false},"timestamp":1776201591424}
+{"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":15,"previous":85,"current":70,"isDead":false,"suppress":false},"timestamp":1776201594045}
+{"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":15,"previous":70,"current":55,"isDead":false,"suppress":false},"timestamp":1776201594826}
+{"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":55,"current":45,"isDead":false,"suppress":false},"timestamp":1776201644040}
+{"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":45,"current":35,"isDead":false,"suppress":false},"timestamp":1776201644042}
+{"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":85,"current":75,"isDead":false,"suppress":false},"timestamp":1776201659978}
+{"sessionId":"debug-session","runId":"run1","hypothesisId":"H2","location":"PlayerHealth.cs:TakeDai run 1st promage","message":"Damage applied","data":{"amount":10,"previous":75,"current":65,"isDead":false,"suppress":false},"timestamp":1776201659978}
+>>>>>>> Stashed changes
