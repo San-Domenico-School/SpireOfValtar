@@ -1091,21 +1091,42 @@ public class GameUIManager : MonoBehaviour
         }
     }
     
+    private void ResetRunState()
+    {
+        // Set restart flag first so Player.OnDestroy() does not save stale state.
+        var session = FindFirstObjectByType<PlayerSession>(FindObjectsInactive.Include);
+        if (session != null)
+        {
+            session.SetRestartFlag(true);
+            session.ResetToDefaults();
+        }
+
+        // Destroy the DontDestroyOnLoad player entirely.
+        // GoldCollector and SpellInventory live on it, so destroying it guarantees
+        // they are recreated fresh (from prefab defaults) when Play is pressed again.
+        var player = FindFirstObjectByType<Player>(FindObjectsInactive.Include);
+        if (player != null)
+        {
+            Destroy(player.gameObject);
+        }
+    }
+
     private void OnPauseMainMenuClicked()
     {
+        ResetRunState();
         ResumeGame();
         HideGameUI();
-        
+
         if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
-        
+
         if (mainMenuManager != null)
         {
             mainMenuManager.LoadMainMenuScene();
         }
-        
+
         CleanupGame();
     }
     
@@ -1194,13 +1215,14 @@ public class GameUIManager : MonoBehaviour
     
     private void OnMenuButtonClicked()
     {
+        ResetRunState();
         HideGameUI();
-        
+
         if (mainMenuManager != null)
         {
             mainMenuManager.LoadMainMenuScene();
         }
-        
+
         CleanupGame();
     }
     
