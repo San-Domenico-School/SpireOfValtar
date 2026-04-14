@@ -17,7 +17,26 @@ public class WizardProjectile : MonoBehaviour
 
     private void Update()
     {
-        transform.position += direction * speed * Time.deltaTime;
+        float moveDistance = speed * Time.deltaTime;
+
+        // Raycast ahead to catch collisions with thin geometry (e.g. floors/walls)
+        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, moveDistance))
+        {
+            if (hit.collider.CompareTag("Player"))
+            {
+                PlayerHealth health = hit.collider.GetComponent<PlayerHealth>();
+                if (health != null) health.TakeDamage(damage);
+                Destroy(gameObject);
+                return;
+            }
+            else if (!hit.collider.isTrigger)
+            {
+                Destroy(gameObject);
+                return;
+            }
+        }
+
+        transform.position += direction * moveDistance;
     }
 
     private void OnTriggerEnter(Collider other)
