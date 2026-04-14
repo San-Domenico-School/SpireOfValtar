@@ -27,6 +27,8 @@ public class SkeletonMeleeController : MonoBehaviour
 
     [Header("Melee Damage")]
     [SerializeField] private int damage = 15;
+    [Tooltip("How far through the swing animation (0-1) before damage can land.")]
+    [SerializeField] private float damageWindowStart = 0.4f;
     [Tooltip("Cooldown between hits while the sword overlaps the player.")]
     [SerializeField] private float damageInterval = 0.5f;
     [SerializeField] private string playerTag = "Player";
@@ -41,6 +43,8 @@ public class SkeletonMeleeController : MonoBehaviour
     // State
     private bool isPlayerDetected = false;
     private bool isAttacking = false;
+    private bool hasHitThisCycle = false;
+    private float lastAttackNormalizedTime = 0f;
 
     // Freeze effect management
     private Coroutine freezeTimer = null;
@@ -157,6 +161,18 @@ public class SkeletonMeleeController : MonoBehaviour
         }
 
         animator.SetFloat(speedParam, speed);
+
+        // Detect when the attack animation loops to allow another hit
+        if (isAttacking)
+        {
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            float currentNorm = stateInfo.normalizedTime % 1f;
+            if (currentNorm < lastAttackNormalizedTime)
+            {
+                hasHitThisCycle = false;
+            }
+            lastAttackNormalizedTime = currentNorm;
+        }
     }
 
     private void FacePlayer()
@@ -174,6 +190,8 @@ public class SkeletonMeleeController : MonoBehaviour
     private void StartAttack()
     {
         isAttacking = true;
+        hasHitThisCycle = false;
+        lastAttackNormalizedTime = 0f;
         animator.SetBool("isAttacking", true);
     }
 
@@ -181,7 +199,7 @@ public class SkeletonMeleeController : MonoBehaviour
     {
         isAttacking = false;
         animator.SetBool("isAttacking", false);
-        // Intentionally do not disable hitbox here.
+        if (hitbox != null) hitbox.EndAttack();
     }
 
     // ===== Animation Events =====
@@ -195,7 +213,7 @@ public class SkeletonMeleeController : MonoBehaviour
 
     public void AnimAttackEnd()
     {
-        // Intentionally left blank so the hitbox stays active until we leave attack range.
+        if (hitbox != null) hitbox.EndAttack();
     }
 
     // Public method for external speed modification (for spells, etc.)
@@ -256,17 +274,21 @@ public class SkeletonMeleeController : MonoBehaviour
 
     public void TryDamage(Collider other)
     {
+        if (!isAttacking || hasHitThisCycle) return;
         if (other == null || !other.CompareTag(playerTag)) return;
 
-        if (damageInterval > 0f)
-        {
-            if (nextDamageTime.TryGetValue(other, out float nextTime) && Time.time < nextTime) return;
-            nextDamageTime[other] = Time.time + damageInterval;
-        }
+        // Only deal damage after the swing animation has reached the contact portion
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        float t = stateInfo.normalizedTime % 1f;
+        if (t < damageWindowStart) return;
 
         PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
         if (playerHealth == null) playerHealth = other.GetComponentInParent<PlayerHealth>();
-        if (playerHealth != null) playerHealth.TakeDamage(damage);
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(damage);
+            hasHitThisCycle = true;
+        }
     }
 
     public void ClearDamageTarget(Collider other)
