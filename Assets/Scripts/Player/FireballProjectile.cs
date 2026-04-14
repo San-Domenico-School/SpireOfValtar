@@ -8,7 +8,7 @@ public class FireballProjectile : MonoBehaviour
     [SerializeField] private float lifetime = 10f;
     [SerializeField] private AnimationCurve arcCurve;
     [SerializeField] private float arcHeight = 1f;
-    [SerializeField] private float fireballRadius = 5f; // AOE
+    [SerializeField] private float fireballRadius = 1.5f; // AOE
     [SerializeField] private float damage = 35f;
 
     [Header("Impact VFX")]
@@ -46,26 +46,16 @@ public class FireballProjectile : MonoBehaviour
                 // Optional hit SFX (you can choose to play on any hit or only enemy hits)
                 if (spellAudio != null) spellAudio.PlayHit(spellId, hit.point);
 
-                // Damage enemies (AOE) only if we hit an enemy (your existing rule)
-                if (hit.collider.CompareTag("Enemy"))
+                // AOE damage on any collision
+                Debug.Log("Fireball impact! Applying AOE damage...");
+                Collider[] hitColliders = Physics.OverlapSphere(hit.point, fireballRadius);
+                foreach (Collider nearby in hitColliders)
                 {
-                    Debug.Log("Fireball hit an enemy! Applying AOE damage...");
+                    EnemyHealth enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
+                    if (enemyHealth == null) continue;
 
-                    Collider[] hitColliders = Physics.OverlapSphere(hit.point, fireballRadius);
-                    foreach (Collider nearby in hitColliders)
-                    {
-                        // Use parent lookup so child colliders work
-                        EnemyHealth enemyHealth = nearby.GetComponentInParent<EnemyHealth>();
-                        if (enemyHealth == null) continue;
-
-                        // Only damage enemy-tagged objects if you want to keep that rule
-                        // If your EnemyHealth exists on enemies only, you can remove this tag check.
-                        if (!nearby.CompareTag("Enemy") && (nearby.transform.root.CompareTag("Enemy") == false))
-                            continue;
-
-                        enemyHealth.TakeDamage(damage);
-                        Debug.Log($"Dealt {damage} damage to {nearby.name}");
-                    }
+                    enemyHealth.TakeDamage(damage);
+                    Debug.Log($"Dealt {damage} damage to {nearby.name}");
                 }
 
                 Destroy(gameObject);
