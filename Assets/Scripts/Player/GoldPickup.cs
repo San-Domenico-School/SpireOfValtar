@@ -3,6 +3,7 @@
 // Works with CharacterController players by polling proximity each frame.
 // OnTriggerEnter is a bonus fallback in case a trigger overlap fires too.
 
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GoldPickup : MonoBehaviour
@@ -10,6 +11,7 @@ public class GoldPickup : MonoBehaviour
     private bool collected = false;
     private Transform playerTransform;
     private const float pickupRadius = 1.2f;
+    private float random = Random.Range(0, 360);
 
     private void Start()
     {
@@ -19,17 +21,14 @@ public class GoldPickup : MonoBehaviour
 
     private void Update()
     {
+        transform.rotation = Quaternion.Euler(0,Time.timeSinceLevelLoad * 100 + random,0);
+
         if (collected || playerTransform == null) return;
 
         if (Vector3.Distance(transform.position, playerTransform.position) <= pickupRadius)
             Collect();
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (collected) return;
-        if (other.CompareTag("Player")) Collect();
-    }
+    
 
     private void Collect()
     {
