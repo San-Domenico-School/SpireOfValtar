@@ -29,6 +29,11 @@ public class GameUIManager : MonoBehaviour
     private Button menuButton;
     private MainMenuManager mainMenuManager;
     private Label goldLabel;
+    private Label chaseBookLabel;
+    private Coroutine chaseBookCoroutine;
+    private Label killCounterLabel;
+    private Stairs stairsRef;
+    private int lastKillsRemaining = -1;
     
     private Button pauseResumeButton;
     private Button pauseControlsButton;
@@ -77,7 +82,11 @@ public class GameUIManager : MonoBehaviour
         var rootVisualElement = uiDocument.rootVisualElement;
         gameUIContainer = rootVisualElement;
         menuButton      = rootVisualElement.Q<Button>("MenuButton");
-        goldLabel       = rootVisualElement.Q<Label>("GoldLabel");
+        goldLabel        = rootVisualElement.Q<Label>("GoldLabel");
+        chaseBookLabel   = rootVisualElement.Q<Label>("ChaseBookLabel");
+        killCounterLabel = rootVisualElement.Q<Label>("KillCounterLabel");
+        stairsRef        = FindFirstObjectByType<Stairs>(FindObjectsInactive.Include);
+        lastKillsRemaining = -1;
         mainMenuManager = FindObjectOfType<MainMenuManager>();
 
         if (menuButton != null)
@@ -192,6 +201,36 @@ public class GameUIManager : MonoBehaviour
 
         if (goldLabel != null && GoldCollector.Instance != null)
             goldLabel.text = GoldCollector.Instance.GetGold().ToString();
+
+        // Kill counter — same stale-panel pattern as goldLabel
+        if (killCounterLabel != null && killCounterLabel.panel == null)
+            killCounterLabel = null;
+
+        if (killCounterLabel == null && uiDocument != null && uiDocument.rootVisualElement != null)
+            killCounterLabel = uiDocument.rootVisualElement.Q<Label>("KillCounterLabel");
+
+        if (killCounterLabel != null)
+        {
+            if (stairsRef == null)
+                stairsRef = FindFirstObjectByType<Stairs>(FindObjectsInactive.Include);
+
+            if (stairsRef == null || stairsRef.IsComplete)
+            {
+                killCounterLabel.style.display = DisplayStyle.None;
+            }
+            else
+            {
+                int remaining = stairsRef.KillsRemaining;
+                if (remaining != lastKillsRemaining)
+                {
+                    lastKillsRemaining    = remaining;
+                    killCounterLabel.text = remaining == 1
+                        ? "Kill 1 more enemy"
+                        : $"Kill {remaining} more enemies";
+                }
+                killCounterLabel.style.display = DisplayStyle.Flex;
+            }
+        }
     }
     
     private void InitializePauseMenu()
@@ -895,6 +934,58 @@ public class GameUIManager : MonoBehaviour
         pauseRebindOperation.Start();
     }
     
+    // ── "Chase the book" centre-screen message ────────────────────────────────
+
+    public void ShowChaseBookMessage()
+    {
+        // Re-query in case the label wasn't ready at bind time
+        if (chaseBookLabel == null && uiDocument != null && uiDocument.rootVisualElement != null)
+            chaseBookLabel = uiDocument.rootVisualElement.Q<Label>("ChaseBookLabel");
+
+        if (chaseBookLabel == null) return;
+
+        if (chaseBookCoroutine != null)
+            StopCoroutine(chaseBookCoroutine);
+
+        chaseBookCoroutine = StartCoroutine(ChaseBookRoutine());
+    }
+
+    private IEnumerator ChaseBookRoutine()
+    {
+        const float fadeInDuration  = 1.0f;
+        const float holdDuration    = 3.0f;
+        const float fadeOutDuration = 1.0f;
+        const float maxOpacity      = 0.75f;
+
+        chaseBookLabel.style.display = DisplayStyle.Flex;
+
+        // Fade in
+        float t = 0f;
+        while (t < fadeInDuration)
+        {
+            t += Time.deltaTime;
+            chaseBookLabel.style.opacity = Mathf.Lerp(0f, maxOpacity, t / fadeInDuration);
+            yield return null;
+        }
+        chaseBookLabel.style.opacity = maxOpacity;
+
+        // Hold
+        yield return new WaitForSeconds(holdDuration);
+
+        // Fade out
+        t = 0f;
+        while (t < fadeOutDuration)
+        {
+            t += Time.deltaTime;
+            chaseBookLabel.style.opacity = Mathf.Lerp(maxOpacity, 0f, t / fadeOutDuration);
+            yield return null;
+        }
+
+        chaseBookLabel.style.opacity = 0f;
+        chaseBookLabel.style.display = DisplayStyle.None;
+        chaseBookCoroutine = null;
+    }
+
     public void PauseGame()
     {
         if (isPaused)
