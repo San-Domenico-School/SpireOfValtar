@@ -24,6 +24,12 @@ public class SpellInventory : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     public bool IsUnlocked(int spellIndex)
     {
         if (spellIndex < 0 || spellIndex >= unlockedSpells.Length) return false;
@@ -42,5 +48,11 @@ public class SpellInventory : MonoBehaviour
         int count = 0;
         foreach (bool b in unlockedSpells) if (b) count++;
         return count;
+    }
+
+    public void Reset()
+    {
+        unlockedSpells = new bool[4];
+        Debug.Log("[SpellInventory] Reset: all spells locked.");
     }
 }

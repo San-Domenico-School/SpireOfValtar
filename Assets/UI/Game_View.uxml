@@ -13,6 +13,10 @@
             <ui:ProgressBar name="HealthBar" low-value="0" high-value="100" value="100" class="hud-bar health-bar" />
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement name="GoldCounter" picking-mode="Ignore" class="gold-counter-panel">
+        <ui:VisualElement name="CoinIcon" picking-mode="Ignore" class="coin-icon" />
+        <ui:Label name="GoldLabel" text="0" class="gold-label" />
+    </ui:VisualElement>
     <ui:VisualElement name="SpellContainer" picking-mode="Ignore" style="position: absolute; right: 2%; bottom: 5%; flex-direction: row; align-items: flex-end; gap: 15px;" />
     <ui:VisualElement name="Reticle" picking-mode="Ignore" class="reticle">
         <ui:VisualElement name="ReticleH" picking-mode="Ignore" class="reticle-h" style="height: 5px; top: 0; left: 0;" />

@@ -20,12 +20,18 @@ public class GoldCollector : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Persist across scenes 
+            DontDestroyOnLoad(gameObject); // Persist across scenes
         }
         else
         {
             Destroy(gameObject); // Prevent duplicates
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -57,5 +63,11 @@ public class GoldCollector : MonoBehaviour
         goldCollected -= amount;
         Debug.Log($"[GoldCollector] Spent {amount} gold. Remaining: {goldCollected}");
         return true;
+    }
+
+    public void Reset()
+    {
+        goldCollected = 0;
+        Debug.Log("[GoldCollector] Reset: gold set to 0.");
     }
 }

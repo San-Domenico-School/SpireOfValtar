@@ -28,6 +28,7 @@ public class GameUIManager : MonoBehaviour
     private VisualElement gameUIContainer;
     private Button menuButton;
     private MainMenuManager mainMenuManager;
+    private Label goldLabel;
     
     private Button pauseResumeButton;
     private Button pauseControlsButton;
@@ -75,7 +76,8 @@ public class GameUIManager : MonoBehaviour
 
         var rootVisualElement = uiDocument.rootVisualElement;
         gameUIContainer = rootVisualElement;
-        menuButton = rootVisualElement.Q<Button>("MenuButton");
+        menuButton      = rootVisualElement.Q<Button>("MenuButton");
+        goldLabel       = rootVisualElement.Q<Label>("GoldLabel");
         mainMenuManager = FindObjectOfType<MainMenuManager>();
 
         if (menuButton != null)
@@ -180,6 +182,16 @@ public class GameUIManager : MonoBehaviour
                 PauseGame();
             }
         }
+
+        // Gold counter — re-query label if it went stale (UIDocument rebuilt after pause/shop)
+        if (goldLabel != null && goldLabel.panel == null)
+            goldLabel = null;
+
+        if (goldLabel == null && uiDocument != null && uiDocument.rootVisualElement != null)
+            goldLabel = uiDocument.rootVisualElement.Q<Label>("GoldLabel");
+
+        if (goldLabel != null && GoldCollector.Instance != null)
+            goldLabel.text = GoldCollector.Instance.GetGold().ToString();
     }
     
     private void InitializePauseMenu()
@@ -1091,21 +1103,42 @@ public class GameUIManager : MonoBehaviour
         }
     }
     
+    private void ResetRunState()
+    {
+        // Set restart flag first so Player.OnDestroy() does not save stale state.
+        var session = FindFirstObjectByType<PlayerSession>(FindObjectsInactive.Include);
+        if (session != null)
+        {
+            session.SetRestartFlag(true);
+            session.ResetToDefaults();
+        }
+
+        // Destroy the DontDestroyOnLoad player entirely.
+        // GoldCollector and SpellInventory live on it, so destroying it guarantees
+        // they are recreated fresh (from prefab defaults) when Play is pressed again.
+        var player = FindFirstObjectByType<Player>(FindObjectsInactive.Include);
+        if (player != null)
+        {
+            Destroy(player.gameObject);
+        }
+    }
+
     private void OnPauseMainMenuClicked()
     {
+        ResetRunState();
         ResumeGame();
         HideGameUI();
-        
+
         if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
-        
+
         if (mainMenuManager != null)
         {
             mainMenuManager.LoadMainMenuScene();
         }
-        
+
         CleanupGame();
     }
     
@@ -1194,13 +1227,14 @@ public class GameUIManager : MonoBehaviour
     
     private void OnMenuButtonClicked()
     {
+        ResetRunState();
         HideGameUI();
-        
+
         if (mainMenuManager != null)
         {
             mainMenuManager.LoadMainMenuScene();
         }
-        
+
         CleanupGame();
     }
     
