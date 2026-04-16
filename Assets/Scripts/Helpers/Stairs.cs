@@ -9,8 +9,7 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Stairs : MonoBehaviour
 {
-    public float numberOfEnemies = 5; 
-    private int killed = 0;
+    public float numberOfEnemies = 5;
 
     [SerializeField] GameObject audioSource;
     [SerializeField] bool test = false;
@@ -26,12 +25,10 @@ public class Stairs : MonoBehaviour
 
     public void Progress()
     {
-        playTimeLeft += playTimeDuration; 
-        if (killed < numberOfEnemies)
-        {
+        playTimeLeft += playTimeDuration;
+        if (progressCount < (int)numberOfEnemies)
             audioSource.GetComponent<AudioSource>().Play();
-        }
-        killed++;
+        progressCount++;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
