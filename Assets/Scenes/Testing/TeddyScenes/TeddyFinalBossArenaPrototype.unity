@@ -163,6 +163,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 7807538432633192378, guid: b43f3597909e5425281215cdd0f558bb, type: 3}
+--- !u!4 &263192225 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7936206195257743609, guid: ffff7901f36514343b5cb8ae260b1c9a, type: 3}
+  m_PrefabInstance: {fileID: 808235443}
+  m_PrefabAsset: {fileID: 0}
 --- !u!64 &343628786
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -550,6 +555,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2811071827075305435, guid: ffff7901f36514343b5cb8ae260b1c9a, type: 3}
+      propertyPath: firePoint
+      value: 
+      objectReference: {fileID: 263192225}
     - target: {fileID: 5043927312112991726, guid: ffff7901f36514343b5cb8ae260b1c9a, type: 3}
       propertyPath: m_Name
       value: EvoWizard
