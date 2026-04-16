@@ -45,7 +45,7 @@ public class SkeletonMeleeHitbox : MonoBehaviour
 
     public void EndAttack()
     {
-        // Intentionally do not disable hitbox.
+        controller?.ClearDamageTarget(null);
     }
 
     private void OnTriggerEnter(Collider other)
