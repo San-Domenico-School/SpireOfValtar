@@ -28,6 +28,7 @@ public class GameUIManager : MonoBehaviour
     private VisualElement gameUIContainer;
     private Button menuButton;
     private MainMenuManager mainMenuManager;
+    private Label goldLabel;
     
     private Button pauseResumeButton;
     private Button pauseControlsButton;
@@ -75,7 +76,8 @@ public class GameUIManager : MonoBehaviour
 
         var rootVisualElement = uiDocument.rootVisualElement;
         gameUIContainer = rootVisualElement;
-        menuButton = rootVisualElement.Q<Button>("MenuButton");
+        menuButton      = rootVisualElement.Q<Button>("MenuButton");
+        goldLabel       = rootVisualElement.Q<Label>("GoldLabel");
         mainMenuManager = FindObjectOfType<MainMenuManager>();
 
         if (menuButton != null)
@@ -180,6 +182,16 @@ public class GameUIManager : MonoBehaviour
                 PauseGame();
             }
         }
+
+        // Gold counter — re-query label if it went stale (UIDocument rebuilt after pause/shop)
+        if (goldLabel != null && goldLabel.panel == null)
+            goldLabel = null;
+
+        if (goldLabel == null && uiDocument != null && uiDocument.rootVisualElement != null)
+            goldLabel = uiDocument.rootVisualElement.Q<Label>("GoldLabel");
+
+        if (goldLabel != null && GoldCollector.Instance != null)
+            goldLabel.text = GoldCollector.Instance.GetGold().ToString();
     }
     
     private void InitializePauseMenu()
