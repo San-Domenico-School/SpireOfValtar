@@ -83,6 +83,19 @@
      background-color: rgb(220, 50, 50);
  }
 
+/* ── Kill Counter (top-centre, only shown when Stairs exist in scene) ── */
+.kill-counter-label {
+    position: absolute;
+    top: 2%;
+    left: 0;
+    right: 0;
+    -unity-text-align: upper-center;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 20px;
+    -unity-font-style: bold;
+    display: none;
+}
+
 /* ── Gold Counter (top-right HUD) ── */
 .gold-counter-panel {
     position: absolute;
@@ -118,6 +131,21 @@
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     min-width: 20px;
+}
+
+/* ── Chase the book — centre-screen narrative label ── */
+.chase-book-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 38%;
+    -unity-text-align: middle-center;
+    font-size: 32px;
+    -unity-font-style: bold;
+    color: rgba(255, 240, 200, 0.85);
+    opacity: 0;
+    display: none;
+    letter-spacing: 2px;
 }
 
 /* ── Reticle (crosshair, dead-centre of screen) ── */

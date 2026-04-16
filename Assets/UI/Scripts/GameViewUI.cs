@@ -22,6 +22,11 @@ public class GameViewUI : MonoBehaviour
     private ProgressBar staminaBar;
     private Label       healthValueLabel;
     private Label       goldLabel;
+    private Label       killCounterLabel;
+
+    // Kill counter state
+    private Stairs stairsRef;
+    private int    lastKillsRemaining = -1;
 
     // Runtime state
     private float        currentHealth  = 100f;
@@ -112,6 +117,9 @@ public class GameViewUI : MonoBehaviour
 
         // ── Gold ──────────────────────────────────────────────────────────────
         UpdateGoldLabel();
+
+        // ── Kill Counter ──────────────────────────────────────────────────────
+        UpdateKillCounterLabel();
     }
 
     // ─── Gold update ───────────────────────────────────────────────────────────
@@ -153,6 +161,48 @@ public class GameViewUI : MonoBehaviour
             goldLabel.text = GoldCollector.Instance.GetGold().ToString();
     }
 
+    // ─── Kill Counter update ───────────────────────────────────────────────────
+
+    private void UpdateKillCounterLabel()
+    {
+        // Lazy-find killCounterLabel the same way goldLabel is handled
+        if (killCounterLabel != null && killCounterLabel.panel == null)
+            killCounterLabel = null;
+
+        if (killCounterLabel == null && uiDocument != null && uiDocument.rootVisualElement != null)
+            killCounterLabel = uiDocument.rootVisualElement.Q<Label>("KillCounterLabel");
+
+        if (killCounterLabel == null) return;
+
+        // Lazy-find Stairs — only present in scenes that have the staircase
+        if (stairsRef == null)
+            stairsRef = FindFirstObjectByType<Stairs>(FindObjectsInactive.Include);
+
+        // No Stairs in this scene — keep label hidden
+        if (stairsRef == null)
+        {
+            killCounterLabel.style.display = DisplayStyle.None;
+            return;
+        }
+
+        // Stairs done — hide the label
+        if (stairsRef.IsComplete)
+        {
+            killCounterLabel.style.display = DisplayStyle.None;
+            return;
+        }
+
+        // Show and update only when the value actually changes
+        int remaining = stairsRef.KillsRemaining;
+        if (remaining != lastKillsRemaining)
+        {
+            lastKillsRemaining  = remaining;
+            killCounterLabel.text = $"Kill {remaining} more {(remaining == 1 ? "enemy" : "enemies")}";
+        }
+
+        killCounterLabel.style.display = DisplayStyle.Flex;
+    }
+
     // ─── Public API ────────────────────────────────────────────────────────────
 
     public void RefreshUI()
@@ -185,8 +235,13 @@ public class GameViewUI : MonoBehaviour
         staminaBar       = root.Q<ProgressBar>("StaminaProgressBar");
         healthValueLabel = root.Q<Label>("HealthValueLabel");
         goldLabel        = root.Q<Label>("GoldLabel");
+        killCounterLabel = root.Q<Label>("KillCounterLabel");
 
-        Debug.Log($"[GameViewUI] BindUI complete — goldLabel found: {goldLabel != null}");
+        // Re-find Stairs whenever UI is rebound (scene may have changed)
+        stairsRef            = FindFirstObjectByType<Stairs>(FindObjectsInactive.Include);
+        lastKillsRemaining   = -1;
+
+        Debug.Log($"[GameViewUI] BindUI complete — goldLabel found: {goldLabel != null} | killLabel found: {killCounterLabel != null} | stairs found: {stairsRef != null}");
     }
 
     private void TryFindUIDocument()
