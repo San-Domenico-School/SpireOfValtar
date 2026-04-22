@@ -83,6 +83,71 @@
      background-color: rgb(220, 50, 50);
  }
 
+/* ── Kill Counter (top-centre, only shown when Stairs exist in scene) ── */
+.kill-counter-label {
+    position: absolute;
+    top: 2%;
+    left: 0;
+    right: 0;
+    -unity-text-align: upper-center;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 20px;
+    -unity-font-style: bold;
+    display: none;
+}
+
+/* ── Gold Counter (top-right HUD) ── */
+.gold-counter-panel {
+    position: absolute;
+    right: 2%;
+    top: 2%;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px 4px 4px;
+    background-color: rgba(12, 12, 12, 0.6);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgba(236, 165, 41, 0.6);
+    border-right-color: rgba(236, 165, 41, 0.6);
+    border-top-color: rgba(236, 165, 41, 0.6);
+    border-bottom-color: rgba(236, 165, 41, 0.6);
+    border-radius: 18px;
+}
+
+.coin-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    flex-shrink: 0;
+    background-color: rgb(236, 165, 41);
+}
+
+.gold-label {
+    color: rgba(236, 165, 41, 0.95);
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    min-width: 20px;
+}
+
+/* ── Chase the book — centre-screen narrative label ── */
+.chase-book-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 38%;
+    -unity-text-align: middle-center;
+    font-size: 32px;
+    -unity-font-style: bold;
+    color: rgba(255, 240, 200, 0.85);
+    opacity: 0;
+    display: none;
+    letter-spacing: 2px;
+}
+
 /* ── Reticle (crosshair, dead-centre of screen) ── */
 .reticle {
     position: absolute;

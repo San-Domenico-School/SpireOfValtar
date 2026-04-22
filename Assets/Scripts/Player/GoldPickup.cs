@@ -11,7 +11,12 @@ public class GoldPickup : MonoBehaviour
     private bool collected = false;
     private Transform playerTransform;
     private const float pickupRadius = 1.2f;
-    private float random = Random.Range(0, 360);
+    private float random;
+
+    private void Awake()
+    {
+        random = Random.Range(0, 360);
+    }
 
     private void Start()
     {
