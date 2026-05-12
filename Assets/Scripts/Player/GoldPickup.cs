@@ -3,6 +3,7 @@
 // Works with CharacterController players by polling proximity each frame.
 // OnTriggerEnter is a bonus fallback in case a trigger overlap fires too.
 
+using Unity.Serialization;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -11,11 +12,14 @@ public class GoldPickup : MonoBehaviour
     private bool collected = false;
     private Transform playerTransform;
     private const float pickupRadius = 1.2f;
-    private float random;
+    private float randomRotationOffset;
+    private float timeToDestroy;
+
+    [SerializeField] AudioSource audioSource;
 
     private void Awake()
     {
-        random = Random.Range(0, 360);
+        randomRotationOffset = Random.Range(0, 360);
     }
 
     private void Start()
@@ -26,12 +30,22 @@ public class GoldPickup : MonoBehaviour
 
     private void Update()
     {
-        transform.rotation = Quaternion.Euler(0,Time.timeSinceLevelLoad * 100 + random,0);
+        transform.rotation = Quaternion.Euler(0,Time.timeSinceLevelLoad * 100 + randomRotationOffset,0);
 
-        if (collected || playerTransform == null) return;
-
-        if (Vector3.Distance(transform.position, playerTransform.position) <= pickupRadius)
+        if (collected)
+        {
+            timeToDestroy += Time.deltaTime;
+            if(timeToDestroy > 1)
+            {
+                // destroy after sound stops playing
+                Destroy(this.gameObject);
+            }
+        }
+        else if (Vector3.Distance(transform.position, playerTransform.position) <= pickupRadius)
+        {
             Collect();
+        }
+        
     }
     
 
@@ -40,6 +54,10 @@ public class GoldPickup : MonoBehaviour
         collected = true;
         if (GoldCollector.Instance != null)
             GoldCollector.Instance.AddGold(1);
-        Destroy(gameObject);
+        
+        audioSource.Play();
+        gameObject.GetComponent<BoxCollider>().enabled =  false;
+        gameObject.GetComponent<MeshRenderer>().enabled =  false;
+
     }
 }
