@@ -166,6 +166,7 @@ GameObject:
   - component: {fileID: 2486578467623477028}
   - component: {fileID: 2484075919418288376}
   - component: {fileID: 466534885314528405}
+  - component: {fileID: 3190463831457042664}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -716,6 +717,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b748485ae294688b39b9eb20cf62ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpellInventory
+--- !u!114 &3190463831457042664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4654921610813067680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78935247277fd48a780d1626b1875208, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DebugCheats
+  enableCheats: 1
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0
