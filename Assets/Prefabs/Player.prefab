@@ -729,7 +729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78935247277fd48a780d1626b1875208, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebugCheats
-  enableCheats: 1
+  enableCheats: 0
 --- !u!1 &8982007630853664744
 GameObject:
   m_ObjectHideFlags: 0
