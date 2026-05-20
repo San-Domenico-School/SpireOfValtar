@@ -223,7 +223,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1211030446560105669}
   - component: {fileID: 80028814546890248}
-  - component: {fileID: 432314041051503826}
   m_Layer: 0
   m_Name: Hitbox
   m_TagString: Enemy
@@ -239,12 +238,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3768894740873920763}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.50000006, y: -0.49999997, z: -0.50000006, w: 0.49999997}
+  m_LocalPosition: {x: 0, y: 0, z: 0.029411597}
+  m_LocalScale: {x: 0.027056834, y: 0.028541256, z: 0.02705683}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2833931114604344829}
+  m_Father: {fileID: 470999052662357756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &80028814546890248
 SphereCollider:
@@ -267,19 +266,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.39
   m_Center: {x: 0, y: -0.93, z: 0}
---- !u!114 &432314041051503826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3768894740873920763}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea2bd82e23f214671b5f565171d72ad9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitboxFollowParent
-  offset: {x: 0, y: 0, z: 0}
 --- !u!1 &6342462121640250399
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,7 +304,6 @@ Transform:
   m_Children:
   - {fileID: 5455198667726463549}
   - {fileID: 1491510060594505256}
-  - {fileID: 1211030446560105669}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &328129803126716651
@@ -711,12 +696,20 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -7029948723529949830, guid: 828c30d16c3ed794599e62da56ef2236, type: 3}
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -7660339126710206657, guid: 828c30d16c3ed794599e62da56ef2236, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1211030446560105669}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 828c30d16c3ed794599e62da56ef2236, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3531756876517338160}
   m_SourcePrefab: {fileID: 100100000, guid: 828c30d16c3ed794599e62da56ef2236, type: 3}
+--- !u!4 &470999052662357756 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -7660339126710206657, guid: 828c30d16c3ed794599e62da56ef2236, type: 3}
+  m_PrefabInstance: {fileID: 1384945954751594947}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1491510060594505256 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 828c30d16c3ed794599e62da56ef2236, type: 3}
