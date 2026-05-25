@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj",
     },
-    "dotnet.defaultSolution": "SpireOfValtar.sln"
+    "dotnet.defaultSolution": "SpireOfValtar.slnx"
 }
