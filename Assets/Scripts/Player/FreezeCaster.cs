@@ -12,6 +12,14 @@ public class FreezeCaster : MonoBehaviour
 
     public bool canCast => !isOnCooldown && Time.timeScale > 0f;
     
+    [Header("Audio (optional)")]
+    [SerializeField] private SpellAudioController spellAudio;
+
+    private void Awake()
+    {
+        if (spellAudio == null) spellAudio = GetComponentInParent<SpellAudioController>();
+    }
+    
     public void OnCast()
     {
         if (!canCast) return;
@@ -29,6 +37,7 @@ public class FreezeCaster : MonoBehaviour
 		FreezeProjectile projectile = instance.GetComponent<FreezeProjectile>();
 		if (projectile != null)
 		{
+            projectile.Init(spellAudio, SpellSfxId.Freeze);
 			projectile.Launch(cam.forward);
 		}
     }

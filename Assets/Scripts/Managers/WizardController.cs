@@ -31,11 +31,17 @@ public class WizardController : MonoBehaviour
   private PlayerHealth playerHealth;
   public int damage = 10;
 
+  [Header("Audio (optional)")]
+  [SerializeField] private EnemySoundController enemySound;
+
   void Start()
   {
     playerHealth = FindFirstObjectByType<PlayerHealth>();
 
     navAgent = GetComponent<NavMeshAgent>();
+    if (enemySound == null) enemySound = GetComponent<EnemySoundController>();
+    if (enemySound == null) enemySound = GetComponentInParent<EnemySoundController>();
+    if (enemySound == null) enemySound = GetComponentInChildren<EnemySoundController>();
 
     GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
     if (playerObject != null)
@@ -122,6 +128,8 @@ public class WizardController : MonoBehaviour
   private void ShootProjectile()
   {
     if (projectilePrefab == null || player == null) return;
+
+    if (enemySound != null) enemySound.PlayAttackSfx();
 
     Transform spawnPoint = firePoint != null ? firePoint : transform;
 

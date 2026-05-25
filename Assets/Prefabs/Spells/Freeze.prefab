@@ -57,6 +57,9 @@ MonoBehaviour:
   freezeSlowAmount: 0.75
   freezeDuration: 5
   freezeRadius: 5
+  impactVfxPrefab: {fileID: 3372925172376557377, guid: a99ae2e1272e947b3abee128fafaccdf, type: 3}
+  impactVfxLifetime: 3
+  spawnVfxOnExpire: 1
 --- !u!1 &9099917820031731689
 GameObject:
   m_ObjectHideFlags: 0

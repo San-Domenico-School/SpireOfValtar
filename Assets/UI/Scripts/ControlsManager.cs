@@ -190,6 +190,7 @@ public class ControlsManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
@@ -377,12 +378,24 @@ public class ControlsManager : MonoBehaviour
         }
         else
         {
-            // For regular actions
+            // For regular actions, prefer Keyboard&Mouse bindings
             foreach (var binding in action.bindings)
             {
                 if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    // Use overridePath if available, otherwise use path
+                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
+                    {
+                        string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
+                        return FormatKeyName(bindingPath);
+                    }
+                }
+            }
+
+            // Fallback to first non-composite binding
+            foreach (var binding in action.bindings)
+            {
+                if (!binding.isComposite && !binding.isPartOfComposite)
+                {
                     string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
                     return FormatKeyName(bindingPath);
                 }
@@ -741,6 +754,7 @@ public class ControlsManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },

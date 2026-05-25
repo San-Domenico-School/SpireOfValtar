@@ -1,0 +1,75 @@
+.death-root {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.death-backdrop {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 1);
+    opacity: 0;
+}
+
+.death-panel {
+    width: 360px;
+    min-height: 280px;
+    background-color: rgb(20, 20, 20);
+    border-left-color: rgb(236, 165, 41);
+    border-right-color: rgb(236, 165, 41);
+    border-top-color: rgb(236, 165, 41);
+    border-bottom-color: rgb(236, 165, 41);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-radius: 12px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: stretch;
+    opacity: 0;
+}
+
+.death-title {
+    font-size: 36px;
+    -unity-font-style: bold;
+    color: rgb(236, 165, 41);
+    -unity-text-align: middle-center;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom-color: rgb(236, 165, 41);
+    border-bottom-width: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Oswald-Bold.ttf?fileID=12800000&guid=c9f6d0e7bc8541498c9a4799ba184ede&type=3#Oswald-Bold");
+}
+
+.death-button {
+    height: 45px;
+    font-size: 16px;
+    -unity-font-style: bold;
+    background-color: rgb(40, 40, 40);
+    color: rgb(236, 165, 41);
+    border-left-color: rgb(236, 165, 41);
+    border-right-color: rgb(236, 165, 41);
+    border-top-color: rgb(236, 165, 41);
+    border-bottom-color: rgb(236, 165, 41);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.death-button-last {
+    margin-bottom: 0;
+}

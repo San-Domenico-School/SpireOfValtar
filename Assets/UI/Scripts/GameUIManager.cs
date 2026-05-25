@@ -1,13 +1,16 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UI.MouseFollow;
 
 /************************************
  * Handles game UI, pause menu, and ESC key controls.
  * Manages pause/unpause, controls menu navigation, and menu button functionality.
+ * Dont look into this script too much, it's a mess.
+ * I'm not proud of it.
+ * Even I don't understand it myself.
  * Gleb 01/09/26
  * Version 1.0
  ************************************/
@@ -17,7 +20,7 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private UIDocument pauseMenuDocument;
     [SerializeField] private UIDocument controlsDocument;
     [SerializeField] private UIDocument controlsPauseDocument;
-    [SerializeField] private ReticleController reticleController;
+    [SerializeField] private UIReticleController reticleController;
     [SerializeField] private int gameUISortOrder = 0;
     [SerializeField] private int pauseMenuSortOrder = 10;
     [SerializeField] private int controlsMenuSortOrder = 20;
@@ -25,6 +28,12 @@ public class GameUIManager : MonoBehaviour
     private VisualElement gameUIContainer;
     private Button menuButton;
     private MainMenuManager mainMenuManager;
+    private Label goldLabel;
+    private Label chaseBookLabel;
+    private Coroutine chaseBookCoroutine;
+    private Label killCounterLabel;
+    private Stairs stairsRef;
+    private int lastKillsRemaining = -1;
     
     private Button pauseResumeButton;
     private Button pauseControlsButton;
@@ -36,53 +45,118 @@ public class GameUIManager : MonoBehaviour
     private Dictionary<string, Button> pauseKeybindButtons = new Dictionary<string, Button>();
     private VisualElement pauseRebindPrompt;
     private InputActionRebindingExtensions.RebindingOperation pauseRebindOperation;
+    private bool isInitialized;
     
     void Start()
     {
+        if (!TryInitializeUI())
+        {
+            StartCoroutine(WaitForRootAndInitialize());
+        }
+    }
+
+    private IEnumerator WaitForRootAndInitialize()
+    {
+        while (!isInitialized)
+        {
+            if (TryInitializeUI())
+            {
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
+    private bool TryInitializeUI()
+    {
+        if (uiDocument == null || uiDocument.rootVisualElement == null)
+        {
+            uiDocument = FindDocumentWithElement("GameContentArea");
+        }
+
+        if (uiDocument == null || uiDocument.rootVisualElement == null)
+        {
+            return false;
+        }
+
         var rootVisualElement = uiDocument.rootVisualElement;
-        
-        // Use root element as gameUIContainer since Game_View.uxml doesn't have a GameUIContainer element
         gameUIContainer = rootVisualElement;
-        menuButton = rootVisualElement.Q<Button>("MenuButton");
+        menuButton      = rootVisualElement.Q<Button>("MenuButton");
+        goldLabel        = rootVisualElement.Q<Label>("GoldLabel");
+        chaseBookLabel   = rootVisualElement.Q<Label>("ChaseBookLabel");
+        killCounterLabel = rootVisualElement.Q<Label>("KillCounterLabel");
+        stairsRef        = FindFirstObjectByType<Stairs>(FindObjectsInactive.Include);
+        lastKillsRemaining = -1;
         mainMenuManager = FindObjectOfType<MainMenuManager>();
-        
+
         if (menuButton != null)
         {
+            menuButton.clicked -= OnMenuButtonClicked;
             menuButton.clicked += OnMenuButtonClicked;
         }
-        
+
         if (reticleController == null)
         {
-            reticleController = FindObjectOfType<ReticleController>(true);
+            reticleController = FindObjectOfType<UIReticleController>(true);
         }
 
         ApplyUIDocumentSorting();
-        HideGameUI();
+        bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
+        if (gameUIVisible)
+        {
+            StartGame();
+        }
+        else
+        {
+            HideGameUI();
+        }
         InitializePauseMenu();
         InitializeControlsMenu();
         InitializeControlsPauseMenu();
-        
-        // Find input actions if not assigned
+
         if (inputActions == null)
         {
             inputActions = Resources.FindObjectsOfTypeAll<InputActionAsset>().FirstOrDefault();
         }
 
         KeybindUtils.ApplySavedKeybinds(inputActions);
+        isInitialized = true;
+        return true;
+    }
+
+    public void RebindGameUI()
+    {
+        isInitialized = false;
+        if (!TryInitializeUI())
+        {
+            StartCoroutine(WaitForRootAndInitialize());
+        }
+
+        var gameViewUI = FindFirstObjectByType<GameViewUI>(FindObjectsInactive.Include);
+        if (gameViewUI != null)
+        {
+            gameViewUI.RefreshUI();
+        }
+
+        EnsureSpellUI();
+
+        var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null)
+        {
+            playerHealth.RefreshHealthUI();
+        }
+
+        var abilityController = FindFirstObjectByType<PlayerAbilityController>(FindObjectsInactive.Include);
+        if (abilityController != null)
+        {
+            abilityController.RefreshStaminaUI();
+        }
     }
     
     void Update()
     {
-        // Only handle ESC if game UI is visible (game is actually running)
-        bool gameUIVisible = gameUIContainer != null && gameUIContainer.style.display == DisplayStyle.Flex;
-        
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            if (!gameUIVisible)
-            {
-                return;
-            }
-            
             // Check for ESC key press during rebinding to cancel it
             if (pauseRebindOperation != null)
             {
@@ -111,8 +185,50 @@ public class GameUIManager : MonoBehaviour
             }
             else
             {
+                // Block pause while the spell shop is open
+                if (SpellShopUI.Instance != null && SpellShopUI.Instance.IsOpen) return;
                 // Pause the game - ESC can only open pause menu
                 PauseGame();
+            }
+        }
+
+        // Gold counter — re-query label if it went stale (UIDocument rebuilt after pause/shop)
+        if (goldLabel != null && goldLabel.panel == null)
+            goldLabel = null;
+
+        if (goldLabel == null && uiDocument != null && uiDocument.rootVisualElement != null)
+            goldLabel = uiDocument.rootVisualElement.Q<Label>("GoldLabel");
+
+        if (goldLabel != null && GoldCollector.Instance != null)
+            goldLabel.text = GoldCollector.Instance.GetGold().ToString();
+
+        // Kill counter — same stale-panel pattern as goldLabel
+        if (killCounterLabel != null && killCounterLabel.panel == null)
+            killCounterLabel = null;
+
+        if (killCounterLabel == null && uiDocument != null && uiDocument.rootVisualElement != null)
+            killCounterLabel = uiDocument.rootVisualElement.Q<Label>("KillCounterLabel");
+
+        if (killCounterLabel != null)
+        {
+            if (stairsRef == null)
+                stairsRef = FindFirstObjectByType<Stairs>(FindObjectsInactive.Include);
+
+            if (stairsRef == null || stairsRef.IsComplete)
+            {
+                killCounterLabel.style.display = DisplayStyle.None;
+            }
+            else
+            {
+                int remaining = stairsRef.KillsRemaining;
+                if (remaining != lastKillsRemaining)
+                {
+                    lastKillsRemaining    = remaining;
+                    killCounterLabel.text = remaining == 1
+                        ? "Kill 1 more enemy"
+                        : $"Kill {remaining} more enemies";
+                }
+                killCounterLabel.style.display = DisplayStyle.Flex;
             }
         }
     }
@@ -136,21 +252,25 @@ public class GameUIManager : MonoBehaviour
             
             if (pauseResumeButton != null)
             {
+                pauseResumeButton.clicked -= OnPauseResumeClicked;
                 pauseResumeButton.clicked += OnPauseResumeClicked;
             }
             
             if (pauseControlsButton != null)
             {
+                pauseControlsButton.clicked -= OnPauseControlsClicked;
                 pauseControlsButton.clicked += OnPauseControlsClicked;
             }
             
             if (pauseMainMenuButton != null)
             {
+                pauseMainMenuButton.clicked -= OnPauseMainMenuClicked;
                 pauseMainMenuButton.clicked += OnPauseMainMenuClicked;
             }
             
             if (pauseExitButton != null)
             {
+                pauseExitButton.clicked -= OnPauseExitClicked;
                 pauseExitButton.clicked += OnPauseExitClicked;
             }
             
@@ -182,6 +302,20 @@ public class GameUIManager : MonoBehaviour
             // Initialize settings UI for pause controls
             InitializePauseControlsSettings();
         }
+    }
+
+    private UIDocument FindDocumentWithElement(string elementName)
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.rootVisualElement == null) continue;
+            if (document.rootVisualElement.Q<VisualElement>(elementName) != null)
+            {
+                return document;
+            }
+        }
+        return null;
     }
 
     private void ApplyUIDocumentSorting()
@@ -304,6 +438,7 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
@@ -361,6 +496,7 @@ public class GameUIManager : MonoBehaviour
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
@@ -521,11 +657,24 @@ public class GameUIManager : MonoBehaviour
         }
         else
         {
+            // Prefer Keyboard&Mouse bindings
             foreach (var binding in action.bindings)
             {
                 if (!binding.isComposite && !binding.isPartOfComposite)
                 {
-                    // Use overridePath if available, otherwise use path
+                    if (binding.groups != null && binding.groups.Contains("Keyboard&Mouse"))
+                    {
+                        string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
+                        return FormatKeyName(bindingPath);
+                    }
+                }
+            }
+
+            // Fallback to first non-composite binding
+            foreach (var binding in action.bindings)
+            {
+                if (!binding.isComposite && !binding.isPartOfComposite)
+                {
                     string bindingPath = !string.IsNullOrEmpty(binding.overridePath) ? binding.overridePath : binding.path;
                     return FormatKeyName(bindingPath);
                 }
@@ -785,6 +934,58 @@ public class GameUIManager : MonoBehaviour
         pauseRebindOperation.Start();
     }
     
+    // ── "Chase the book" centre-screen message ────────────────────────────────
+
+    public void ShowChaseBookMessage()
+    {
+        // Re-query in case the label wasn't ready at bind time
+        if (chaseBookLabel == null && uiDocument != null && uiDocument.rootVisualElement != null)
+            chaseBookLabel = uiDocument.rootVisualElement.Q<Label>("ChaseBookLabel");
+
+        if (chaseBookLabel == null) return;
+
+        if (chaseBookCoroutine != null)
+            StopCoroutine(chaseBookCoroutine);
+
+        chaseBookCoroutine = StartCoroutine(ChaseBookRoutine());
+    }
+
+    private IEnumerator ChaseBookRoutine()
+    {
+        const float fadeInDuration  = 1.0f;
+        const float holdDuration    = 3.0f;
+        const float fadeOutDuration = 1.0f;
+        const float maxOpacity      = 0.75f;
+
+        chaseBookLabel.style.display = DisplayStyle.Flex;
+
+        // Fade in
+        float t = 0f;
+        while (t < fadeInDuration)
+        {
+            t += Time.deltaTime;
+            chaseBookLabel.style.opacity = Mathf.Lerp(0f, maxOpacity, t / fadeInDuration);
+            yield return null;
+        }
+        chaseBookLabel.style.opacity = maxOpacity;
+
+        // Hold
+        yield return new WaitForSeconds(holdDuration);
+
+        // Fade out
+        t = 0f;
+        while (t < fadeOutDuration)
+        {
+            t += Time.deltaTime;
+            chaseBookLabel.style.opacity = Mathf.Lerp(maxOpacity, 0f, t / fadeOutDuration);
+            yield return null;
+        }
+
+        chaseBookLabel.style.opacity = 0f;
+        chaseBookLabel.style.display = DisplayStyle.None;
+        chaseBookCoroutine = null;
+    }
+
     public void PauseGame()
     {
         if (isPaused)
@@ -795,12 +996,16 @@ public class GameUIManager : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
         UnlockCursor();
+        HideGameUI();
+        DisableMainMenuDocument();
         
         if (pauseMenuDocument != null)
         {
             pauseMenuDocument.enabled = true;
             if (pauseMenuDocument.rootVisualElement != null)
             {
+                // Re-bind buttons in case the root was rebuilt.
+                InitializePauseMenu();
                 pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
             }
         }
@@ -842,9 +1047,36 @@ public class GameUIManager : MonoBehaviour
         {
             controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+
+        if (gameUIContainer != null)
+        {
+            gameUIContainer.style.display = DisplayStyle.Flex;
+        }
+        SetReticleVisible(true);
         
         // Lock cursor using the button-triggered method
         LockCursor();
+    }
+
+    private void DisableMainMenuDocument()
+    {
+        var documents = FindObjectsOfType<UIDocument>(true);
+        foreach (var document in documents)
+        {
+            if (document == null || document.visualTreeAsset == null)
+            {
+                continue;
+            }
+
+            if (document.visualTreeAsset.name.Equals("MainMenu", System.StringComparison.OrdinalIgnoreCase))
+            {
+                document.enabled = false;
+                if (document.rootVisualElement != null)
+                {
+                    document.rootVisualElement.style.display = DisplayStyle.None;
+                }
+            }
+        }
     }
     
     // Called when Resume button is clicked - this ensures cursor locks from button click
@@ -962,21 +1194,42 @@ public class GameUIManager : MonoBehaviour
         }
     }
     
+    private void ResetRunState()
+    {
+        // Set restart flag first so Player.OnDestroy() does not save stale state.
+        var session = FindFirstObjectByType<PlayerSession>(FindObjectsInactive.Include);
+        if (session != null)
+        {
+            session.SetRestartFlag(true);
+            session.ResetToDefaults();
+        }
+
+        // Destroy the DontDestroyOnLoad player entirely.
+        // GoldCollector and SpellInventory live on it, so destroying it guarantees
+        // they are recreated fresh (from prefab defaults) when Play is pressed again.
+        var player = FindFirstObjectByType<Player>(FindObjectsInactive.Include);
+        if (player != null)
+        {
+            Destroy(player.gameObject);
+        }
+    }
+
     private void OnPauseMainMenuClicked()
     {
+        ResetRunState();
         ResumeGame();
         HideGameUI();
-        
+
         if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
-        
+
         if (mainMenuManager != null)
         {
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.LoadMainMenuScene();
         }
-        
+
         CleanupGame();
     }
     
@@ -1015,6 +1268,20 @@ public class GameUIManager : MonoBehaviour
         {
             pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
         }
+
+        var gameViewUI = FindFirstObjectByType<GameViewUI>(FindObjectsInactive.Include);
+        if (gameViewUI != null)
+        {
+            gameViewUI.RefreshUI();
+        }
+
+        EnsureSpellUI();
+
+        var playerHealth = FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null)
+        {
+            playerHealth.RefreshHealthUI();
+        }
     }
     
     public void HideGameUI()
@@ -1025,16 +1292,40 @@ public class GameUIManager : MonoBehaviour
         }
         SetReticleVisible(false);
     }
+
+    public void ResetForMainMenu()
+    {
+        isPaused = false;
+        HideGameUI();
+        HideControlsMenu();
+        HideControlsPauseMenu();
+
+        if (controlsDocument != null && controlsDocument.rootVisualElement != null)
+        {
+            controlsDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        if (pauseMenuDocument != null && pauseMenuDocument.rootVisualElement != null)
+        {
+            pauseMenuDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        if (controlsPauseDocument != null && controlsPauseDocument.rootVisualElement != null)
+        {
+            controlsPauseDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
     
     private void OnMenuButtonClicked()
     {
+        ResetRunState();
         HideGameUI();
-        
+
         if (mainMenuManager != null)
         {
-            mainMenuManager.ShowMainMenu();
+            mainMenuManager.LoadMainMenuScene();
         }
-        
+
         CleanupGame();
     }
     
@@ -1051,15 +1342,19 @@ public class GameUIManager : MonoBehaviour
 
     private void SetReticleVisible(bool isVisible)
     {
-        if (reticleController == null)
+        if (reticleController == null) return;
+        reticleController.SetVisible(isVisible);
+    }
+
+    private void EnsureSpellUI()
+    {
+        var spellUI = FindFirstObjectByType<SpellUI>(FindObjectsInactive.Include);
+        if (spellUI == null)
         {
-            return;
+            var spellUiObject = new GameObject("SpellUI");
+            spellUI = spellUiObject.AddComponent<SpellUI>();
         }
 
-        reticleController.enabled = isVisible;
-        if (reticleController.reticle != null)
-        {
-            reticleController.reticle.gameObject.SetActive(isVisible);
-        }
+        spellUI.RefreshSpellUI();
     }
 }

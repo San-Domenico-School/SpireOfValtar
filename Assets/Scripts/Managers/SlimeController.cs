@@ -11,7 +11,8 @@ public class SlimeController : MonoBehaviour
     [SerializeField] private float rotationSpeed = 5f;
 
     [Header("Speed Modifiers")]
-    [SerializeField] private float currentSpeedMultiplier = 0.2f;
+    // default to 1 so the enemy moves at intended baseSpeed unless slowed
+    [SerializeField] private float currentSpeedMultiplier = 1f;
 
     [Header("Animation")]
     [Tooltip("Animator on the slime model (often on a child object). If left empty, will auto-find in children.")]
@@ -37,6 +38,10 @@ public class SlimeController : MonoBehaviour
     public int damage = 15;
     [SerializeField] private float damageInterval = 3f;
     private Coroutine damageCoroutine;
+    private bool playerInDamageRange;
+
+    [Header("Audio (optional)")]
+    [SerializeField] private EnemySoundController enemySound;
 
     void Start()
     {
@@ -53,6 +58,15 @@ public class SlimeController : MonoBehaviour
             Debug.LogError("SlimeController requires a NavMeshAgent component!");
             return;
         }
+
+        // make sure the agent updates position/rotation and doesn't auto brake unnecessarily
+        navAgent.updatePosition = true;
+        navAgent.updateRotation = true;
+        navAgent.autoBraking = false;
+
+        if (enemySound == null) enemySound = GetComponent<EnemySoundController>();
+        if (enemySound == null) enemySound = GetComponentInParent<EnemySoundController>();
+        if (enemySound == null) enemySound = GetComponentInChildren<EnemySoundController>();
 
         // Find Animator if not assigned (usually on the model child)
         if (animator == null)
@@ -81,7 +95,23 @@ public class SlimeController : MonoBehaviour
         navAgent.acceleration = 8f;
         navAgent.stoppingDistance = attackRange;
 
-        // Set initial destination to current position
+        // Ensure agent is placed on NavMesh. If not, try to snap/warp to nearest point.
+        if (!navAgent.isOnNavMesh)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 5f, NavMesh.AllAreas))
+            {
+                navAgent.Warp(hit.position);
+                Debug.Log($"{gameObject.name}: Warped to NavMesh at {hit.position}");
+            }
+            else
+            {
+                Debug.LogWarning($"{gameObject.name}: NavMeshAgent is not on a NavMesh and none was found nearby. Bake NavMesh and place agent on it.");
+            }
+        }
+
+        // Start stopped; will start moving once player detected
+        navAgent.isStopped = true;
         navAgent.SetDestination(transform.position);
     }
 
@@ -95,7 +125,23 @@ public class SlimeController : MonoBehaviour
 
         if (isPlayerDetected)
         {
-            // Update destination to player position
+            // If agent not on navmesh try to sample/warp once more
+            if (!navAgent.isOnNavMesh)
+            {
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(transform.position, out hit, 5f, NavMesh.AllAreas))
+                {
+                    navAgent.Warp(hit.position);
+                }
+                else
+                {
+                    // cannot move without a NavMesh
+                    return;
+                }
+            }
+
+            // allow movement and set destination to player
+            navAgent.isStopped = false;
             navAgent.SetDestination(player.position);
 
             // Check if in attack range
@@ -111,7 +157,12 @@ public class SlimeController : MonoBehaviour
         else
         {
             // Player not detected, stop moving
-            navAgent.SetDestination(transform.position);
+            if (!navAgent.isStopped)
+            {
+                navAgent.isStopped = true;
+                navAgent.ResetPath();
+            }
+
             if (isAttacking)
             {
                 StopAttack();
@@ -123,6 +174,8 @@ public class SlimeController : MonoBehaviour
 
         // ---- Animation drive ----
         UpdateAnimation();
+
+        HandleDamageRange(distanceToPlayer);
     }
 
     private void UpdateAnimation()
@@ -143,6 +196,7 @@ public class SlimeController : MonoBehaviour
         isAttacking = true;
         // TODO: Add attack logic here (you can also trigger attack animations)
         // Example: animator?.SetTrigger("Attack");
+        if (enemySound != null) enemySound.PlayAttackSfx();
     }
 
     private void StopAttack()
@@ -211,6 +265,7 @@ public class SlimeController : MonoBehaviour
 
             if (playerHealth != null)
             {
+                if (enemySound != null) enemySound.PlayAttackSfx();
                 playerHealth.TakeDamage(damage); // initial instant damage
                 Debug.Log($"{gameObject.name} has hit Player!");
 
@@ -240,10 +295,42 @@ public class SlimeController : MonoBehaviour
         {
             if (playerHealth != null)
             {
+                if (enemySound != null) enemySound.PlayAttackSfx();
                 playerHealth.TakeDamage(damage);
                 Debug.Log($"{gameObject.name} dealt periodic damage: {damage}");
             }
             yield return new WaitForSeconds(damageInterval);
+        }
+    }
+
+    private void HandleDamageRange(float distanceToPlayer)
+    {
+        if (player == null || playerHealth == null) return;
+
+        bool inRange = distanceToPlayer <= attackRange;
+
+        if (inRange != playerInDamageRange)
+        {
+            playerInDamageRange = inRange;
+
+            if (inRange)
+            {
+                if (enemySound != null) enemySound.PlayAttackSfx();
+                playerHealth.TakeDamage(damage);
+                if (damageCoroutine == null)
+                {
+                    damageCoroutine = StartCoroutine(DamageOverTime());
+                }
+            }
+            else if (damageCoroutine != null)
+            {
+                StopCoroutine(damageCoroutine);
+                damageCoroutine = null;
+            }
+        }
+        else if (inRange && damageCoroutine == null)
+        {
+            damageCoroutine = StartCoroutine(DamageOverTime());
         }
     }
 }

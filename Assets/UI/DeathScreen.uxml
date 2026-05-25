@@ -1,0 +1,11 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/DeathScreen.uss?fileID=7433441132597879392&amp;guid=629a8927f9f2c46f393490dbec916839&amp;type=3#DeathScreen" />
+    <ui:VisualElement name="DeathRoot" class="death-root">
+        <ui:VisualElement name="DeathBackdrop" class="death-backdrop" style="opacity: 1;" />
+        <ui:VisualElement name="DeathPanel" class="death-panel" style="opacity: 1;">
+            <ui:Label name="DeathTitle" text="You Died" class="death-title" />
+            <ui:Button name="RestartButton" text="Restart / Respawn" class="death-button" />
+            <ui:Button name="ExitButton" text="Exit" class="death-button death-button-last" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

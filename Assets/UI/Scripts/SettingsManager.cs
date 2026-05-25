@@ -40,7 +40,6 @@ public class SettingsManager : MonoBehaviour
                 {
                     GameObject settingsObject = new GameObject("SettingsManager");
                     instance = settingsObject.AddComponent<SettingsManager>();
-                    DontDestroyOnLoad(settingsObject);
                 }
             }
             return instance;
@@ -52,7 +51,6 @@ public class SettingsManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
             LoadSettings();
         }
         else if (instance != this)

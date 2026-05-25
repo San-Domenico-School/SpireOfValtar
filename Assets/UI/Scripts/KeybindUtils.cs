@@ -12,6 +12,7 @@ public static class KeybindUtils
             { "Keybind_MoveLeft", ("Move", "left") },
             { "Keybind_MoveRight", ("Move", "right") },
             { "Keybind_Jump", ("Jump", null) },
+            { "Keybind_Dash", ("Crouch", null) },
             { "Keybind_CastSpell", ("Attack", null) },
             { "Keybind_MeleeAttack", ("MeleeAttack", null) },
             { "Keybind_NextSpell", ("Next", null) },
@@ -88,4 +89,3 @@ public static class KeybindUtils
         return -1;
     }
 }
-
